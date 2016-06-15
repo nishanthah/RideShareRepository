@@ -11,8 +11,9 @@ namespace RideShare
     {
         public App()
         {
+            //remove dead code
             //// The root page of your application
-            //MainPage = new ContentPage
+            //MainPage = new ContentPage/
             //{
             //    Content = new StackLayout
             //    {
