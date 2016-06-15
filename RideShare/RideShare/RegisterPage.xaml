@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RideShare.RegisterPage"
+             Title="Register">
+  <ContentPage.Content>
+    <StackLayout  Orientation="Vertical">
+      <StackLayout Orientation="Horizontal">
+        <Entry x:Name="firstNameEntry" Text="First Name" />
+        <Entry x:Name="lastNameEntry" Text="Last Name" />
+      </StackLayout>
+      <Entry x:Name="userNameEntry" Text="User Name" />
+      <Entry x:Name="passwordEntry" Text="Password" />
+      <Entry x:Name="emailEntry" Text="E-mail" />
+      <Button x:Name="registerButton" Text="Register"/>
+      </StackLayout  >
+  </ContentPage.Content>
+</ContentPage>
