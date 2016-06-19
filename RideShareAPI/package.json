@@ -1,0 +1,15 @@
+{
+  "name": "ride-share-api",
+  "version": "0.0.0",
+  "description": "RideShareAPI",
+  "main": "app.js",
+  "author": {
+    "name": "nhettiarachchi",
+    "email": ""
+  },
+  "dependencies": {
+    "express": "3.4.4",
+    "jade": "*",
+    "stylus": "*"
+  }
+}
