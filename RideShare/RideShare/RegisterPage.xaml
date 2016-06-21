@@ -6,13 +6,13 @@
   <ContentPage.Content>
     <StackLayout  Orientation="Vertical">
       <StackLayout Orientation="Horizontal">
-        <Entry x:Name="firstNameEntry" Text="First Name" />
-        <Entry x:Name="lastNameEntry" Text="Last Name" />
+        <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" />
+        <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" />
       </StackLayout>
       <Entry x:Name="userNameEntry" Text="User Name" />
       <Entry x:Name="passwordEntry" Text="Password" />
       <Entry x:Name="emailEntry" Text="E-mail" />
-      <Button x:Name="registerButton" Text="Register"/>
+      <Button x:Name="registerButton" Text="OnSaveActivated"/>
       </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

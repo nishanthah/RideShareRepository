@@ -4,11 +4,14 @@ using System.Linq;
 using System.Text;
 
 using Xamarin.Forms;
+using RideShare.Data;
 
 namespace RideShare
 {
     public class App : Application
     {
+        public static UserManager User_Manager { get; private set; }
+
         public App()
         {
             //remove dead code
@@ -34,6 +37,8 @@ namespace RideShare
             // NavigationPage.SetHasBackButton(MainPage, false);
             NavigationPage.SetHasBackButton(MainPage, false);
             //  NavigationPage.SetHasBackButton(MasterPage, false);
+
+            User_Manager = new UserManager(new RideShareService());
         }
 
         protected override void OnStart()
