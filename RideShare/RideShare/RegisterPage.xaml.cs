@@ -1,4 +1,6 @@
-﻿using RideShare.Models;
+﻿using RideShare.Common;
+using RideShare.Models;
+using RideShare.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class RegisterPage : ContentPage
+    public partial class RegisterPage : ContentPage,ISignUpPageProcessor
     {
         //public RegisterPage()
         //{
@@ -56,24 +58,29 @@ namespace RideShare
         public RegisterPage(bool isNew = false)
         {
             InitializeComponent();
+            Content.BindingContext = new SignUpViewModel(this);
             isNewItem = isNew;
         }
 
-        void OnMainPage(object sender, EventArgs e)
+        public void MoveToLoginPage()
         {
-            
-           //Navigation.PushAsync(new MainPage());
-            Application.Current.MainPage = new MainPage();
-            
-            //NavigationPage.
-            //api.rideshare.com
+            //App.Current.MainPage = new Login();
         }
+        //void OnMainPage(object sender, EventArgs e)
+        //{
 
-        async void OnSaveActivated(object sender, EventArgs e)
-        {
-            var user = (User)BindingContext;
-            await App.User_Manager.SaveTaskAsync(user, isNewItem);
-            await Navigation.PopAsync();
-        }
+        //   //Navigation.PushAsync(new MainPage());
+        //    Application.Current.MainPage = new MainPage();
+
+        //    //NavigationPage.
+        //    //api.rideshare.com
+        //}
+
+        //async void OnSaveActivated(object sender, EventArgs e)
+        //{
+        //    var user = (User)BindingContext;
+        //    await App.User_Manager.SaveTaskAsync(user, isNewItem);
+        //    await Navigation.PopAsync();
+        //}
     }
 }

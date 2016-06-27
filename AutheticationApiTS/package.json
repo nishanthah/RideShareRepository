@@ -1,0 +1,20 @@
+{
+  "name": "test-type-script-api",
+  "version": "0.0.0",
+  "description": "TestTypeScriptAPI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "author": {
+    "name": "SPPATHIRANA",
+    "email": ""
+  },
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.0.1",
+    "mongoose": "^4.5.1",
+    "morgan": "^1.7.0"
+  }
+}

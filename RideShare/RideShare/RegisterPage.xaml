@@ -6,13 +6,13 @@
   <ContentPage.Content>
     <StackLayout  Orientation="Vertical">
       <StackLayout Orientation="Horizontal">
-        <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" />
-        <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" />
+        <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name"/>
+        <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name"/>
       </StackLayout>
-      <Entry x:Name="userNameEntry" Text="User Name" />
-      <Entry x:Name="passwordEntry" Text="Password" />
-      <Entry x:Name="emailEntry" Text="E-mail" />
-      <Button x:Name="registerButton" Text="OnSaveActivated"/>
+      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>
+      <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
+      <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
+      <Button x:Name="registerButton" Text="OnSaveActivated" Command="{Binding SignUpCommand}"/>
       </StackLayout  >
   </ContentPage.Content>
 </ContentPage>
