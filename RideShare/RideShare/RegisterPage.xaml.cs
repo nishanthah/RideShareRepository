@@ -65,6 +65,8 @@ namespace RideShare
         public void MoveToLoginPage()
         {
             //App.Current.MainPage = new Login();
+            App.Current.MainPage = new NavigationPage(new LogInPage());
+            
         }
         //void OnMainPage(object sender, EventArgs e)
         //{

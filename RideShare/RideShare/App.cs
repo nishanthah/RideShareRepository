@@ -35,7 +35,7 @@ namespace RideShare
 
             MainPage = new NavigationPage(new LogInPage());
             // NavigationPage.SetHasBackButton(MainPage, false);
-            NavigationPage.SetHasBackButton(MainPage, false);
+           // NavigationPage.SetHasBackButton(MainPage, false);
             //  NavigationPage.SetHasBackButton(MasterPage, false);
 
             //User_Manager = new UserManager(new RideShareService());

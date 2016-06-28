@@ -13,6 +13,7 @@ namespace RideShare
         public LogInPage()
         {
             InitializeComponent();
+            Title = "Login Page";
             //var layout = new StackLayout();
             //var button = new Button
             //{
@@ -63,7 +64,8 @@ namespace RideShare
 
         void GoToRegister(object sender, EventArgs e)
         {
-            Navigation.PushAsync(new RegisterPage());
+            //Navigation.PushAsync(new RegisterPage());
+            App.Current.MainPage = new RegisterPage();
         }
         
     }
