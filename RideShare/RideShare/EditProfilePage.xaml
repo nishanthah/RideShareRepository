@@ -34,6 +34,9 @@
     </StackLayout>
   </ContentPage.Content>-->
   <ContentPage.Content>
+    <StackLayout Grid.Row="1"  x:Name="mapContainer" VerticalOptions="Fill" >
+
+    </StackLayout>
     <StackLayout  >
     <Label Text="Enter a Phoneword:" />
       <Label Text="Enter a Phoneword2:" />
