@@ -16,10 +16,10 @@
   </ContentPage.Content>-->
   <ContentPage.Content>
     <StackLayout  >
-      <Entry x:Name="userNameEntry" Text="User Name" />
-      <Entry x:Name="passwordEntry" Text="Password" />
-      <Button x:Name="translateButon" Text="Log In" Clicked="OnMainPage"/>
-      <Button x:Name="registerButton" Text="Register" Clicked="GoToRegister"/>
+      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" />
+      <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" />
+      <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}"/>
+      <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>
       </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

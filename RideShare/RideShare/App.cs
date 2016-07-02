@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DriverLocator.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +12,7 @@ namespace RideShare
     public class App : Application
     {
         //public static UserManager User_Manager { get; private set; }
+        public static UserCoordinate CurrentLoggedUser { get; set; }
 
         public App()
         {

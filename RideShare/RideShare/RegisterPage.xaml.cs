@@ -1,5 +1,4 @@
 ﻿using RideShare.Common;
-using RideShare.Models;
 using RideShare.ViewModels;
 using System;
 using System.Collections.Generic;

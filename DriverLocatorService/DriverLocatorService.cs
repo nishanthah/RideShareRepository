@@ -11,7 +11,7 @@ namespace DriverLocator
 {
     public class DriverLocatorService
     {
-        private const string SERVER = "http://172.28.40.120:8079";
+        private const string SERVER = "http://192.168.1.5:8079";
         //private const string SERVER = "http://192.168.42.166:8079";
         private const string GET_USERS_URL = SERVER+"/api/usercoordinates";
         private const string SAVE_USERS_URL = SERVER+"/api/saveuserdata";

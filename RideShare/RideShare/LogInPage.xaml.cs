@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RideShare.Common;
+using RideShare.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +10,14 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class LogInPage : ContentPage
+    public partial class LogInPage : ContentPage,ILoginPageProcessor
     {
         public LogInPage()
         {
             InitializeComponent();
             Title = "Login Page";
+            Content.BindingContext = new LoginViewModel(this);
+            
             //var layout = new StackLayout();
             //var button = new Button
             //{
@@ -67,6 +71,21 @@ namespace RideShare
             //Navigation.PushAsync(new RegisterPage());
             App.Current.MainPage = new RegisterPage();
         }
-        
+
+        public void MoveToMainPage()
+        {
+            App.Current.MainPage = new MainPage();
+        }
+
+        public void MoveToCreateUserPage()
+        {
+            App.Current.MainPage = new RegisterPage();
+        }
+
+        public void MoveToSignUpPage()
+        {
+           // App.Current.MainPage = new SignUp();
+        }
+
     }
 }

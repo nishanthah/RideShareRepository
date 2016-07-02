@@ -35,13 +35,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Common\ILoginPageProcessor.cs" />
     <Compile Include="Common\ISignUpPageProcessor.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="MapView2.xaml.cs">
       <DependentUpon>MapView2.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\User.cs" />
     <Compile Include="RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
@@ -74,6 +74,7 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SharedInterfaces\IMapSocketService.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
   </ItemGroup>
