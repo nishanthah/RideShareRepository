@@ -20,6 +20,7 @@ namespace RideShare.Droid
             //Getting rid of the App ICON appearing on the taskbar
             ActionBar.SetIcon(null);
             global::Xamarin.Forms.Forms.Init(this, bundle);
+            Xamarin.FormsMaps.Init(this, bundle);
             LoadApplication(new App());
         }
     }
