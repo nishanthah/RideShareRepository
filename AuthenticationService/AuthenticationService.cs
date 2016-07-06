@@ -14,7 +14,7 @@ namespace Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private const string SERVER = "http://172.28.40.104:8078";
+        private const string SERVER = "http://192.168.1.4:8078";
         //private const string SERVER = "http://192.168.42.166:8078";
         private const string CREATE_USER_URL = SERVER + "/authapp/useraccount";
         private const string AUTHENCATION_URL = SERVER + "/authapp/accesstoken";

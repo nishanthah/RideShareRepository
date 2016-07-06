@@ -51,7 +51,7 @@ namespace RideShare
             {
                 Title = "Map View",
                 IconSource = "logout.png",
-                TargetType = typeof(MapView2)
+                TargetType = typeof(MapView)
             });
 
             listView.ItemsSource = masterPageItems;

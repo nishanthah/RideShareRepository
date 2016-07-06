@@ -1,11 +1,8 @@
 ﻿using DriverLocator.Models;
-using RideShare;
 using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
@@ -93,3 +90,4 @@ namespace RideShare
 
     }
 }
+
