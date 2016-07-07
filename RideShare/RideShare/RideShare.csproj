@@ -74,6 +74,7 @@
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="SharedInterfaces\IMapSocketService.cs" />
+    <Compile Include="SharedInterfaces\IUrbanAirshipNotificationService.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
@@ -144,6 +145,10 @@
     <ProjectReference Include="..\..\DriverLocatorService\DriverLocatorService.csproj">
       <Project>{f708ac5d-9546-413e-b93d-7424a580b6b2}</Project>
       <Name>DriverLocatorService</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\UrbanAirshipClient\UrbanAirshipClient.csproj">
+      <Project>{5714a7e8-1b89-4ab7-81db-9985b95114f2}</Project>
+      <Name>UrbanAirshipClient</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

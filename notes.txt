@@ -25,3 +25,5 @@ Certificate fingerprints:
 API KEY
 AndroidkeyForGoogleMaps
 AIzaSyCROgvWStvV6ygacZtrUU2TdLLCoJKSQBA
+
+channelid "8f9d8ec9-e92a-4be3-a2ed-1c514ac8b227"

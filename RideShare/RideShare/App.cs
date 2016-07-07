@@ -9,6 +9,14 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
+    public class NotificationInfo
+    {
+        public string RequestId { get; set; }
+        public string LocationName { get; set; }
+        public string Longitude { get; set; }
+        public string Latitude { get; set; }
+    }
+
     public class App : Application
     {
         //public static UserManager User_Manager { get; private set; }
@@ -41,6 +49,12 @@ namespace RideShare
             //  NavigationPage.SetHasBackButton(MasterPage, false);
 
             //User_Manager = new UserManager(new RideShareService());
+        }
+
+        public App(NotificationInfo notificationInfo)
+        {
+            // The root page of your application
+            MainPage = new MainPage(notificationInfo);
         }
 
         protected override void OnStart()

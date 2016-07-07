@@ -24,6 +24,16 @@ namespace RideShare
             
         }
 
+        public MainPage(NotificationInfo notificationInfo) : this()
+        {
+            RenderMianPageWithNotificationInfo(notificationInfo);
+        }
+
+        void RenderMianPageWithNotificationInfo(NotificationInfo notificationInfo)
+        {
+            Detail = new NavigationPage(new MapView(notificationInfo));
+        }
+
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var item = e.SelectedItem as MasterPageItem;

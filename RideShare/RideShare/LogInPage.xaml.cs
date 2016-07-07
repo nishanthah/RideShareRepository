@@ -1,4 +1,5 @@
 ﻿using RideShare.Common;
+using RideShare.SharedInterfaces;
 using RideShare.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,11 +13,13 @@ namespace RideShare
 {
     public partial class LogInPage : ContentPage,ILoginPageProcessor
     {
+        IUrbanAirshipNotificationService urbanAirshipNotificationService = DependencyService.Get<IUrbanAirshipNotificationService>();
+
         public LogInPage()
         {
             InitializeComponent();
             Title = "Login Page";
-            Content.BindingContext = new LoginViewModel(this);
+            Content.BindingContext = new LoginViewModel(this, urbanAirshipNotificationService);
             
             //var layout = new StackLayout();
             //var button = new Button

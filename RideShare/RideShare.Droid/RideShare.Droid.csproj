@@ -152,12 +152,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DependecyServices\MapSocketServiceDroid.cs" />
+    <Compile Include="DependecyServices\UrbanAirshipServiceDroid.cs" />
     <Compile Include="MainActivity.cs" />
+    <Compile Include="MainApp.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UrbanAirshipReceiver.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <AndroidAsset Include="Assets\airshipconfig.properties" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -174,6 +178,10 @@
     <None Include="Properties\AndroidManifest.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\UrbanAirshipClient\UrbanAirshipClient.csproj">
+      <Project>{5714a7e8-1b89-4ab7-81db-9985b95114f2}</Project>
+      <Name>UrbanAirshipClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RideShare\RideShare.csproj">
       <Name>RideShare</Name>
       <Project>{9968FB5D-72ED-412F-8F64-5B3A955E5413}</Project>
