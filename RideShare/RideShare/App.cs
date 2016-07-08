@@ -22,7 +22,7 @@ namespace RideShare
         //public static UserManager User_Manager { get; private set; }
         public static UserCoordinate CurrentLoggedUser { get; set; }
 
-        public App()
+        public App(bool isLoading)
         {
             //remove dead code
             //// The root page of your application
@@ -39,11 +39,18 @@ namespace RideShare
             //        }
             //    }
             //};
-             //MainPage = new RideShare.MainPage();
+            //inPage = new RideShare.MainPage();
             // MainPage = new RideShare.EditProfilePage();
+            if(isLoading)
+            {
+                MainPage = new SplashScreen();
+            }
+            else
+            {
+                MainPage = new NavigationPage(new LogInPage());
+            }
 
-
-            MainPage = new NavigationPage(new LogInPage());
+            //MainPage = new NavigationPage(new LogInPage());
             // NavigationPage.SetHasBackButton(MainPage, false);
            // NavigationPage.SetHasBackButton(MainPage, false);
             //  NavigationPage.SetHasBackButton(MasterPage, false);

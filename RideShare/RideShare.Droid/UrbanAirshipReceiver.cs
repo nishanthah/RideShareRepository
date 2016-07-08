@@ -45,6 +45,11 @@ namespace RideShare.Droid
             Intent intent = new Intent(ACTION_CHANNEL_UPDATED);
             LocalBroadcastManager.GetInstance(context).SendBroadcast(intent);
 
+            Intent intent1 = new Intent("com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
+            intent1.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+            intent1.PutExtra("intentName", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
+            context.StartActivity(intent1);
+            //com.virtusa.driverlocatorforms.LOADINGCOMPLETED
             //OnRegistrationSucceeded(this,new OnRegistrationSucceededEventArgs() {ChannelId = channelId });
         }
 
@@ -86,7 +91,7 @@ namespace RideShare.Droid
             if (actionButtonInfo.ButtonId == KEY_ACCEPT_BUTTON)
             {
                 Intent intent = new Intent(KEY_NOTIFICATION_INTENT);
-                intent.SetFlags(ActivityFlags.NewTask);
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
                 intent.PutExtra(MainActivity.KEY_LOCATION_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_LOCATION_NAME_EXTRA));
                 intent.PutExtra(MainActivity.KEY_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_LONGITUDE_EXTRA));
