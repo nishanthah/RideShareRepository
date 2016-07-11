@@ -7,11 +7,12 @@ using Authentication.Common;
 using Common;
 using DriverLocator.Models;
 
+
 namespace DriverLocator
 {
     public class DriverLocatorService
     {
-        private const string SERVER = "http://192.168.1.4:8079";
+        private const string SERVER = "http://192.168.1.2:8079";
         //private const string SERVER = "http://192.168.42.166:8079";
         private const string GET_USERS_URL = SERVER+"/api/usercoordinates";
         private const string SAVE_USERS_URL = SERVER+"/api/saveuserdata";

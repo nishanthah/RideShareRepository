@@ -79,8 +79,8 @@ namespace RideShare.ViewModels
         }
 
         private void SignUp()
-        {
-            loginProcessor.MoveToSignUpPage();
+        {            
+            loginProcessor.MoveToCreateUserPage();
         }
 
         public string UserName

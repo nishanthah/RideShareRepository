@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RideShare.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,17 +14,14 @@ namespace RideShare
         public LogoutPage()
         {
             InitializeComponent();
+            Content.BindingContext = new LogOutViewModel();
         }
 
+        //TODO: Need to findout how to move this to viewModel
         async void OnCancelButtonClicked(object sender, EventArgs args)
         {
             await Navigation.PopModalAsync();
         }
 
-        async void OnLogOutButtonClicked(object sender, EventArgs args)
-        {
-            Application.Current.MainPage = new LogInPage();
-        }
-        
     }
 }
