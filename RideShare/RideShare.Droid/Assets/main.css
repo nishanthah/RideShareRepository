@@ -1,0 +1,20 @@
+
+/* End Ring Stypes */
+body
+{
+    background-image:url('splash.png');
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.spinner
+{
+    margin-top:80%;
+    margin-left:auto;
+    margin-right:auto;
+    display:table-cell;
+    width:100px;
+    height:100px;
+}

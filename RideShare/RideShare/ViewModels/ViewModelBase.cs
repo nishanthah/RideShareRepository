@@ -20,6 +20,6 @@ namespace RideShare.ViewModels
             }
         }
 
-        public string ErrorMessaage { get; set; }
+        public string ErrorMessage { get; set; }
     }
 }

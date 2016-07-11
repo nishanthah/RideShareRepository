@@ -19,6 +19,8 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="app\models\ride_history.js" />
+    <Compile Include="urban_airship_client.js" />
     <Content Include="package.json" />
     <Compile Include="config.js" />
     <Compile Include="server.js" />

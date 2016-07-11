@@ -39,9 +39,13 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
+    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
+    <AndroidLinkSkip />
+    <AndroidSupportedAbis />
+    <AndroidStoreUncompressedFileExtensions />
+    <MandroidI18n />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -161,6 +165,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <AndroidAsset Include="Assets\splash.html" />
+    <AndroidAsset Include="Assets\main.css" />
+    <Compile Include="CustomMapRenderer.cs" />
+    <Compile Include="DependecyServices\BaseUrlDroid.cs" />
     <Compile Include="DependecyServices\MapSocketServiceDroid.cs" />
     <Compile Include="DependecyServices\UrbanAirshipServiceDroid.cs" />
     <Compile Include="MainActivity.cs" />
@@ -193,8 +201,8 @@
       <Name>UrbanAirshipClient</Name>
     </ProjectReference>
     <ProjectReference Include="..\RideShare\RideShare.csproj">
+      <Project>{9968fb5d-72ed-412f-8f64-5b3a955e5413}</Project>
       <Name>RideShare</Name>
-      <Project>{9968FB5D-72ED-412F-8F64-5B3A955E5413}</Project>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -230,6 +238,27 @@
       <Visible>False</Visible>
       <Version>2.2.0</Version>
     </XamarinComponentReference>
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\spinner1.svg" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\login_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\driverLog_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\driverLogActive_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\userLog_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\userLogActive_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\splash.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

@@ -1,4 +1,5 @@
 ﻿using DriverLocator.Models;
+using RideShare.ViewModels;
 using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
@@ -7,31 +8,39 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
+using RideShare.Common;
 
 namespace RideShare
 {
-    public partial class MapView : ContentPage
+    public partial class MapView : ContentPage,IMapPageProcessor
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-        Map map;
+        CustomMap map;
+        IMapSocketService mapSocketService;
+        SendRequestViewModel sendRequestViewModel;
 
         public MapView()
         {
-            InitializeComponent();
-            var mapSocketService = DependencyService.Get<IMapSocketService>();
-            InitMap();
-            mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
+            Init();
             LoadUserData();
+            RenderLine();
         }
 
         public MapView(NotificationInfo notificationInfo)
         {
-            var mapSocketService = DependencyService.Get<IMapSocketService>();
-            InitMap();
-            mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
+            Init();
             ShowNotificationInMap(notificationInfo);
         }
 
+        private void Init()
+        {
+            InitializeComponent();
+            mapSocketService = DependencyService.Get<IMapSocketService>();
+            sendRequestViewModel = new SendRequestViewModel(this, driverLocatorService);
+            requestArea.BindingContext = sendRequestViewModel;
+            InitMap();
+            mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
+        }
         void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -74,7 +83,7 @@ namespace RideShare
 
         private void InitMap()
         {
-            map = new Map
+            map = new CustomMap
             {
                 IsShowingUser = true,
                 HeightRequest = 100,
@@ -107,6 +116,14 @@ namespace RideShare
             };
 
             map.Pins.Add(pin);
+        }
+
+        private void RenderLine()
+        {
+            map.RouteCoordinates.Add(new Position(7.087310, 80.014366));
+            map.RouteCoordinates.Add(new Position(7.209709, 79.842796));
+
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(7.087310, 80.014366), Distance.FromMiles(1.0)));
         }
     }
 }

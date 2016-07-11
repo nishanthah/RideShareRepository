@@ -121,7 +121,7 @@ namespace RideShare.ViewModels
                 }
                 else
                 {
-                    ErrorMessaage = "Sign up failed";
+                    ErrorMessage = "Sign up failed";
                 }
             }
 

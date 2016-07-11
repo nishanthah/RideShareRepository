@@ -6,8 +6,10 @@ var Schema = mongoose.Schema;
 module.exports = mongoose.model('UserCoordinate', new Schema({
 	firstName: String,
 	lastName: String,
+	mobileNo: String,
 	email: String,
-    userName: String,
+	userName: String,
 	longitude: String,
-	latitude: String
+	latitude: String,
+	userType: Number
 }));

@@ -47,18 +47,25 @@ namespace Common
         {
             HttpClient httpClinet = new HttpClient(new NativeMessageHandler());
             var request = new HttpRequestMessage();
-            request.Method = Method == "POST" ? HttpMethod.Post : HttpMethod.Get;
+
+            switch (Method)
+            {
+                case "POST":
+                    request.Method = HttpMethod.Post;
+                    break;
+                case "GET":
+                    request.Method = HttpMethod.Get;
+                    break;
+                case "PUT":
+                    request.Method = HttpMethod.Put;
+                    break;
+                case "DELETE":
+                    request.Method = HttpMethod.Delete;
+                    break;
+            }
+
             if (!String.IsNullOrEmpty(AcceptHeders))
             {
-                //var acceptHeders = AcceptHeders.Split(';');
-                //foreach(var hedder in acceptHeders)
-                //{
-                //    if(!String.IsNullOrEmpty(hedder))
-                //    {
-                //        httpClinet.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(AcceptHeders));
-                //    }  
-                //}
-
                 httpClinet.DefaultRequestHeaders.TryAddWithoutValidation("Accept", AcceptHeders);
             }
             else

@@ -1,18 +1,21 @@
 ﻿using System;
 
-using Android.App;
 using Android.Content.PM;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
 using System.Net;
+using RideShare;
+using Android.App;
+using Android.Preferences;
+using Android.Content;
 
 namespace RideShare.Droid
 {
     //, Icon = "@drawable/app_icon"
     [Activity(Label = "RideShare", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATION" }, Categories = new[] { "android.intent.category.DEFAULT" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATION", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
 
@@ -30,20 +33,38 @@ namespace RideShare.Droid
             ActionBar.SetIcon(null);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
-
-            if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
+            
+            if(Intent.Action == "com.virtusa.driverlocatorforms.LOADINGCOMPLETED")
             {
-                NotificationInfo notificationInfo = new NotificationInfo();
-                notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
-                notificationInfo.LocationName = Intent.GetStringExtra(KEY_LOCATION_NAME_EXTRA);
-                notificationInfo.Longitude = Intent.GetStringExtra(KEY_LONGITUDE_EXTRA);
-                notificationInfo.Latitude = Intent.GetStringExtra(KEY_LATITUDE_EXTRA);
-                LoadApplication(new App(notificationInfo));
+                LoadApplication(new App(false));
+            }
+            else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATION")
+            {
+                if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
+                {
+                    NotificationInfo notificationInfo = new NotificationInfo();
+                    notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
+                    notificationInfo.LocationName = Intent.GetStringExtra(KEY_LOCATION_NAME_EXTRA);
+                    notificationInfo.Longitude = Intent.GetStringExtra(KEY_LONGITUDE_EXTRA);
+                    notificationInfo.Latitude = Intent.GetStringExtra(KEY_LATITUDE_EXTRA);
+                    LoadApplication(new App(notificationInfo));
+                }
             }
             else
             {
-                LoadApplication(new App());
+                ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
+                string channelId = prefs.GetString("urban_airship_client_id", null);
+                if(!String.IsNullOrEmpty(channelId))
+                {
+                    LoadApplication(new App(false));
+                }
+                else
+                {
+                    LoadApplication(new App(true));
+                }
+                
             }
+          
         }
     }
 }

@@ -20,7 +20,8 @@ namespace RideShare
             InitializeComponent();
             Title = "Login Page";
             Content.BindingContext = new LoginViewModel(this, urbanAirshipNotificationService);
-            
+            driverIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDriver));
+            riderIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapRider));
             //var layout = new StackLayout();
             //var button = new Button
             //{
@@ -69,6 +70,22 @@ namespace RideShare
             //api.rideshare.com
         }
 
+        void OnTapDriver(View sender, object e)
+        {
+            
+                driverIcon.Source = "driverLogActive_icon.png";
+                riderIcon.Source = "userLog_icon.png";
+           
+        }
+
+
+        void OnTapRider(View sender, object e)
+        {
+
+            driverIcon.Source = "driverLog_icon.png";
+            riderIcon.Source = "userLogActive_icon.png";
+
+        }
         void GoToRegister(object sender, EventArgs e)
         {
             //Navigation.PushAsync(new RegisterPage());

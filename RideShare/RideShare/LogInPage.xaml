@@ -1,8 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="RideShare.LogInPage"
-           >
+             x:Class="RideShare.LogInPage" BackgroundColor="#b3b3b3" Title="Login" >
   
   <!--  Title="Login Page"-->
 
@@ -15,11 +14,32 @@
     </StackLayout>
   </ContentPage.Content>-->
   <ContentPage.Content>
-    <StackLayout  >
-      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" />
-      <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" />
-      <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}"/>
-      <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>
-      </StackLayout  >
+
+    <Grid RowSpacing="0" ColumnSpacing="0">
+
+      <Grid.RowDefinitions>
+        <RowDefinition Height="40*" />
+        <RowDefinition Height="60*" />
+      </Grid.RowDefinitions>
+
+
+      <StackLayout Grid.Row="0">
+        <Image Source="login_logo.png" HorizontalOptions="Center" Margin="0,50,0,0"  />
+        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" >
+          <Image Source="driverLogActive_icon.png" WidthRequest="50" x:Name="driverIcon"/>
+          <Label Text="OR" FontSize="50"/>
+          <Image Source="userLog_icon.png"  WidthRequest="50" x:Name="riderIcon" />
+        </StackLayout>
+      </StackLayout>
+
+      <StackLayout Grid.Row="1">
+        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
+        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" WidthRequest="300" HorizontalOptions="Center"/>
+        <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#467891" WidthRequest="300" HorizontalOptions="Center"/>
+        <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="300" HorizontalOptions="Center"/>
+      </StackLayout>
+      
+    </Grid>
+   
   </ContentPage.Content>
 </ContentPage>
