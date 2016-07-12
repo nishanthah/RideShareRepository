@@ -12,7 +12,7 @@
       <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>
       <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
       <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
-      <Button x:Name="registerButton" Text="OnSaveActivated" Command="{Binding SignUpCommand}"/>
+      <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>
       </StackLayout  >
   </ContentPage.Content>
 </ContentPage>
