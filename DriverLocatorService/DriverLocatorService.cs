@@ -11,15 +11,18 @@ namespace DriverLocator
 {
     public class DriverLocatorService
     {
-        //private const string SERVER = "http://192.168.1.4:8079";
+        //private const string SERVER = "http://172.28.40.120:8079";
         private const string SERVER = "http://ridesharemain.herokuapp.com";
-        private const string GET_USERS_URL = SERVER+"/api/usercoordinates";
-        private const string SAVE_USERS_URL = SERVER+"/api/saveuserdata";
+        private const string GET_USERS_URL = SERVER+"/api/users";
+        private const string SAVE_USERS_URL = SERVER+"/api/users";
         private const string UPDATE_USER_COORDINATE_URL = SERVER + "/api/updatecoordinates";
-        private const string SELECTED_USER_COORDINATE_URL = SERVER + "/api/selectedusercoordinate";
+        private const string SELECTED_USER_COORDINATE_URL = SERVER + "/api/users/{0}";
         private const string CREATE_RIDEHISTORY_URL = SERVER + "/api/ridehistory";
         private const string RIDEHISTORY_BY_FILTER_URL = SERVER + "/api/ridehistory/{0}/?filter={1}";
         private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/ridehistory/status/{0}";
+        private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/type";
+        private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
+        private const string GET_RIDERS_URL = SERVER + "/api/riders";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -32,33 +35,32 @@ namespace DriverLocator
             this.authenticationService = authenticationService;           
         }
 
-        public UserCoordinatesResponse ViewUserCoordinates()
+        public UserLocationResponse ViewUserCoordinates()
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = "GET";
             requestHandler.Url = GET_USERS_URL;
-            var userCoordinateResponse=requestHandler.SendRequest<UserCoordinatesResponse>();
+            var userCoordinateResponse=requestHandler.SendRequest<UserLocationResponse>();
             return userCoordinateResponse;
         }
 
-        public SaveUserDataResponse SaveUserData(UserCoordinate userCoordinate)
+        public SaveUserDataResponse SaveUserData(User userCoordinate)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = "POST";
             requestHandler.Url = SAVE_USERS_URL;
-            var result=requestHandler.SendRequest<UserCoordinate, SaveUserDataResponse>(userCoordinate);
+            var result=requestHandler.SendRequest<User, SaveUserDataResponse>(userCoordinate);
             return result;
         }
 
-
-		public SelectedUserCoordinateResponse GetSelectedUserCoordinate()
+		public SelectedUserCoordinateResponse GetSelectedUserCoordinate(string userName)
 		{
 			HttpRequestHandler requestHandler = new HttpRequestHandler();
 			requestHandler.AccessToken = authenticationService.AuthenticationToken;
 			requestHandler.Method = "GET";
-			requestHandler.Url = SELECTED_USER_COORDINATE_URL;
+			requestHandler.Url = String.Format(SELECTED_USER_COORDINATE_URL,userName);
 			var result=requestHandler.SendRequest<SelectedUserCoordinateResponse>();
 			return result;
 		}
@@ -93,5 +95,34 @@ namespace DriverLocator
             return result;
         }
 
+        public UpdateUserTypeResponse UpdateUserType(UpdateUserTypeRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = "PUT";
+            requestHandler.Url = UPDATE_USER_TYPE_URL;
+            var result = requestHandler.SendRequest<UpdateUserTypeRequest, UpdateUserTypeResponse>(request);
+            return result;
+        }
+
+        public UserLocationResponse GetDrivers()
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = "GET";
+            requestHandler.Url = GET_DRIVERS_URL;
+            var result = requestHandler.SendRequest<UserLocationResponse>();
+            return result;
+        }
+
+        public UserLocationResponse GetRiders()
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = "GET";
+            requestHandler.Url = GET_RIDERS_URL;
+            var result = requestHandler.SendRequest<UserLocationResponse>();
+            return result;
+        }
     }
 }

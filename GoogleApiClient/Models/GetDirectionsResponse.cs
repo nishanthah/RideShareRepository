@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GoogleApiClient.Helpers;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace GoogleApiClient.Models
     {
         [JsonProperty("overview_polyline")]
         public OverviewPolyLine OverViewPolyLine { get; set; }
-
+       
         [JsonProperty("legs")]
         public IList<Leg> Legs { get; set; }
     }
@@ -53,7 +54,9 @@ namespace GoogleApiClient.Models
         [JsonProperty("points")]
         public string Ponits { get; set; }
 
-        
+        public IList<Coordinate> DecodedOverViewPolyLine { get { return PolyLineDecoder.Decode(this.Ponits); } }
+
+
     }
     public class GetDirectionsResponse
     {

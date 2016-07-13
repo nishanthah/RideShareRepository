@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 using RideShare.Common;
+using GoogleApiClient.Maps;
+using Common.Models;
 
 namespace RideShare
 {
@@ -23,7 +25,7 @@ namespace RideShare
         {
             Init();
             LoadUserData();
-            RenderLine();
+            //RenderLine();
         }
 
         public MapView(NotificationInfo notificationInfo)
@@ -51,32 +53,46 @@ namespace RideShare
 
         private void LoadUserData()
         {
-            var userCoordinates = driverLocatorService.ViewUserCoordinates();
-            ShowOnLabels(userCoordinates.UserCoordinates);
-            ShowOnMap(userCoordinates.UserCoordinates);
+            //var userCoordinates = driverLocatorService.ViewUserCoordinates();
+            //ShowOnLabels(userCoordinates.UserCoordinates);
+
+            var drivers = driverLocatorService.GetDrivers();
+            var rider = App.CurrentLoggedUser;
+            var currentRiders = new List<UserLocation>();
+            currentRiders.Add(rider);
+            ShowOnMap(drivers.UserLocations);
+            ShowOnMap(currentRiders);
         }
 
-        private void ShowOnLabels(List<UserCoordinate> userCoordinates)
+        //private List<UserLocation> TestSeed()
+        //{
+        //    var userLocations = new List<UserLocation>();
+            
+        //}
+        private void ShowOnLabels(List<UserLocation> userCoordinates)
         {
             messageLabel.Text = "";
             foreach (var userCorrdinate in userCoordinates)
             {
-                messageLabel.Text += userCorrdinate.UserName + "|" + userCorrdinate.EMail + "|" + userCorrdinate.FirstName + "|" + userCorrdinate.Longitude + "|" + userCorrdinate.Latitude + Environment.NewLine;
+                messageLabel.Text += userCorrdinate.User.UserName + "|" + userCorrdinate.User.EMail + "|" + userCorrdinate.User.FirstName + "|" + userCorrdinate.Location.Longitude + "|" + userCorrdinate.Location.Latitude + Environment.NewLine;
             }
         }
 
         private void ShowNotificationInMap(NotificationInfo notificationInfo)
         {
             map.Pins.Clear();
-            RenderPin(notificationInfo.Longitude, notificationInfo.Latitude, notificationInfo.LocationName);
+            map.CustomPins.Clear();
+            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(), notificationInfo.Source.LocationName,UserType.Driver);
+            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(), notificationInfo.Destination.LocationName,UserType.Rider);
+            RenderLine(notificationInfo.Source, notificationInfo.Destination);
         }
 
-        private void ShowOnMap(List<UserCoordinate> userCoordinates)
+        private void ShowOnMap(List<UserLocation> userCoordinates)
         {
 
             foreach (var item in userCoordinates)
             {
-                RenderPin(item.Longitude, item.Latitude, item.FirstName + " " + item.LastName + " | Position : " + item.Longitude + " , " + item.Latitude);
+                RenderPin(item.Location.Longitude, item.Location.Latitude, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType);
             }
 
         }
@@ -95,7 +111,7 @@ namespace RideShare
             mapContainer.Children.Add(map);
         }
 
-        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate, string lable)
+        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate, string lable,UserType userType)
         {
             double latitude = 0;
             double longitude = 0;
@@ -103,27 +119,45 @@ namespace RideShare
             double.TryParse(latitudeCoordinate, out latitude);
             double.TryParse(longitudeCoordinate, out longitude);
 
-
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromMiles(60)));
-
             var position = new Position(latitude, longitude);
 
-            var pin = new Pin
+            var pin = new CustomPin
             {
-                Type = PinType.Place,
-                Position = position,
-                Label = lable
+                Pin = new Pin
+                {
+                    Type = PinType.Place,
+                    Position = position,
+                    Label = lable
+                },
+                Title = lable,
+                UserType = userType
             };
 
-            map.Pins.Add(pin);
+            map.CustomPins.Add(pin);
+            
+            map.Pins.Add(pin.Pin);
+
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromMiles(60)));
         }
 
-        private void RenderLine()
-        {
-            map.RouteCoordinates.Add(new Position(7.087310, 80.014366));
-            map.RouteCoordinates.Add(new Position(7.209709, 79.842796));
+        private void RenderLine(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
+        {            
+            GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
+            var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
+            var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
 
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(7.087310, 80.014366), Distance.FromMiles(1.0)));
+            //var source = new GoogleApiClient.Models.Coordinate() { Latitude = 7.087310, Longitude = 80.014366 };
+            //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
+            var directions  = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
+
+            foreach(var route in directions.Routes)
+            {
+                foreach(var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)
+                {
+                    map.RouteCoordinates.Add(new Position(coordinates.Latitude, coordinates.Longitude));
+                }
+            }
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromMiles(1.0)));
         }
     }
 }

@@ -9,18 +9,39 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
+    public class Coordinate
+    {
+        public string LocationName { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
+    }
     public class NotificationInfo
     {
         public string RequestId { get; set; }
-        public string LocationName { get; set; }
-        public string Longitude { get; set; }
-        public string Latitude { get; set; }
+
+        private Coordinate source =new Coordinate();
+
+        public Coordinate Source
+        {
+            get { return source; }
+            set { source = value; }
+        }
+
+        private Coordinate destination = new Coordinate();
+
+        public Coordinate Destination
+        {
+            get { return destination; }
+            set { destination = value; }
+        }
+
+       
     }
 
     public class App : Application
     {
         //public static UserManager User_Manager { get; private set; }
-        public static UserCoordinate CurrentLoggedUser { get; set; }
+        public static UserLocation CurrentLoggedUser { get; set; }
 
         public App(bool isLoading)
         {
@@ -41,14 +62,14 @@ namespace RideShare
             //};
             //inPage = new RideShare.MainPage();
             // MainPage = new RideShare.EditProfilePage();
-            if(isLoading)
-            {
-                MainPage = new SplashScreen();
-            }
-            else
-            {
+            //if(isLoading)
+            //{
+               // MainPage = new SplashScreen();
+            //}
+           // else
+            //{
                 MainPage = new NavigationPage(new LogInPage());
-            }
+            //}
 
             //MainPage = new NavigationPage(new LogInPage());
             // NavigationPage.SetHasBackButton(MainPage, false);

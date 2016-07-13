@@ -1,4 +1,5 @@
 ﻿using Authentication.Common;
+using Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace RideShare
         public static IAuthenticationService AuthenticationService { get; set; }
 
         public static string CurrentUserName { get; set; }
+        public static UserType CurrentUserType { get; set; }
         public static string AppKey { get { return "IsFOZ2ABTlKQOEvJJkEJ5Q"; } }
         public static string AppMasterSecret { get { return "c7aYTrIvTZyVPomI04FQRA"; } }
     }

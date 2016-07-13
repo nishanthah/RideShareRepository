@@ -18,6 +18,7 @@ using Android.Gms.Maps;
 using Xamarin.Forms.Maps;
 using Android.Gms.Maps.Model;
 using RideShare;
+using System.ComponentModel;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 namespace RideShare.Droid
@@ -27,13 +28,15 @@ namespace RideShare.Droid
 
         GoogleMap map;
         List<Position> routeCoordinates;
+        List<CustomPin> customPins;
+        bool isDrawn;
 
         public void OnMapReady(GoogleMap googleMap)
         {
             map = googleMap;
 
             var polylineOptions = new PolylineOptions();
-            polylineOptions.InvokeColor(0x66FF0000);
+            polylineOptions.InvokeColor(Android.Graphics.Color.Blue);
 
             foreach (var position in routeCoordinates)
             {
@@ -49,6 +52,7 @@ namespace RideShare.Droid
 
             if (e.OldElement != null)
             {
+                //map.InfoWindowClick -= OnInfoWindowClick;
                 // Unsubscribe
             }
 
@@ -56,10 +60,42 @@ namespace RideShare.Droid
             {
                 var formsMap = (CustomMap)e.NewElement;
                 routeCoordinates = formsMap.RouteCoordinates;
-                
+                customPins = formsMap.CustomPins;
                 ((Android.Gms.Maps.MapView)Control).GetMapAsync(this);
             }
         }
 
+        protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            base.OnElementPropertyChanged(sender, e);
+
+            if (e.PropertyName.Equals("VisibleRegion") && !isDrawn)
+            {
+                map.Clear();
+
+                foreach (var pin in customPins)
+                {
+                    var marker = new MarkerOptions();
+                    marker.SetPosition(new LatLng(pin.Pin.Position.Latitude, pin.Pin.Position.Longitude));
+                    marker.SetTitle(pin.UserType.ToString());
+                    marker.SetSnippet(pin.Pin.Address);
+
+                    if(pin.UserType == global::Common.Models.UserType.Driver)
+                    {
+                        marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.car));
+                    }
+
+                    else if (pin.UserType == global::Common.Models.UserType.Rider)
+                    {
+                        marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.person));
+                    }
+
+                    map.AddMarker(marker);
+                }
+                isDrawn = true;
+            }
+        }
+
     }
+
 }

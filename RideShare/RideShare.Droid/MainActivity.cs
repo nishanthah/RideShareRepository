@@ -20,9 +20,12 @@ namespace RideShare.Droid
     {
 
         public const string KEY_REQUEST_ID_EXTRA = "request_id";
-        public const string KEY_LOCATION_NAME_EXTRA = "location_name";
-        public const string KEY_LONGITUDE_EXTRA = "longitude";
-        public const string KEY_LATITUDE_EXTRA = "latitude";
+        public const string KEY_SOURCE_NAME_EXTRA = "source_name";
+        public const string KEY_SOURCE_LONGITUDE_EXTRA = "source_longitude";
+        public const string KEY_SOURCE_LATITUDE_EXTRA = "source_latitude";
+        public const string KEY_DESTINATION_NAME_EXTRA = "destination_name";
+        public const string KEY_DESTINATION_LONGITUDE_EXTRA = "destination_longitude";
+        public const string KEY_DESTINATION_LATITUDE_EXTRA = "destination_latitude";
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -44,9 +47,13 @@ namespace RideShare.Droid
                 {
                     NotificationInfo notificationInfo = new NotificationInfo();
                     notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
-                    notificationInfo.LocationName = Intent.GetStringExtra(KEY_LOCATION_NAME_EXTRA);
-                    notificationInfo.Longitude = Intent.GetStringExtra(KEY_LONGITUDE_EXTRA);
-                    notificationInfo.Latitude = Intent.GetStringExtra(KEY_LATITUDE_EXTRA);
+                    notificationInfo.Source.LocationName = Intent.GetStringExtra(KEY_SOURCE_NAME_EXTRA);
+                    notificationInfo.Source.Longitude = double.Parse(Intent.GetStringExtra(KEY_SOURCE_LONGITUDE_EXTRA));
+                    notificationInfo.Source.Latitude = double.Parse(Intent.GetStringExtra(KEY_SOURCE_LATITUDE_EXTRA));
+                    notificationInfo.Destination.LocationName = Intent.GetStringExtra(KEY_DESTINATION_NAME_EXTRA);
+                    notificationInfo.Destination.Longitude = double.Parse(Intent.GetStringExtra(KEY_DESTINATION_LONGITUDE_EXTRA));
+                    notificationInfo.Destination.Latitude = double.Parse(Intent.GetStringExtra(KEY_DESTINATION_LATITUDE_EXTRA));
+
                     LoadApplication(new App(notificationInfo));
                 }
             }

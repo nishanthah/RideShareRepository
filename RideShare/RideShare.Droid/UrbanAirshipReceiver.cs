@@ -93,9 +93,12 @@ namespace RideShare.Droid
                 Intent intent = new Intent(KEY_NOTIFICATION_INTENT);
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
-                intent.PutExtra(MainActivity.KEY_LOCATION_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_LOCATION_NAME_EXTRA));
-                intent.PutExtra(MainActivity.KEY_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_LONGITUDE_EXTRA));
-                intent.PutExtra(MainActivity.KEY_LATITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_LATITUDE_EXTRA));
+                intent.PutExtra(MainActivity.KEY_SOURCE_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_NAME_EXTRA));
+                intent.PutExtra(MainActivity.KEY_SOURCE_LATITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_LATITUDE_EXTRA));
+                intent.PutExtra(MainActivity.KEY_SOURCE_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_LONGITUDE_EXTRA));
+                intent.PutExtra(MainActivity.KEY_DESTINATION_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_NAME_EXTRA));
+                intent.PutExtra(MainActivity.KEY_DESTINATION_LATITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_LATITUDE_EXTRA));
+                intent.PutExtra(MainActivity.KEY_DESTINATION_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_LONGITUDE_EXTRA));
                 context.StartActivity(intent);
             }
             else

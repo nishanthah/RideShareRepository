@@ -1,4 +1,5 @@
-﻿using RideShare.Common;
+﻿using Common.Models;
+using RideShare.Common;
 using RideShare.SharedInterfaces;
 using RideShare.ViewModels;
 using System;
@@ -18,10 +19,12 @@ namespace RideShare
         public LogInPage()
         {
             InitializeComponent();
+            InitUserType();
             Title = "Login Page";
             Content.BindingContext = new LoginViewModel(this, urbanAirshipNotificationService);
             driverIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDriver));
             riderIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapRider));
+
             //var layout = new StackLayout();
             //var button = new Button
             //{
@@ -69,23 +72,43 @@ namespace RideShare
             //NavigationPage.
             //api.rideshare.com
         }
+        
+        public void InitUserType()
+        {
+            ChangeUserType(UserType.Rider);           
+        }
+
+        private void ChangeUserType(UserType userType)
+        {
+            if(userType== UserType.Driver)
+            {
+                driverIcon.Source = "driverLogActive_icon.png";
+                riderIcon.Source = "userLog_icon.png";
+                Session.CurrentUserType = UserType.Driver;
+            }
+            else
+            {
+                driverIcon.Source = "driverLog_icon.png";
+                riderIcon.Source = "userLogActive_icon.png";
+                Session.CurrentUserType = UserType.Rider;
+            }
+        }
 
         void OnTapDriver(View sender, object e)
         {
-            
-                driverIcon.Source = "driverLogActive_icon.png";
-                riderIcon.Source = "userLog_icon.png";
-           
-        }
 
+            ChangeUserType(UserType.Driver);
+
+
+        }
 
         void OnTapRider(View sender, object e)
         {
 
-            driverIcon.Source = "driverLog_icon.png";
-            riderIcon.Source = "userLogActive_icon.png";
+            ChangeUserType(UserType.Rider);
 
         }
+
         void GoToRegister(object sender, EventArgs e)
         {
             //Navigation.PushAsync(new RegisterPage());

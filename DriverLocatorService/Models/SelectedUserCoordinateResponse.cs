@@ -5,8 +5,8 @@ namespace DriverLocator.Models
 {
 	public class SelectedUserCoordinateResponse : ResponseBase
 	{
-        [JsonProperty("userCoordinate")]
-        public UserCoordinate UserCoordinate { get; set; }
+        [JsonProperty("userData")]
+        public UserLocation UserLocation { get; set; }
 
 		
 	}

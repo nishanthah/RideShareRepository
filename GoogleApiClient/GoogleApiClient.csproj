@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helpers\GoogleDirectionsApiUrlBuilder.cs" />
+    <Compile Include="Helpers\PolyLineDecoder.cs" />
     <Compile Include="Maps\GoogleMapsClient.cs" />
     <Compile Include="Models\Coordinate.cs" />
     <Compile Include="Models\GetDirectionRequest.cs" />

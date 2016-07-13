@@ -13,7 +13,7 @@ namespace GoogleApiClient.Maps
     {
 
        
-        public string ApiKey
+        private string ApiKey
         {
             get 
             {
@@ -32,6 +32,7 @@ namespace GoogleApiClient.Maps
             GoogleDirectionsApiUrlBuilder urlBuilder = new GoogleDirectionsApiUrlBuilder();
             urlBuilder.ApiKey = this.ApiKey;
             urlBuilder.AddWaypoints<Coordinate>(request.WayPoints);
+       
             urlBuilder.SourceCoordinates = request.SourceCoordinate;
             urlBuilder.DestinationCoordinates = request.DestinationCoordinate;
 
