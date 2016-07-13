@@ -48,7 +48,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-	httpClient.get("http://localhost:8078/authapp/userinfo", args, function (userInfo, response) {
+	httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)
@@ -195,7 +195,33 @@ apiRoutes.get('/usercoordinates', function(req, res) {
 		res.json({ userCoordinates: userDatas, success: true });
 	});
 
-});   
+});
+
+apiRoutes.put('/users/type', function (req, res) {
+	
+	UserCoordinate.findOne({ userName : req.userInfo.userName }, function (err, user) {
+		
+		if (err) res.json({ success: false, message: err });
+		
+		if (!user) {
+			res.json({ success: false, message: "User Not Found" });
+		}
+		else {
+			user.userType = req.body.userType;
+			
+			user.save(function (err) {
+				if (err) res.json({ success: false, message: err });
+				
+				console.log('Updated User successfully');
+				res.json({ success: true });
+			});
+
+		}
+
+	});
+
+   
+});
 
 apiRoutes.get('/users/:queryString', function (req, res) {
 	
@@ -245,7 +271,17 @@ apiRoutes.post('/ridehistory', function (req, res) {
 	newRideHistory.save(function (err, saved) {
 		if (err) res.json({ success: false, message: err });
 		
-		urbanAirshipClient.sendNotification(saved.driverUserName, saved.id, saved.sourseName, saved.sourceLongitude, saved.sourceLatitude, function (notificationSentStatus) {
+		var notificationData = {};
+		notificationData.driverUserName = saved.driverUserName;
+		notificationData.id = saved.id;
+		notificationData.sourseName = saved.sourseName;
+		notificationData.sourceLongitude = saved.sourceLongitude;
+		notificationData.sourceLatitude = saved.sourceLatitude;
+		notificationData.destinationName = saved.destinationName;
+		notificationData.destinationLongitude = saved.destinationLongitude;
+		notificationData.destinationLatitude = saved.destinationLatitude;
+
+		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
 			console.log(notificationSentStatus.message);
 		});
 		
