@@ -5,35 +5,44 @@
              Icon="map.png">
   <ContentPage.Content>
 
-    <Grid>
+    
+      <!--<Entry x:Name="destinationEntry" Placeholder="Destination" />-->
 
-      <Grid.RowDefinitions>
-        <RowDefinition Height="4*" />
-        <RowDefinition Height="6*" />
-      </Grid.RowDefinitions>
+      <Grid>
 
-      
-      
-       <ScrollView  Orientation="Vertical" Grid.Row="0">
-         <StackLayout VerticalOptions="StartAndExpand" x:Name="requestArea">
-        <Label Text="Driver User Name" />
-          <Entry x:Name="driverUserNameEntry" Text="{Binding DriverUserName, Mode=TwoWay}" Placeholder="Driver User Name" />
-        <Label Text="Source" />
-          <Entry x:Name="sourceEntry" Text="{Binding Source, Mode=TwoWay}" Placeholder="SourceName,Longitude,Latitude" />
+        <Grid.RowDefinitions>
+          <RowDefinition Height="1*" />
+          <RowDefinition Height="0*" />
+          <RowDefinition Height="6*" />
+        </Grid.RowDefinitions>
+
+        <AbsoluteLayout HorizontalOptions="CenterAndExpand" Grid.Row="0" >
+          <Entry x:Name="destinationEntry" HorizontalOptions="Fill" Placeholder="Destination" />
+        </AbsoluteLayout>
         
-        <Label Text="Destination" />
-          <Entry x:Name="destinationEntry" Text="{Binding Destination, Mode=TwoWay}" Placeholder="DestinationName,Longitude,Latitude" />
-         
-        <Button Text="Send Request" Command="{Binding SendRequestCommand}" />
+        <ScrollView  Orientation="Vertical" Grid.Row="1" x:Name="simulatorView">
+          <StackLayout VerticalOptions="StartAndExpand" x:Name="requestArea">
+            <Label Text="Driver User Name" />
+            <Entry x:Name="driverUserNameEntry" Text="{Binding DriverUserName, Mode=TwoWay}" Placeholder="Driver User Name" />
+            <Label Text="Source" />
+            <Entry x:Name="sourceEntry" Text="{Binding Source, Mode=TwoWay}" Placeholder="SourceName,Longitude,Latitude" />
 
-        <Label Text="{Binding ErrorMessage}" />
-       <Label x:Name="messageLabel" Grid.Row="0" VerticalOptions="Fill" />
-       </StackLayout>
-      </ScrollView>
-      
-      <StackLayout Grid.Row="1"  x:Name="mapContainer" VerticalOptions="Fill" >
+            <Label Text="Destination" />
+            <Entry Text="{Binding Destination, Mode=TwoWay}" Placeholder="DestinationName,Longitude,Latitude" />
 
-      </StackLayout>
-    </Grid>
+            <Button Text="Send Request" Command="{Binding SendRequestCommand}" />
+
+            <Label Text="{Binding ErrorMessage}" />
+            <Label x:Name="messageLabel" Grid.Row="0" VerticalOptions="Fill" />
+          </StackLayout>
+        </ScrollView>
+
+        <StackLayout Grid.Row="2"  x:Name="mapContainer" VerticalOptions="Fill" >
+
+        </StackLayout>
+      </Grid>
+
+
+    
   </ContentPage.Content>
 </ContentPage>

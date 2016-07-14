@@ -31,6 +31,9 @@ namespace DriverLocator.Models
         [JsonProperty("email")]
         public string EMail { get; set; }
 
+        [JsonProperty("mobileNo")]
+        public string MobileNo { get; set; }
+
         [JsonProperty("userType")]
         public UserType UserType { get; set; }
     }

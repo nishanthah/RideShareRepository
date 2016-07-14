@@ -11,7 +11,10 @@ namespace RideShare
     public class CustomPin
     {
         public Pin Pin { get; set; }
+        public Guid Id { get; set; }
         public string Title { get; set; }
+        public string MobileNo { get; set; }
+        public string Image { get; set; }
         public UserType UserType { get; set; }
     }
 
@@ -20,6 +23,8 @@ namespace RideShare
         public List<CustomPin> CustomPins { get; set; }
 
         public List<Position> RouteCoordinates { get; set; }
+
+        public Action<CustomPin> OnInfoWindowClicked;
 
         public CustomMap()
         {
