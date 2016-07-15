@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace GoogleApiClient.Maps
 {
-    class GooglePlacesClient
-    {
+    public class GooglePlacesClient
+     {
         private string ApiKey
         {
             get 
