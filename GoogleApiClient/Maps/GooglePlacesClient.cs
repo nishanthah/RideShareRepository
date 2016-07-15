@@ -31,7 +31,16 @@ namespace GoogleApiClient.Maps
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Url = String.Format(strAutoCompleteGoogleApi, ApiKey, textSearch);
             requestHandler.Method = "GET";
-            return requestHandler.SendRequest<GetPlacesResponse>();
+            return requestHandler.SendRequest<GetPlacesResponse>();          
+        }
+
+        public GetPlaceCoordinates GetCoordinates(String referenceNo)
+        {
+            const string strPlaceGoogleApi = "https://maps.googleapis.com/maps/api/place/details/json?reference={0}&key={1}";
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Url = String.Format(strPlaceGoogleApi,referenceNo, ApiKey);
+            requestHandler.Method = "GET";
+            return requestHandler.SendRequest<GetPlaceCoordinates>();
         }
     }    
 }

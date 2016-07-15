@@ -20,9 +20,25 @@ namespace GoogleApiClient.Models
         public string Placeid { get; set; }
 
     }
+
+    public class Result
+    {
+        [JsonProperty("lat")]
+        public string Lat { get; set; }
+
+        [JsonProperty("lng")]
+        public string Lng { get; set; }        
+
+    }
     public class GetPlacesResponse
     {
         [JsonProperty("predictions")]
         public IList<Prediction> Predictions { get; set; }
     }
+    public class GetPlaceCoordinates
+    {
+        [JsonProperty("result")]
+        public IList<Result> Results { get; set; }
+    }
+
 }
