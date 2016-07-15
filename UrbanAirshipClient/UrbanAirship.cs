@@ -17,6 +17,7 @@ namespace UrbanAirshipClient
     public class UrbanAirshipApiClient : INotificationClient
     {
 
+
         private const string REGISTER_USER_URL = "https://go.urbanairship.com/api/named_users/associate";
         private const string URBAN_AIRSHIP_API_ACCEPT_HEDERS = "application/vnd.urbanairship+json;version=3;";
         public string AppKey { get; set; }
