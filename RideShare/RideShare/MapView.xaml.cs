@@ -14,13 +14,15 @@ using Common.Models;
 
 namespace RideShare
 {
-    public partial class MapView : ContentPage,IMapPageProcessor
+    public partial class MapView : ContentPage,IMapPageProcessor,ILocationSelectionResult
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
         IMapSocketService mapSocketService;
         SendRequestViewModel sendRequestViewModel;
         IBaseUrl baseResource;
+        public Action<LocationSearchResult> OnLocationSelected { get; set; }
+
 
         bool ShowTestSimulator = false;
         public MapView()
@@ -51,8 +53,10 @@ namespace RideShare
             InitializeComponent();
             mapSocketService = DependencyService.Get<IMapSocketService>();
             baseResource = DependencyService.Get<IBaseUrl>();
+            this.OnLocationSelected = OnLocationSelecteResult;
+            destinationSelector.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDestinationSelector));
 
-            if(ShowTestSimulator)
+            if (ShowTestSimulator)
             {
                 simulatorView.IsVisible = true;
             }
@@ -65,12 +69,18 @@ namespace RideShare
             InitMap();
             mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
         }
+
         void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
                 LoadUserData();
             });
+        }
+
+        void OnLocationSelecteResult(LocationSearchResult result)
+        {
+            destinationSelector.Text =String.Format("Your Destination : {0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
         }
 
         private void LoadUserData()
@@ -117,6 +127,12 @@ namespace RideShare
                 RenderPin(item.Location.Longitude, item.Location.Latitude, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png");
             }
 
+        }
+
+        void OnTapDestinationSelector(View sender, object e)
+        {
+            //App.Current.MainPage = new NavigationPage(new LocationSearch());
+            Navigation.PushAsync(new LocationSearch(this));
         }
 
         private void InitMap()

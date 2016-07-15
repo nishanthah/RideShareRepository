@@ -25,6 +25,7 @@ namespace RideShare
             driverIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDriver));
             riderIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapRider));
 
+            
             //var layout = new StackLayout();
             //var button = new Button
             //{

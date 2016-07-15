@@ -19,17 +19,25 @@ namespace GoogleApiClient.Models
         [JsonProperty("place_id")]
         public string Placeid { get; set; }
 
+        [JsonProperty("reference")]
+        public string Refernce { get; set; }
+
     }
 
     public class Result
     {
-        [JsonProperty("lat")]
-        public string Lat { get; set; }
-
-        [JsonProperty("lng")]
-        public string Lng { get; set; }        
+        [JsonProperty("geometry")]
+        public Geometry Geometry { get; set; }
 
     }
+
+    public class Geometry
+    {
+        [JsonProperty("location")]
+        public Location Location { get; set; }
+    }
+
+    
     public class GetPlacesResponse
     {
         [JsonProperty("predictions")]
@@ -38,7 +46,7 @@ namespace GoogleApiClient.Models
     public class GetPlaceCoordinates
     {
         [JsonProperty("result")]
-        public IList<Result> Results { get; set; }
+        public Result CoordinateResult { get; set; }
     }
 
 }

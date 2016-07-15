@@ -4,23 +4,22 @@
              x:Class="RideShare.MapView"
              Icon="map.png">
   <ContentPage.Content>
-
     
-      <!--<Entry x:Name="destinationEntry" Placeholder="Destination" />-->
-
-      <Grid>
+    <AbsoluteLayout>
+		 <Label Text="Select Your Destination" x:Name="destinationSelector" AbsoluteLayout.LayoutBounds="0.5, 0.5, -1, -1" AbsoluteLayout.LayoutFlags="PositionProportional" />
+		 
+    <Grid>
 
         <Grid.RowDefinitions>
-          <RowDefinition Height="1*" />
           <RowDefinition Height="0*" />
           <RowDefinition Height="6*" />
         </Grid.RowDefinitions>
 
-        <AbsoluteLayout HorizontalOptions="CenterAndExpand" Grid.Row="0" >
-          <Entry x:Name="destinationEntry" HorizontalOptions="Fill" Placeholder="Destination" />
-        </AbsoluteLayout>
+       <!-- <AbsoluteLayout HorizontalOptions="CenterAndExpand" Grid.Row="0" >
+          <Label Text="Select Your Destination" x:Name="destinationSelector" />
+        </AbsoluteLayout> -->
         
-        <ScrollView  Orientation="Vertical" Grid.Row="1" x:Name="simulatorView">
+        <ScrollView  Orientation="Vertical" Grid.Row="0" x:Name="simulatorView">
           <StackLayout VerticalOptions="StartAndExpand" x:Name="requestArea">
             <Label Text="Driver User Name" />
             <Entry x:Name="driverUserNameEntry" Text="{Binding DriverUserName, Mode=TwoWay}" Placeholder="Driver User Name" />
@@ -37,10 +36,16 @@
           </StackLayout>
         </ScrollView>
 
-        <StackLayout Grid.Row="2"  x:Name="mapContainer" VerticalOptions="Fill" >
+        <StackLayout Grid.Row="1"  x:Name="mapContainer" VerticalOptions="Fill" >
 
         </StackLayout>
       </Grid>
+    
+	  </AbsoluteLayout>
+    
+      <!--<Entry x:Name="destinationEntry" Placeholder="Destination" />-->
+
+      
 
 
     
