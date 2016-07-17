@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<component format="1" id="urbanairship" is-shell="true">
+  <name>Urban Airship SDK</name>
+  <publisher>Urban Airship, Inc.</publisher>
+  <publisher-url>http://urbanairship.com</publisher-url>
+  <version>2.2.1</version>
+  <summary>A full suite of mobile engagement tools for building next-generation apps</summary>
+  <packages>
+    <package id="urbanairship" version="2.2.1" framework="android" />
+    <package id="urbanairship" version="2.2.1" framework="ios-unified" />
+  </packages>
+  <samples>
+    <sample id="AndroidSample">
+      <name>Android Sample</name>
+      <summary>Android Sample</summary>
+    </sample>
+    <sample id="iOSSample">
+      <name>iOS Sample</name>
+      <summary>iOS Sample</summary>
+    </sample>
+  </samples>
+</component>

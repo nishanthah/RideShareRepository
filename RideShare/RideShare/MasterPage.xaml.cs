@@ -43,17 +43,16 @@ namespace RideShare
             });
             masterPageItems.Add(new MasterPageItem
             {
-                Title = "Logout",
-                IconSource = "logout.png",
-                TargetType = typeof(LogoutPage)
-            });
-            masterPageItems.Add(new MasterPageItem
-            {
                 Title = "Map View",
                 IconSource = "logout.png",
                 TargetType = typeof(MapView)
             });
-
+            masterPageItems.Add(new MasterPageItem
+            {
+                Title = "Logout",
+                IconSource = "logout.png",
+                TargetType = typeof(LogoutPage)
+            });
             listView.ItemsSource = masterPageItems;
         }
     }

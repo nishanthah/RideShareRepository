@@ -1,4 +1,6 @@
-﻿using RideShare.Common;
+﻿using ImageCircle.Forms.Plugin.Abstractions;
+using MediaPicker.Forms.Plugin.Abstractions;
+using RideShare.Common;
 using RideShare.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -12,53 +14,63 @@ namespace RideShare
 {
     public partial class RegisterPage : ContentPage,ISignUpPageProcessor
     {
-        //public RegisterPage()
-        //{
-        //    InitializeComponent();
-        //    //var layout = new StackLayout();
-        //    //var button = new Button
-        //    //{
-        //    //    Text = "StackLayout",
-        //    //    VerticalOptions = LayoutOptions.Start,
-        //    //    HorizontalOptions = LayoutOptions.FillAndExpand
-        //    //};
-        //    //var yellowBox = new BoxView { Color = Color.Yellow, VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand };
-        //    //var greenBox = new BoxView { Color = Color.Green, VerticalOptions = LayoutOptions.FillAndExpand, HorizontalOptions = LayoutOptions.FillAndExpand };
-        //    //var blueBox = new BoxView
-        //    //{
-        //    //    Color = Color.Blue,
-        //    //    VerticalOptions = LayoutOptions.FillAndExpand,
-        //    //    HorizontalOptions = LayoutOptions.FillAndExpand,
-        //    //    HeightRequest = 75
-        //    //};
-
-        //    //layout.Children.Add(button);
-        //    //layout.Children.Add(yellowBox);
-        //    //layout.Children.Add(greenBox);
-        //    //layout.Children.Add(blueBox);
-        //    //layout.Spacing = 10;
-        //    //Content = layout;
-
-        //    //InitializeComponent();
-        //    //Title = "Edit Profile Page";
-        //    //Content = new StackLayout
-        //    //{
-        //    //    Children = {
-        //    //        new Label {
-        //    //            Text = "Edit Profile Page data goes here",
-        //    //            HorizontalOptions = LayoutOptions.Center,
-        //    //            VerticalOptions = LayoutOptions.CenterAndExpand
-        //    //        }
-        //    //    }
-        //    //};
-        //}
         bool isNewItem;
+
+        IMediaPicker mediaPicker;
+        ImageSource imageSource;
+        CircleImage profilePhoto;
+        String status;
 
         public RegisterPage(bool isNew = false)
         {
             InitializeComponent();
             Content.BindingContext = new SignUpViewModel(this);
             isNewItem = isNew;
+
+            profilePhoto = new CircleImage()
+            {
+                //BorderColor = Color.Yellow,
+                //FillColor = Color.Yellow,
+                BorderThickness = 9,
+                HeightRequest = 150,
+                WidthRequest = 150,
+                Aspect = Aspect.AspectFill,
+                HorizontalOptions = LayoutOptions.Center,
+                Source = "add_picture.png"
+            };
+
+            var addPictureButton = new Button()
+            {
+                Text = "Select Picture",
+                Command = new Command(async () => { await SelectPicture(); })
+            };
+
+            profileImageStackLayout.Children.Add(profilePhoto);
+            profileImageStackLayout.Children.Add(addPictureButton);
+        }
+
+        private async Task SelectPicture()
+        {
+
+            mediaPicker = DependencyService.Get<IMediaPicker>();
+
+            imageSource = null;
+
+            try
+            {
+                var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
+                {
+                    DefaultCamera = CameraDevice.Front,
+                    MaxPixelDimension = 400
+                });
+                imageSource = ImageSource.FromStream(() => mediaFile.Source);
+                
+                profilePhoto.Source = imageSource;
+            }
+            catch (System.Exception ex)
+            {
+                this.status = ex.Message;
+            }
         }
 
         public void MoveToLoginPage()
