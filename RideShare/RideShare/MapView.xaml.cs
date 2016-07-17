@@ -28,7 +28,7 @@ namespace RideShare
         public MapView()
         {
             Init();
-            map.OnInfoWindowClicked = OnInfoWindowClicked;
+           
             LoadUserData();
             //RenderLine();
         }
@@ -41,11 +41,12 @@ namespace RideShare
 
         async void OnInfoWindowClicked(CustomPin pin)
         {
-            var answer = await DisplayAlert("Select Driver?", "Do you want to select this driver?", "Yes", "No");
-            if(answer)
-            {
-                messageLabel.Text = pin.Id.ToString();
-            }
+            //var answer = await DisplayAlert("Select Driver?", "Do you want to select this driver?", "Yes", "No");
+            //if(answer)
+            //{
+            //messageLabel.Text = pin.Id.ToString();
+            //}
+            ShowPopupBox();
         }
 
         private void Init()
@@ -53,21 +54,28 @@ namespace RideShare
             InitializeComponent();
             mapSocketService = DependencyService.Get<IMapSocketService>();
             baseResource = DependencyService.Get<IBaseUrl>();
-            this.OnLocationSelected = OnLocationSelecteResult;
+            
             destinationSelector.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDestinationSelector));
 
-            if (ShowTestSimulator)
-            {
-                simulatorView.IsVisible = true;
-            }
-            else
-            {
-                simulatorView.IsVisible = false;
-            }
-            sendRequestViewModel = new SendRequestViewModel(this, driverLocatorService);
-            requestArea.BindingContext = sendRequestViewModel;
+            //if (ShowTestSimulator)
+            //{
+            //    simulatorView.IsVisible = true;
+            //}
+            //else
+            //{
+            //    simulatorView.IsVisible = false;
+            //}
+            //sendRequestViewModel = new SendRequestViewModel(this, driverLocatorService);
+            //requestArea.BindingContext = sendRequestViewModel;
             InitMap();
             mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
+            cancelPopupButton.Clicked += CancelPopupButton_Clicked;
+            this.OnLocationSelected = OnLocationSelecteResult;
+        }
+
+        private void CancelPopupButton_Clicked(object sender, EventArgs e)
+        {
+            HidePopupBox();
         }
 
         void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
@@ -80,7 +88,7 @@ namespace RideShare
 
         void OnLocationSelecteResult(LocationSearchResult result)
         {
-            destinationSelector.Text =String.Format("Your Destination : {0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
+            destinationText.Text =String.Format("{0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
         }
 
         private void LoadUserData()
@@ -103,11 +111,11 @@ namespace RideShare
         //}
         private void ShowOnLabels(List<UserLocation> userCoordinates)
         {
-            messageLabel.Text = "";
-            foreach (var userCorrdinate in userCoordinates)
-            {
-                messageLabel.Text += userCorrdinate.User.UserName + "|" + userCorrdinate.User.EMail + "|" + userCorrdinate.User.FirstName + "|" + userCorrdinate.Location.Longitude + "|" + userCorrdinate.Location.Latitude + Environment.NewLine;
-            }
+            //messageLabel.Text = "";
+            //foreach (var userCorrdinate in userCoordinates)
+            //{
+            //    messageLabel.Text += userCorrdinate.User.UserName + "|" + userCorrdinate.User.EMail + "|" + userCorrdinate.User.FirstName + "|" + userCorrdinate.Location.Longitude + "|" + userCorrdinate.Location.Latitude + Environment.NewLine;
+            //}
         }
 
         private void ShowNotificationInMap(NotificationInfo notificationInfo)
@@ -145,8 +153,10 @@ namespace RideShare
                 VerticalOptions = LayoutOptions.FillAndExpand
             };
 
+
             mapContainer.Children.Clear();
             mapContainer.Children.Add(map);
+            map.OnInfoWindowClicked = OnInfoWindowClicked;
         }
 
         private void RenderPin(string longitudeCoordinate, string latitudeCoordinate, string lable,UserType userType,string mobileNo,string image)
@@ -199,6 +209,18 @@ namespace RideShare
                 }
             }
             map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromMiles(50)));
+        }
+
+        private void ShowPopupBox()
+        {
+            sendingPopupBack.IsVisible = true;
+            sendingPopupForeground.IsVisible = true;
+        }
+
+        private void HidePopupBox()
+        {
+            sendingPopupBack.IsVisible = false;
+            sendingPopupForeground.IsVisible = false;
         }
     }
 }
