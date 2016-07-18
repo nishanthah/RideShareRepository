@@ -9,11 +9,12 @@ var morgan      = require('morgan');
 var mongoose    = require('mongoose');
 var HttpClient = require('node-rest-client').Client;
 var urbanAirshipClient = require("./urban_airship_client");
+var userMapper = require("./helpers/user_mapper");
 var httpClient = new HttpClient();
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
-var UserCoordinate   = require('./app/models/user_coordinate'); // get our mongoose model
+var UserCoordinate   = require('./app/models/user'); // get our mongoose model
 var RideHistory = require('./app/models/ride_history.js'); // RideHistory mongoose model
 
 // =======================
@@ -48,7 +49,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-	httpClient.get("http://localhost:8078/authapp/userinfo", args, function (userInfo, response) {
+	httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)
@@ -71,8 +72,8 @@ apiRoutes.use(function(req, res, next) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
 });
 
-apiRoutes.post('/saveuserdata', function(req, res) {
-  UserCoordinate.findOne({userName : req.userInfo.userName}, function(err, userCoordinate) {
+apiRoutes.post('/users', function(req, res) {
+  UserCoordinate.findOne({userName : req.body.userName}, function(err, userCoordinate) {
   
 	if (err) res.json({ success: false, message:err });
 
@@ -97,10 +98,10 @@ apiRoutes.post('/saveuserdata', function(req, res) {
 	else
 	{
 		var newUserCoordinate= new UserCoordinate({ 
-			userName:req.userInfo.userName,
-			email:req.userInfo.email,
-			firstName:req.userInfo.firstName,
-			lastName:req.userInfo.lastName,
+			userName:req.body.userName,
+			email:req.body.email,
+			firstName:req.body.firstName,
+			lastName:req.body.lastName,
 			longitude: req.body.longitude,
 			latitude: req.body.latitude,
 			userType: req.body.userType,
@@ -139,12 +140,51 @@ apiRoutes.post('/saveuserdata', function(req, res) {
   });
 });   */ 
 
+apiRoutes.put('/users/:userName/location', function (req, res) {
+    UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
+        
+        if (err) res.json({ success: false, message: err });
 
+	    userCoordinate.longitude = req.body.longitude;
+        userCoordinate.latitude = req.body.latitude;
+        
+        userCoordinate.save(function (err) {
+            if (err) res.json({ success: false, message: err });
+            
+            console.log('Coordinate saved successfully');
+            io.emit('coordinate_changed', "Changed");
+            res.json({ success: true });
+        });
+	
+    });
+});  
 
-apiRoutes.get('/selectedusercoordinate', function(req, res) {
+apiRoutes.get('/drivers', function (req, res) {    
+    sendResponseByUserType(2, req, res);
+});
+
+apiRoutes.get('/riders', function (req, res) {
+    
+    sendResponseByUserType(1, req, res);
+
+});
+
+function sendResponseByUserType(userType,req,res)
+{
+    UserCoordinate.find({ userType : userType }, function (err, userCoordinates) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        var userDatas = userMapper.mapUsersList(userCoordinates);
+        
+        res.json({ userData: userDatas, success: true });
+    });
+}
+
+apiRoutes.get('/users/:userName', function(req, res) {
 
   
-	UserCoordinate.findOne({userName : req.userInfo.userName}, function(err, userCoordinate) {
+	UserCoordinate.findOne({userName : req.params.userName}, function(err, userCoordinate) {
   
 			if (err) res.json({ success: false, message:err });
 			
@@ -152,18 +192,9 @@ apiRoutes.get('/selectedusercoordinate', function(req, res) {
 			{
 				res.json({ success: false, message:"User Not Found" });				
 			}
-			else
-			{
-				var userData={};
-				userData.userName=userCoordinate.userName;
-				userData.email=userCoordinate.email;
-				userData.firstName=userCoordinate.firstName;
-				userData.lastName=userCoordinate.lastName;
-				userData.longitude=userCoordinate.longitude;
-				userData.latitude = userCoordinate.latitude;
-				userData.mobileNo = userCoordinate.mobileNo;
-				userData.userType = userCoordinate.userType;
-				res.json({ userCoordinate: userData, success: true });
+			else {
+                var userData = userMapper.mapSingleUser(userCoordinate);
+				res.json({ userData: userData, success: true });
 			}
 			
 			
@@ -172,7 +203,7 @@ apiRoutes.get('/selectedusercoordinate', function(req, res) {
 
 }); 
 
-apiRoutes.get('/usercoordinates', function(req, res) {
+apiRoutes.get('/users', function(req, res) {
 
 	UserCoordinate.find({}, function(err, userCoordinates) {
   
@@ -195,37 +226,56 @@ apiRoutes.get('/usercoordinates', function(req, res) {
 		res.json({ userCoordinates: userDatas, success: true });
 	});
 
-});   
+});
 
-apiRoutes.get('/users/:queryString', function (req, res) {
+apiRoutes.put('/users/type', function (req, res) {
 	
-	var name = req.query.filter;
-	var value = req.params.queryString;
-	var query = {};
-	query[name] = value;
-
-	UserCoordinate.find(query, function (err, userCoordinates) {
+	UserCoordinate.findOne({ userName : req.userInfo.userName }, function (err, user) {
 		
 		if (err) res.json({ success: false, message: err });
 		
-		var userDatas = new Array();
-		userCoordinates.forEach(function (userCoordinate) {
+		if (!user) {
+			res.json({ success: false, message: "User Not Found" });
+		}
+		else {
+			user.userType = req.body.userType;
 			
-			var userData = {};
-			userData.userName = userCoordinate.userName;
-			userData.email = userCoordinate.email;
-			userData.firstName = userCoordinate.firstName;
-			userData.lastName = userCoordinate.lastName;
-			userData.longitude = userCoordinate.longitude;
-			userData.latitude = userCoordinate.latitude;
-			userData.mobileNo = userCoordinate.mobileNo;
-			userData.userType = userCoordinate.userType;
-			userDatas.push(userData);
-		});
-		res.json({ userCoordinates: userDatas, success: true });
+			user.save(function (err) {
+				if (err) res.json({ success: false, message: err });
+				
+				console.log('Updated User successfully');
+				res.json({ success: true });
+			});
+
+		}
+
 	});
 
+   
 });
+
+//apiRoutes.get('/users/:queryString', function (req, res) {
+	
+//	var name = req.query.filter;
+//	var value = req.params.queryString;
+//	var query = {};
+//	query[name] = value;
+
+//	UserCoordinate.find(query, function (err, userCoordinates) {
+		
+//		if (err) res.json({ success: false, message: err });
+		
+//		var userDatas = new Array();
+//		userCoordinates.forEach(function (userCoordinate) {
+			
+//			var userData = {};
+//            userDatas = userMapper.mapSingleUser(userCoordinate);
+//			userDatas.push(userData);
+//		});
+//		res.json({ userCoordinates: userDatas, success: true });
+//	});
+
+//});
 
 apiRoutes.post('/ridehistory', function (req, res) {
 	
@@ -245,7 +295,17 @@ apiRoutes.post('/ridehistory', function (req, res) {
 	newRideHistory.save(function (err, saved) {
 		if (err) res.json({ success: false, message: err });
 		
-		urbanAirshipClient.sendNotification(saved.driverUserName, saved.id, saved.sourseName, saved.sourceLongitude, saved.sourceLatitude, function (notificationSentStatus) {
+		var notificationData = {};
+		notificationData.driverUserName = saved.driverUserName;
+		notificationData.id = saved.id;
+		notificationData.sourseName = saved.sourseName;
+		notificationData.sourceLongitude = saved.sourceLongitude;
+		notificationData.sourceLatitude = saved.sourceLatitude;
+		notificationData.destinationName = saved.destinationName;
+		notificationData.destinationLongitude = saved.destinationLongitude;
+		notificationData.destinationLatitude = saved.destinationLatitude;
+
+		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
 			console.log(notificationSentStatus.message);
 		});
 		

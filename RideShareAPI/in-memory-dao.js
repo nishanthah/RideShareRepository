@@ -1,4 +1,3 @@
-"use strict";
 /// <reference path="dao.ts" />
 var InMemoryUserDAO = (function () {
     function InMemoryUserDAO() {
@@ -31,6 +30,6 @@ var InMemoryUserDAO = (function () {
         return true;
     };
     return InMemoryUserDAO;
-}());
+})();
 exports.InMemoryUserDAO = InMemoryUserDAO;
 //# sourceMappingURL=in-memory-dao.js.map

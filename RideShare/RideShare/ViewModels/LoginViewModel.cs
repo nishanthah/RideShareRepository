@@ -1,5 +1,6 @@
 ﻿using Authentication;
 using Authentication.Models;
+using Common.Models;
 using DriverLocatorFormsPortable.Common;
 using RideShare.Common;
 using RideShare.SharedInterfaces;
@@ -57,13 +58,14 @@ namespace RideShare.ViewModels
             {
 
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate();
+                var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;
                 urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
 
                 if (userCorrdinateResult.IsSuccess)
                 {
-                    App.CurrentLoggedUser = userCorrdinateResult.UserCoordinate;
+                    App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                    driverLocatorService.UpdateUserType(new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
                     loginProcessor.MoveToMainPage();
                 }
                 else

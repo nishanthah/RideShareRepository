@@ -31,14 +31,17 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Models\CreateRideHistoryResponse.cs" />
+    <Compile Include="Models\DriversResponse.cs" />
     <Compile Include="Models\FilteredRideHistoryResponse.cs" />
     <Compile Include="Models\RideHistory.cs" />
     <Compile Include="Models\UpdateRideHistoryRequest.cs" />
     <Compile Include="Models\UpdateRideHistoryStatusResponse.cs" />
+    <Compile Include="Models\UpdateUserTypeRequest.cs" />
+    <Compile Include="Models\UpdateUserTypeResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ResponseBase.cs" />
     <Compile Include="Models\UpdateUserCoordinateResponse.cs" />
-    <Compile Include="Models\UserCoordinate.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Models\UserCoordinatesResponse.cs" />
     <Compile Include="DriverLocatorService.cs" />
     <Compile Include="Models\SelectedUserCoordinateResponse.cs" />

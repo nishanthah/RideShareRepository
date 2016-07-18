@@ -3,22 +3,25 @@ var httpClient = new HttpClient();
 
 module.exports = function () {
    
-    function sendNotification(driverUserName,requestId,sourceLocation,longitude,latitude,callback) {
+    function sendNotification(notificationData,callback) {
        
 		var args = {
 			data: {
 				"audience" : {
-					"named_user" : driverUserName
+					"named_user" : notificationData.driverUserName
 				},
 				"device_types": ["android"],
 				"notification": {
 					"android": {
 						"alert": "New Pickup Request",
 						"extra": {
-							"request_id": requestId,
-							"location_name": sourceLocation,
-							"longitude": longitude,
-							"latitude": latitude
+							"request_id": notificationData.id,
+							"source_name": notificationData.sourseName,
+							"source_longitude": notificationData.sourceLongitude,
+							"source_latitude": notificationData.sourceLatitude,
+							"destination_name": notificationData.destinationName,
+							"destination_longitude": notificationData.destinationLongitude,
+							"destination_latitude": notificationData.destinationLatitude
 						},
 						"interactive": {
 							"type": "ua_accept_decline_foreground",
@@ -38,7 +41,7 @@ module.exports = function () {
 			headers: {
 				"Content-Type": "application/json", 
 				"Accept": "application/vnd.urbanairship+json; version=3;",
-				"Authorization": "Basic N1JhUG1GRTBRUC1MX3BES3NUeUxDQTpKRWY2S2RzSlJZLUc3YTZRT2cxOUpn"
+				"Authorization": "Basic SXNGT1oyQUJUbEtRT0V2SkprRUo1UTpjN2FZVHJJdlRaeVZQb21JMDRGUVJB"
 			}
 		};
 		

@@ -20,15 +20,17 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
     <Compile Include="app\models\ride_history.js" />
+    <Compile Include="helpers\user_mapper.js" />
     <Compile Include="urban_airship_client.js" />
     <Content Include="package.json" />
     <Compile Include="config.js" />
     <Compile Include="server.js" />
-    <Compile Include="app\models\user_coordinate.js" />
+    <Compile Include="app\models\user.js" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="app" />
     <Folder Include="app\models" />
+    <Folder Include="helpers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <!--Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them.-->

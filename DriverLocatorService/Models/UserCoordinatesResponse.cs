@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DriverLocator.Models
 {
-    public class UserCoordinatesResponse : ResponseBase
+    public class UserLocationResponse : ResponseBase
     {
-        [JsonProperty("userCoordinates")]
-        public List<UserCoordinate> UserCoordinates { get; set; }
+        [JsonProperty("userData")]
+        public List<UserLocation> UserLocations { get; set; }
     }
 }

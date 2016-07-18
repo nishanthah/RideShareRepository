@@ -76,28 +76,32 @@ namespace GoogleApiClient.Helpers
 
         public void AddWaypoints<T>(IList<T> listOfCoordinates) where T : class
         {
-            if(typeof(T) == typeof(Coordinate))
+            if (listOfCoordinates != null)
             {
-                IList<Coordinate> list = (IList<Coordinate>)listOfCoordinates;
-                foreach(var value in list )
+                if (typeof(T) == typeof(Coordinate))
                 {
+                    IList<Coordinate> list = (IList<Coordinate>)listOfCoordinates;
+                    foreach (var value in list)
+                    {
 
-                    coordinatedWaypoints.Add(value.Latitude + "," + value.Longitude);
+                        coordinatedWaypoints.Add(value.Latitude + "," + value.Longitude);
+                    }
+
                 }
-               
-            }
-            else
-            {
-                foreach (var value in listOfCoordinates)
+                else
                 {
-                    coordinatedWaypoints.Add(value.ToString());
+                    foreach (var value in listOfCoordinates)
+                    {
+                        coordinatedWaypoints.Add(value.ToString());
+                    }
                 }
             }
+            
         } 
 
         public string GetGeneratedUrl()
         {
-            if(coordinatedWaypoints.Count > 0)
+            if(coordinatedWaypoints != null || coordinatedWaypoints.Count > 0)
             {
                 var waypoints = String.Join("|", CoordinatedWaypoints);
                 return String.Format(BASE_URL_WITH_WAYPOINTS, Source, Destination, waypoints, ApiKey);

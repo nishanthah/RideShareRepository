@@ -39,7 +39,7 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <JavaMaximumHeapSize>2G</JavaMaximumHeapSize>
+    <JavaMaximumHeapSize>1G</JavaMaximumHeapSize>
     <Debugger>Xamarin</Debugger>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <AndroidLinkSkip />
@@ -178,6 +178,7 @@
     <AndroidAsset Include="Assets\main.css" />
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />
+    <Compile Include="DependecyServices\LocationServiceDroid.cs" />
     <Compile Include="DependecyServices\MapSocketServiceDroid.cs" />
     <Compile Include="DependecyServices\UrbanAirshipServiceDroid.cs" />
     <Compile Include="MainActivity.cs" />
@@ -194,6 +195,9 @@
     </None>
     <None Include="Resources\AboutResources.txt" />
     <None Include="Assets\AboutAssets.txt" />
+    <AndroidResource Include="Resources\layout\MapInfoWindow.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\icon.png" />
@@ -202,9 +206,15 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\AndroidManifest.xml" />
+    <None Include="Properties\AndroidManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Common\Common.csproj">
+      <Project>{27f7ef25-dc26-4427-9966-8cde4146d3a9}</Project>
+      <Name>Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\UrbanAirshipClient\UrbanAirshipClient.csproj">
       <Project>{5714a7e8-1b89-4ab7-81db-9985b95114f2}</Project>
       <Name>UrbanAirshipClient</Name>
@@ -272,6 +282,21 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidAsset Include="Assets\splash.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\car.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\person.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\profile_images\userLogActive_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidAsset Include="Assets\profile_images\driverLogActive_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\search.png" />
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\add_picture.png" />
