@@ -15,6 +15,7 @@ namespace RideShare
         public string Title { get; set; }
         public string MobileNo { get; set; }
         public string Image { get; set; }
+        public string UserName { get; set; }
         public UserType UserType { get; set; }
     }
 

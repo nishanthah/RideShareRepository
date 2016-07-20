@@ -25,7 +25,7 @@ namespace RideShare.Droid.DependecyServices
             string channelId = prefs.GetString("urban_airship_client_id", null);
 
             UrbanAirshipApiClient urbanAirshipClient = new UrbanAirshipApiClient(Session.AppKey, Session.AppMasterSecret);
-            //urbanAirshipClient.RegisterUser(new UrbanAirshipClient.Models.RegisterUserRequest() { ChannelId = channelId, DeviceType = "android", NamedUserId = userName });
+            urbanAirshipClient.RegisterUser(new UrbanAirshipClient.Models.RegisterUserRequest() { ChannelId = channelId, DeviceType = "android", NamedUserId = userName });
             UAirship.Shared().PushManager.NamedUser.Id = userName;
             //UAirship.Shared().PushManager.UpdateRegistration();
         }

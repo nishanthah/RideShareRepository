@@ -69,7 +69,9 @@ namespace RideShare.Droid
 
             if (e.NewElement != null)
             {
+                
                 var formsMap = (CustomMap)e.NewElement;
+                
                 routeCoordinates = formsMap.RouteCoordinates;
                 customPins = formsMap.CustomPins;
                 onInfoWindowClicked = formsMap.OnInfoWindowClicked;
@@ -80,8 +82,8 @@ namespace RideShare.Droid
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
-
-            if (e.PropertyName.Equals("VisibleRegion") && !isDrawn)
+           
+            if (map != null && e.PropertyName.Equals("VisibleRegion") && !isDrawn)
             {
                 map.Clear();
 

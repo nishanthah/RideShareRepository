@@ -62,18 +62,18 @@ namespace RideShare
             //};
             //inPage = new RideShare.MainPage();
             // MainPage = new RideShare.EditProfilePage();
-            //if(isLoading)
-            //{
-               // MainPage = new SplashScreen();
-            //}
-           // else
-            //{
+            if (isLoading)
+            {
+                MainPage = new SplashScreen();
+            }
+            else
+            {
                 MainPage = new NavigationPage(new LogInPage());
-            //}
+            }
 
             //MainPage = new NavigationPage(new LogInPage());
             // NavigationPage.SetHasBackButton(MainPage, false);
-           // NavigationPage.SetHasBackButton(MainPage, false);
+            // NavigationPage.SetHasBackButton(MainPage, false);
             //  NavigationPage.SetHasBackButton(MasterPage, false);
 
             //User_Manager = new UserManager(new RideShareService());

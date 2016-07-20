@@ -47,7 +47,6 @@ namespace RideShare.Droid
 
             Intent intent1 = new Intent("com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
             intent1.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
-            intent1.PutExtra("intentName", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
             context.StartActivity(intent1);
             //com.virtusa.driverlocatorforms.LOADINGCOMPLETED
             //OnRegistrationSucceeded(this,new OnRegistrationSucceededEventArgs() {ChannelId = channelId });
