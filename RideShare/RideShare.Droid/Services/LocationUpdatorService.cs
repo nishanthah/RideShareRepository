@@ -12,6 +12,8 @@ using Android.Util;
 using Java.Lang;
 using RideShare.Utilities;
 using Android.App;
+using RideShare.SharedInterfaces;
+using Xamarin.Forms;
 
 namespace RideShare.Droid.Services
 {
@@ -27,10 +29,15 @@ namespace RideShare.Droid.Services
 
         public void DoWork()
         {
+            ILocationService locService = DependencyService.Get<ILocationService>();
+            LocationUtility locationUtility = new LocationUtility(locService);
+
             Thread t = new Thread(() => {
+
+                
                 while(true)
                 {
-                    LocationUtility.UpdateCurrentLocation();
+                    locationUtility.UpdateCurrentLocation();
                     Thread.Sleep(5000);
                 }
             });
@@ -39,6 +46,7 @@ namespace RideShare.Droid.Services
 
         public override void OnDestroy()
         {
+
             base.OnDestroy();
             // cleanup code
         }

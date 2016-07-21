@@ -10,6 +10,7 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using UrbanAirship;
+using RideShare.Droid.Services;
 
 namespace RideShare.Droid
 {
@@ -27,6 +28,8 @@ namespace RideShare.Droid
             {                
                 UAirship.Shared().PushManager.UserNotificationsEnabled = true;
             });
+
+            StartService(new Intent(this, typeof(LocationUpdatorService)));
         }
         
       

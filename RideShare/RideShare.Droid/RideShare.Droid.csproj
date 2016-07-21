@@ -177,6 +177,7 @@
     <AndroidAsset Include="Assets\splash.html" />
     <AndroidAsset Include="Assets\main.css" />
     <Compile Include="CustomMapRenderer.cs" />
+    <Compile Include="DependecyServices\AppDataServiceDroid.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroid.cs" />
     <Compile Include="DependecyServices\MapSocketServiceDroid.cs" />

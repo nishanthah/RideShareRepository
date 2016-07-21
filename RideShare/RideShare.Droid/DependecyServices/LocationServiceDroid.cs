@@ -11,72 +11,53 @@ using Android.Views;
 using Android.Widget;
 using CommonModels = Common.Models;
 using RideShare.SharedInterfaces;
-using Android.Locations;
 using Org.Xml.Sax;
 using System.Threading.Tasks;
+using Android.Locations;
+using Android.Util;
 
 [assembly: Xamarin.Forms.Dependency(typeof(RideShare.Droid.DependecyServices.LocationServiceDroid))]
 namespace RideShare.Droid.DependecyServices
 {
-    public class LocationServiceDroid : ILocationService,ILocationListener
+    public class LocationServiceDroid : Java.Lang.Object,ILocationService,ILocationListener
     {
+        string tag = "LocationServiceDroid";
         LocationManager locationManger;
-        string locationProvider;
+        Location location;
+        
         public LocationServiceDroid()
         {
-            locationManger = (LocationManager)MainApp.Context.GetSystemService(Context.LocationService);
-            Criteria criteriaForLocationService = new Criteria
-            {
-                Accuracy = Accuracy.Fine
-            };
-            IList<string> acceptableLocationProviders = locationManger.GetProviders(criteriaForLocationService, true);
-
-            if (acceptableLocationProviders.Any())
-            {
-                locationProvider = acceptableLocationProviders.First();
-            }
-            else
-            {
-                locationProvider = string.Empty;
-            }
+            locationManger = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
+            locationManger.RequestLocationUpdates(LocationManager.GpsProvider, 5000, 1, this);
         }
-
-        public IntPtr Handle
-        {
-            get
-            {
-                throw new NotImplementedException();
-            }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
+  
         public  CommonModels.Location GetCurrentLocation()
         {
-            throw new NotImplementedException();
+            if(location != null)
+            {
+                return new CommonModels.Location() { Latitude = location.Latitude, Longitude = location.Longitude };
+            }
+            return null;
         }
 
         public void OnLocationChanged(Location location)
         {
-            throw new NotImplementedException();
+            this.location = location;
         }
 
         public void OnProviderDisabled(string provider)
         {
-            throw new NotImplementedException();
+            Log.Debug(tag, provider + " disabled by user");
         }
 
         public void OnProviderEnabled(string provider)
         {
-            throw new NotImplementedException();
+            Log.Debug(tag, provider + " enabled by user");
         }
 
         public void OnStatusChanged(string provider, [GeneratedEnum] Availability status, Bundle extras)
         {
-            throw new NotImplementedException();
+            Log.Debug(tag, provider + " availability has changed to " + status.ToString());
         }
     }
 }

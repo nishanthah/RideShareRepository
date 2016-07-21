@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace RideShare.ViewModels
 {
@@ -66,6 +67,8 @@ namespace RideShare.ViewModels
                 {
                     App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
                     driverLocatorService.UpdateUserType(new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
+                    IAppDataService appDataService = DependencyService.Get<IAppDataService>();
+                    appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
                     loginProcessor.MoveToMainPage();
                 }
                 else

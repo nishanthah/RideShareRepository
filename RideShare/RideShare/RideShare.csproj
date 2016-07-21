@@ -78,6 +78,7 @@
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SharedInterfaces\IAppDataService.cs" />
     <Compile Include="SharedInterfaces\IBaseUrl.cs" />
     <Compile Include="SharedInterfaces\ILocationService.cs" />
     <Compile Include="SharedInterfaces\IMapSocketService.cs" />
@@ -95,7 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="GettingStarted.Xamarin" />
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
