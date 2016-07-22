@@ -9,11 +9,12 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.Util;
-using Java.Lang;
 using RideShare.Utilities;
 using Android.App;
 using RideShare.SharedInterfaces;
 using Xamarin.Forms;
+using System.Threading;
+using RideShare.Droid.DependecyServices;
 
 namespace RideShare.Droid.Services
 {
@@ -29,18 +30,17 @@ namespace RideShare.Droid.Services
 
         public void DoWork()
         {
-            ILocationService locService = DependencyService.Get<ILocationService>();
+            ILocationService locService = new LocationServiceDroid();
             LocationUtility locationUtility = new LocationUtility(locService);
 
-            Thread t = new Thread(() => {
-
-                
+            Thread t = new Thread(() => { 
                 while(true)
                 {
                     locationUtility.UpdateCurrentLocation();
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                 }
             });
+            t.IsBackground = false;
             t.Start();
         }
 

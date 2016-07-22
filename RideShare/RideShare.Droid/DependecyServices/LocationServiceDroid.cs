@@ -28,7 +28,13 @@ namespace RideShare.Droid.DependecyServices
         public LocationServiceDroid()
         {
             locationManger = (LocationManager)Application.Context.GetSystemService(Context.LocationService);
-            locationManger.RequestLocationUpdates(LocationManager.GpsProvider, 5000, 1, this);
+            Criteria criteriaForLocationService = new Criteria
+            {
+                Accuracy = Accuracy.Fine
+            };
+            IList<string> acceptableLocationProviders = locationManger.GetProviders(criteriaForLocationService, true);
+
+            locationManger.RequestLocationUpdates(acceptableLocationProviders.First(), 2000,1, this);
         }
   
         public  CommonModels.Location GetCurrentLocation()
@@ -60,4 +66,6 @@ namespace RideShare.Droid.DependecyServices
             Log.Debug(tag, provider + " availability has changed to " + status.ToString());
         }
     }
+
+    
 }

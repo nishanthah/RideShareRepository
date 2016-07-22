@@ -32,7 +32,7 @@ namespace RideShare
         {
             Init();
            
-            LoadUserData();
+            LoadUserData(true);
             //RenderLine();
         }
 
@@ -119,7 +119,7 @@ namespace RideShare
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                LoadUserData();
+                LoadUserData(false);
             });
         }
 
@@ -128,17 +128,18 @@ namespace RideShare
             destinationText.Text =String.Format("{0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
         }
 
-        private void LoadUserData()
+        private void LoadUserData(bool canMoveToLocation)
         {
             //var userCoordinates = driverLocatorService.ViewUserCoordinates();
             //ShowOnLabels(userCoordinates.UserCoordinates);
-
+            map.Pins.Clear();
+            map.CustomPins.Clear();
             var drivers = driverLocatorService.GetDrivers();
             var rider = App.CurrentLoggedUser;
             var currentRiders = new List<UserLocation>();
             currentRiders.Add(rider);
-            ShowOnMap(drivers.UserLocations);
-            ShowOnMap(currentRiders);
+            ShowOnMap(drivers.UserLocations,canMoveToLocation);
+            ShowOnMap(currentRiders, canMoveToLocation);
         }
 
         //private List<UserLocation> TestSeed()
@@ -159,17 +160,17 @@ namespace RideShare
         {
             map.Pins.Clear();
             map.CustomPins.Clear();
-            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(), notificationInfo.Source.LocationName,UserType.Driver, String.Empty, "userLogActive_icon.png",String.Empty);
-            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(), notificationInfo.Destination.LocationName,UserType.Rider,String.Empty, "driverLogActive_icon.png",String.Empty);
+            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(),true, notificationInfo.Source.LocationName,UserType.Driver, String.Empty, "userLogActive_icon.png",String.Empty);
+            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(),true, notificationInfo.Destination.LocationName,UserType.Rider,String.Empty, "driverLogActive_icon.png",String.Empty);
             RenderLine(notificationInfo.Source, notificationInfo.Destination);
         }
 
-        private void ShowOnMap(List<UserLocation> userCoordinates)
+        private void ShowOnMap(List<UserLocation> userCoordinates,bool canMoveToLocation)
         {
 
             foreach (var item in userCoordinates)
             {
-                RenderPin(item.Location.Longitude, item.Location.Latitude, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png",item.User.UserName);
+                RenderPin(item.Location.Longitude, item.Location.Latitude, canMoveToLocation, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png",item.User.UserName);
             }
 
         }
@@ -196,7 +197,7 @@ namespace RideShare
             map.OnInfoWindowClicked = OnInfoWindowClicked;
         }
 
-        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate, string lable,UserType userType,string mobileNo,string image,string userName)
+        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate,bool canMoveToLoacation, string lable,UserType userType,string mobileNo,string image,string userName)
         {
             double latitude = 0;
             double longitude = 0;
@@ -206,7 +207,11 @@ namespace RideShare
 
             var position = new Position(latitude, longitude);
 
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromKilometers(3)));
+            if(canMoveToLoacation)
+            {
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromKilometers(2)));
+            }
+           
 
             var pin = new CustomPin
             {
@@ -240,7 +245,7 @@ namespace RideShare
             //var source = new GoogleApiClient.Models.Coordinate() { Latitude = 7.087310, Longitude = 80.014366 };
             //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
             var directions  = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromMiles(50)));
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromKilometers(10)));
             foreach (var route in directions.Routes)
             {
                 foreach(var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)

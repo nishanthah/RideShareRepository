@@ -37,13 +37,12 @@ namespace RideShare.Droid
         List<CustomPin> customPins;
         Action<CustomPin> onInfoWindowClicked;
 
-        bool isDrawn;
 
         public void OnMapReady(GoogleMap googleMap)
         {
             map = googleMap;
 
-            map.InfoWindowClick += OnInfoWindowClick;
+            //map.InfoWindowClick += OnInfoWindowClick;
             map.SetInfoWindowAdapter(this);
 
             var polylineOptions = new PolylineOptions();
@@ -55,12 +54,13 @@ namespace RideShare.Droid
             }
 
             map.AddPolyline(polylineOptions);
+            
         }
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.View> e)
         {
             base.OnElementChanged(e);
-
+            
             if (e.OldElement != null)
             {
                 map.InfoWindowClick -= OnInfoWindowClick;
@@ -83,7 +83,7 @@ namespace RideShare.Droid
         {
             base.OnElementPropertyChanged(sender, e);
            
-            if (map != null && e.PropertyName.Equals("VisibleRegion") && !isDrawn)
+            if (map != null)
             {
                 map.Clear();
 
@@ -106,7 +106,7 @@ namespace RideShare.Droid
                     
                     map.AddMarker(marker);
                 }
-                isDrawn = true;
+               
             }
         }
 
