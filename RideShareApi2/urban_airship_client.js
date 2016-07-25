@@ -41,7 +41,7 @@ module.exports = function () {
 			headers: {
 				"Content-Type": "application/json", 
 				"Accept": "application/vnd.urbanairship+json; version=3;",
-				"Authorization": "Basic SXNGT1oyQUJUbEtRT0V2SkprRUo1UTpjN2FZVHJJdlRaeVZQb21JMDRGUVJB"
+				"Authorization": "Basic N1JhUG1GRTBRUC1MX3BES3NUeUxDQTpKRWY2S2RzSlJZLUc3YTZRT2cxOUpn"
 			}
 		};
 		
