@@ -14,7 +14,7 @@ namespace Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private const string SERVER = "http://192.168.1.2:8078";
+        private const string SERVER = "http://vauthapp.herokuapp.com";
         //private const string SERVER = "http://192.168.42.166:8078";
         private const string CREATE_USER_URL = SERVER + "/authapp/useraccount";
         private const string AUTHENCATION_URL = SERVER + "/authapp/accesstoken";
@@ -62,6 +62,14 @@ namespace Authentication
             var userInfo = requestHandler.SendRequest<UserInfoResponse>();
             return userInfo;
         }
-        
+
+        public UpdateUserResponse UpdateUser(User user)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Method = "PUT";
+            requestHandler.Url = CREATE_USER_URL;
+            requestHandler.AccessToken = authenticationToken;
+            return requestHandler.SendRequest<User, UpdateUserResponse>(user);
+        }
     }
 }

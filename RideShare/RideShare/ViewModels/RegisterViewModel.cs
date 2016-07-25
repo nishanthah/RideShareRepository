@@ -20,16 +20,35 @@ namespace RideShare.ViewModels
             string email;
             ISignUpPageProcessor signUpPageProcessor;
 
-            public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
+        public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
             {
-            Session.AuthenticationService = new AuthenticationService();
             this.signUpPageProcessor = signUpPageProcessor;
-                this.SignUpCommand = new RelayCommand(SignUp);
+
+            if (Session.AuthenticationService.IsAuthenticated)
+                {
+                    var currentUserDetails = App.CurrentLoggedUser.User;
+                    this.FirstName = currentUserDetails.FirstName;
+                    this.LastName = currentUserDetails.LastName;
+                    this.UserName = currentUserDetails.UserName;
+                    this.Email = currentUserDetails.EMail;
+                    this.SignUpCommand = new RelayCommand(Update);
+            }
+            else
+                {
+                    Session.AuthenticationService = new AuthenticationService();
+                    this.SignUpCommand = new RelayCommand(SignUp);
+                }
+                    
             }
 
             public ICommand SignUpCommand { protected set; get; }
 
-            public string FirstName
+            public bool isAuthenticated
+            {
+                get { return Session.AuthenticationService.IsAuthenticated; }                
+            }
+
+        public string FirstName
             {
                 get
                 {
@@ -125,7 +144,32 @@ namespace RideShare.ViewModels
                 }
             }
 
-            bool AreDetailsValid(User user)
+        private void Update()
+        {
+            var user = new User()
+            {
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                UserName = this.UserName,
+                EMail = this.Email,
+                Password = this.Password
+            };
+
+            //var updateUpSucceeded = AreDetailsValid(user);
+
+            //if (updateUpSucceeded)
+            //{
+            //    var result = Session.AuthenticationService.UpdateUser(user);
+            //    this.signUpPageProcessor.MoveToMainPage();
+            //}
+            //else
+            //{
+            //    ErrorMessage = "Update up failed";
+            //}
+        }
+
+
+        bool AreDetailsValid(User user)
             {
                 return (!string.IsNullOrWhiteSpace(user.UserName) &&
                     !string.IsNullOrWhiteSpace(user.Password) &&
