@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using GoogleApiClient.Helpers;
+using GoogleApiClient.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,5 +65,10 @@ namespace DriverLocator.Models
 
         [JsonProperty("destinationLatitude")]
         public string DestinationLatitude { get; set; }
+
+        [JsonProperty("polyline")]
+        public string PolyLine { get; set; }
+
+        public IList<Coordinate> DecodedOverviewPolyLine{ get { return PolyLineDecoder.Decode(this.PolyLine); } }
     }
 }

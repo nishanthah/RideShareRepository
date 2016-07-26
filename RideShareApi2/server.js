@@ -289,7 +289,8 @@ apiRoutes.post('/ridehistory', function (req, res) {
 		sourceLongitude: req.body.sourceLongitude,
 		sourceLatitude: req.body.sourceLatitude,
 		destinationLongitude: req.body.destinationLongitude,
-		destinationLatitude: req.body.destinationLatitude
+        destinationLatitude: req.body.destinationLatitude,
+        polyLine:req.body.polyLine
 	});
 	
 	newRideHistory.save(function (err, saved) {
@@ -304,7 +305,7 @@ apiRoutes.post('/ridehistory', function (req, res) {
 		notificationData.destinationName = saved.destinationName;
 		notificationData.destinationLongitude = saved.destinationLongitude;
 		notificationData.destinationLatitude = saved.destinationLatitude;
-
+        notificationData.polyLine= saved.polyLine
 		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
 			console.log(notificationSentStatus.message);
 		});

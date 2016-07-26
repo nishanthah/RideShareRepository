@@ -27,7 +27,7 @@ namespace RideShare
             {
                 Title = "History",
                 IconSource = "history.png",
-                TargetType = typeof(HistoryPage)
+                TargetType = typeof(HistoryView)
             });
             masterPageItems.Add(new MasterPageItem
             {

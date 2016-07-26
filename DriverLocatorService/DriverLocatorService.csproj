@@ -57,6 +57,10 @@
       <Project>{27F7EF25-DC26-4427-9966-8CDE4146D3A9}</Project>
       <Name>Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\GoogleApiClient\GoogleApiClient.csproj">
+      <Project>{fbb93082-b2cd-4690-87c1-82e19e2e9f63}</Project>
+      <Name>GoogleApiClient</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json">
