@@ -12,7 +12,7 @@ namespace Authentication.Common
         bool Authenticate(string userName, string password);
         UserInfoResponse GetUserInfo(string token);
         CreateUserResponse CreateUser(User user);
-
+        UpdateUserResponse UpdateUser(User user);
         string AuthenticationToken { get; }
 
         bool IsAuthenticated { get; }

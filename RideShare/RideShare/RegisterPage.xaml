@@ -11,10 +11,34 @@
         <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name"/>
         <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name"/>
       </StackLayout>
-      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>
+      <!--<Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>-->
+      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name">
+        <Entry.Style>
+          <Style TargetType="Entry">
+            <Setter Property="IsEnabled" Value="true" />
+            <Style.Triggers>
+              <DataTrigger TargetType="Entry" Binding="{Binding isAuthenticated, Mode=TwoWay}" Value="true">
+                <Setter Property="IsEnabled" Value="false" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </Entry.Style>
+      </Entry>
       <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
       <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
-      <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>
+      <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
+      <Button x:Name="registerButton" Command="{Binding SignUpCommand}">
+        <Button.Style>
+          <Style TargetType="Button">
+            <Setter Property="Text" Value="Register"></Setter>
+            <Style.Triggers>
+              <DataTrigger TargetType="Button" Binding="{Binding isAuthenticated, Mode=TwoWay}" Value="true">
+                <Setter Property="Text" Value="Update"></Setter>
+              </DataTrigger  >
+            </Style.Triggers>
+          </Style>
+        </Button.Style>
+      </Button>
       
       </StackLayout  >
   </ContentPage.Content>
