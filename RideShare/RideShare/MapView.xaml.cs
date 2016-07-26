@@ -12,7 +12,7 @@ using RideShare.Common;
 using GoogleApiClient.Maps;
 using Common.Models;
 using Plugin.Toasts;
-
+using System.Collections.ObjectModel;
 
 namespace RideShare
 {
@@ -24,6 +24,7 @@ namespace RideShare
         IMapSocketService mapSocketService;
         SendRequestViewModel sendRequestViewModel;
         IBaseUrl baseResource;
+        List<CustomPin> customPins;
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
 
 
@@ -117,10 +118,11 @@ namespace RideShare
 
         void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
                 LoadUserData(false);
-            });
+           // });
+            
         }
 
         void OnLocationSelecteResult(LocationSearchResult result)
@@ -130,16 +132,29 @@ namespace RideShare
 
         private void LoadUserData(bool canMoveToLocation)
         {
+
             //var userCoordinates = driverLocatorService.ViewUserCoordinates();
             //ShowOnLabels(userCoordinates.UserCoordinates);
-            map.Pins.Clear();
-            map.CustomPins.Clear();
-            var drivers = driverLocatorService.GetDrivers();
-            var rider = App.CurrentLoggedUser;
-            var currentRiders = new List<UserLocation>();
-            currentRiders.Add(rider);
-            ShowOnMap(drivers.UserLocations,canMoveToLocation);
-            ShowOnMap(currentRiders, canMoveToLocation);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                map.Pins.Clear();
+                map.CustomPins.Clear();
+                customPins= new List<CustomPin>() ;
+                var drivers = driverLocatorService.GetDrivers();
+                var rider = App.CurrentLoggedUser;
+                var currentRiders = new List<UserLocation>();
+                currentRiders.Add(rider);
+                ShowOnMap(drivers.UserLocations, canMoveToLocation);
+                ShowOnMap(currentRiders, canMoveToLocation);
+                map.CustomPins = customPins;
+
+                if (canMoveToLocation)
+                {
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Distance.FromKilometers(2)));
+                }
+
+            });
+           
         }
 
         //private List<UserLocation> TestSeed()
@@ -159,7 +174,7 @@ namespace RideShare
         private void ShowNotificationInMap(NotificationInfo notificationInfo)
         {
             map.Pins.Clear();
-            map.CustomPins.Clear();
+            map.CustomPins = new List<CustomPin>();
             RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(),true, notificationInfo.Source.LocationName,UserType.Driver, String.Empty, "userLogActive_icon.png",String.Empty);
             RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(),true, notificationInfo.Destination.LocationName,UserType.Rider,String.Empty, "driverLogActive_icon.png",String.Empty);
             RenderLine(notificationInfo.Source, notificationInfo.Destination);
@@ -207,12 +222,6 @@ namespace RideShare
 
             var position = new Position(latitude, longitude);
 
-            if(canMoveToLoacation)
-            {
-                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromKilometers(2)));
-            }
-           
-
             var pin = new CustomPin
             {
                 Pin = new Pin
@@ -229,11 +238,10 @@ namespace RideShare
                 Id = Guid.NewGuid()
             };
 
-            map.CustomPins.Add(pin);
-            
+            //map.CustomPins.Add(pin);
             map.Pins.Add(pin.Pin);
-
-            
+            customPins.Add(pin);
+   
         }
 
         private void RenderLine(Coordinate sourceCoordinate, Coordinate destinationCoordinate)

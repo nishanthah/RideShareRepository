@@ -25,6 +25,7 @@ using Android.Graphics;
 using Android.Media;
 using Java.IO;
 using Android.Content.Res;
+using System.Collections.ObjectModel;
 
 [assembly: ExportRenderer(typeof(CustomMap), typeof(CustomMapRenderer))]
 namespace RideShare.Droid
@@ -36,13 +37,13 @@ namespace RideShare.Droid
         List<Position> routeCoordinates;
         List<CustomPin> customPins;
         Action<CustomPin> onInfoWindowClicked;
-
-
+        bool isDrawn;
+        
         public void OnMapReady(GoogleMap googleMap)
         {
             map = googleMap;
 
-            //map.InfoWindowClick += OnInfoWindowClick;
+            map.InfoWindowClick += OnInfoWindowClick;
             map.SetInfoWindowAdapter(this);
 
             var polylineOptions = new PolylineOptions();
@@ -82,31 +83,52 @@ namespace RideShare.Droid
         protected override void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             base.OnElementPropertyChanged(sender, e);
-           
-            if (map != null)
+            map = ((Android.Gms.Maps.MapView)Control).Map;
+
+            if (e.PropertyName.Equals ("VisibleRegion") && !isDrawn)
             {
-                map.Clear();
 
-                foreach (var pin in customPins)
+                ChangePinRender();
+                isDrawn = true;
+            }
+
+            else if(e.PropertyName.Equals("CustomPins"))
+            {
+                ChangePinRender();
+            }
+        }
+
+        private void ChangePinRender()
+        {
+            map.Clear();
+            customPins = ((CustomMap)Element).CustomPins;
+            foreach (var pin in customPins)
+            {
+                var marker = new MarkerOptions();
+                marker.SetPosition(new LatLng(pin.Pin.Position.Latitude, pin.Pin.Position.Longitude));
+                marker.SetTitle(pin.Id.ToString());
+                marker.SetSnippet(pin.Pin.Address);
+
+                if (pin.UserType == global::Common.Models.UserType.Driver)
                 {
-                    var marker = new MarkerOptions();
-                    marker.SetPosition(new LatLng(pin.Pin.Position.Latitude, pin.Pin.Position.Longitude));
-                    marker.SetTitle(pin.Id.ToString());
-                    marker.SetSnippet(pin.Pin.Address);
-                    
-                    if(pin.UserType == global::Common.Models.UserType.Driver)
-                    {
-                        marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.car));
-                    }
-
-                    else if (pin.UserType == global::Common.Models.UserType.Rider)
-                    {
-                        marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.person));
-                    }
-                    
-                    map.AddMarker(marker);
+                    marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.car));
                 }
-               
+
+                else if (pin.UserType == global::Common.Models.UserType.Rider)
+                {
+                    marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.person));
+                }
+
+                map.AddMarker(marker);
+            }
+        }
+        protected override void OnLayout(bool changed, int l, int t, int r, int b)
+        {
+            base.OnLayout(changed, l, t, r, b);
+
+            if (changed)
+            {
+                isDrawn = false;
             }
         }
 
@@ -117,7 +139,7 @@ namespace RideShare.Droid
 
         private CustomPin GetCustomPin(Marker marker)
         {
-            return customPins.Find(x => x.Id.ToString() ==marker.Title.ToString());
+            return customPins.ToList().Find(x => x.Id.ToString() ==marker.Title.ToString());
         }
 
         public Android.Views.View GetInfoContents(Marker marker)
