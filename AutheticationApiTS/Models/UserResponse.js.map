@@ -1,1 +1,1 @@
-{"version":3,"file":"UserResponse.js","sourceRoot":"","sources":["UserResponse.ts"],"names":["UserResponse","UserResponse.constructor"],"mappings":";;;;;AACA,IAAO,YAAY,WAAW,uBAAuB,CAAC,CAAC;AAEvD;IAA2BA,gCAAYA;IAAvCA;QAA2BC,8BAAYA;IAMvCA,CAACA;IAADD,mBAACA;AAADA,CAACA,AAND,EAA2B,YAAY,EAMtC;AAED,iBAAS,YAAY,CAAC"}
+{"version":3,"file":"UserResponse.js","sourceRoot":"","sources":["UserResponse.ts"],"names":[],"mappings":";;;;;;AACA,IAAO,YAAY,WAAW,uBAAuB,CAAC,CAAC;AAEvD;IAA2B,gCAAY;IAAvC;QAA2B,8BAAY;IAMvC,CAAC;IAAD,mBAAC;AAAD,CAAC,AAND,CAA2B,YAAY,GAMtC;AAED,iBAAS,YAAY,CAAC"}

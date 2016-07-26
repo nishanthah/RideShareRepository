@@ -8,6 +8,7 @@ class UserMongooseDAO implements IUserDAO
 {
     onSelectedUserDataReceived: (error: Error, userData: IUser) => void ;
     onUserAdded: (error: Error, status: boolean) => void;
+    onUserUpdated: (error: Error, status: boolean) => void;
     constructor() {
         mongoose.connect(Config.database);
     }
@@ -33,7 +34,28 @@ class UserMongooseDAO implements IUserDAO
 
     updateUser(user: IUser)
     {
+        var status: boolean;
+        var self = this;
+        User.findOne({ userName: user.userName }, function (err, selecteduser) {
 
+            if (err) self.onUserUpdated(err, null);
+
+            if (!selecteduser) {
+                self.onUserUpdated(new Error("User not found."), null);
+            } else if (selecteduser) {
+                selecteduser.email = user.email;
+                selecteduser.firstName = user.firstName;
+                selecteduser.lastName = user.lastName;
+                selecteduser.password = user.password;
+                selecteduser.userName = user.userName;
+                selecteduser.save(function (err) {
+                    if (err) self.onUserUpdated(err, null);
+
+                    self.onUserUpdated(null, true);
+                });
+            }
+
+        });
     }
 
     getSelectedUser(userName: string)

@@ -84,7 +84,66 @@ class AuthhenticationAPIController{
     }
 
     // /userinfo
-    userinfo(req: express.Request, res: express.Response) {
+    userinfo(req: express.Request, res: express.Response) {              
+
+        try {
+
+            var user = AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
+
+            AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
+                if (req.body.canAccessUserInfo) {
+
+                    var userResponse = new UserResponse();
+                    userResponse.email = user.email;
+                    userResponse.firstName = user.firstName;
+                    userResponse.lastName = user.lastName;
+                    userResponse.userName = user.userName;
+                    userResponse.success = true;
+                    res.json(userResponse);
+                }
+                else {
+                    return res.json({ success: false, message: 'No Permissions to access' });
+                }
+            };
+
+                      
+                       
+        }
+        catch(e){
+            return res.json({ success: false, message: 'Failed to find user.' });
+        } 
+    }
+
+    // /account
+    account(req: express.Request, res: express.Response) {
+
+        var user = new User();
+        user.email = req.body.email;
+        user.firstName = req.body.firstName;
+        user.lastName = req.body.lastName;
+        user.password = req.body.password;
+        user.userName = req.body.userName;
+        try {
+
+            AuthhenticationAPIController.userDAO.updateUser(user);
+            AuthhenticationAPIController.userDAO.onUserUpdated = (error: Error, status: boolean) => {
+                if (status) {
+                    res.json({ success: true });
+                }
+                else {
+                    res.json({ success: false, message: "Cant update the User" });
+                }
+            };
+
+        }
+        catch (e) {
+            res.json({ success: false, message: e.message });
+        }
+
+    }
+
+    // 
+    token(req: express.Request, res: express.Response, next: express.NextFunction) {
 
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         var self = this;
@@ -96,34 +155,23 @@ class AuthhenticationAPIController{
                 } else {
 
                     try {
-
-                        var user = AuthhenticationAPIController.userDAO.getSelectedUser(decoded.userName);
-
-                        AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
-                            if (decoded.canAccessUserInfo) {
-
-                                var userResponse = new UserResponse();
-                                userResponse.email = user.email;
-                                userResponse.firstName = user.firstName;
-                                userResponse.lastName = user.lastName;
-                                userResponse.userName = user.userName;
-                                userResponse.success = true;
-                                res.json(userResponse);
-                            }
-                            else {
-                                return res.json({ success: false, message: 'No Permissions to access' });
-                            }
-                        };
-
-                      
-                       
+                        if (decoded.userName)
+                        {
+                            req.body.userName = decoded.userName;
+                            req.body.canAccessUserInfo =decoded.canAccessUserInfo;
+                            next();
+                        }
+                        else
+                            return res.json({ success: false, message: 'No user found' });
                     }
-                    catch(e){
+                    catch (e) {
                         return res.json({ success: false, message: 'Failed to find user.' });
-                    } 
+                    }
                 }
             });
         }
+        else
+            return res.json({ success: false, message: 'Token not found.' });
     }
 
 }

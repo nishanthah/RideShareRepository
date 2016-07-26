@@ -154,18 +154,10 @@ namespace RideShare.ViewModels
                 EMail = this.Email,
                 Password = this.Password
             };
-
-            //var updateUpSucceeded = AreDetailsValid(user);
-
-            //if (updateUpSucceeded)
-            //{
-            //    var result = Session.AuthenticationService.UpdateUser(user);
-            //    this.signUpPageProcessor.MoveToMainPage();
-            //}
-            //else
-            //{
-            //    ErrorMessage = "Update up failed";
-            //}
+          
+            var result = Session.AuthenticationService.UpdateUser(user);
+            this.signUpPageProcessor.MoveToMainPage();
+           
         }
 
 

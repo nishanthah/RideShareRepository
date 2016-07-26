@@ -2,7 +2,8 @@
 
 interface IUserDAO {
     onSelectedUserDataReceived: (error: Error, userData: IUser) => void ;
-    onUserAdded: (error: Error, status: boolean)=> void;
+    onUserAdded: (error: Error, status: boolean) => void;
+    onUserUpdated: (error: Error, status: boolean) => void;
     addUser(user: IUser);
     updateUser(user: IUser);
     getSelectedUser(userName: string);

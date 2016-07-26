@@ -1,3 +1,4 @@
+"use strict";
 var mongoose = require("mongoose");
 var User = require("../models/mongoose/UserMongooseModel");
 var Config = require("../config");
@@ -23,6 +24,27 @@ var UserMongooseDAO = (function () {
         });
     };
     UserMongooseDAO.prototype.updateUser = function (user) {
+        var status;
+        var self = this;
+        User.findOne({ userName: user.userName }, function (err, selecteduser) {
+            if (err)
+                self.onUserUpdated(err, null);
+            if (!selecteduser) {
+                self.onUserUpdated(new Error("User not found."), null);
+            }
+            else if (selecteduser) {
+                selecteduser.email = user.email;
+                selecteduser.firstName = user.firstName;
+                selecteduser.lastName = user.lastName;
+                selecteduser.password = user.password;
+                selecteduser.userName = user.userName;
+                selecteduser.save(function (err) {
+                    if (err)
+                        self.onUserUpdated(err, null);
+                    self.onUserUpdated(null, true);
+                });
+            }
+        });
     };
     UserMongooseDAO.prototype.getSelectedUser = function (userName) {
         var userData = new User();
@@ -44,6 +66,6 @@ var UserMongooseDAO = (function () {
         });
     };
     return UserMongooseDAO;
-})();
+}());
 module.exports = UserMongooseDAO;
 //# sourceMappingURL=UserDAO.js.map
