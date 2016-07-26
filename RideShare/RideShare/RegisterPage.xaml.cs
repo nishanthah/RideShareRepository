@@ -14,18 +14,18 @@ namespace RideShare
 {
     public partial class RegisterPage : ContentPage,ISignUpPageProcessor
     {
-        bool isNewItem;
+        //bool isNewItem;
 
         IMediaPicker mediaPicker;
         ImageSource imageSource;
         CircleImage profilePhoto;
         String status;
 
-        public RegisterPage(bool isNew = false)
+        public RegisterPage()
         {
             InitializeComponent();
             Content.BindingContext = new SignUpViewModel(this);
-            isNewItem = isNew;
+            //isNewItem = isNew;
 
             profilePhoto = new CircleImage()
             {
@@ -79,6 +79,12 @@ namespace RideShare
             App.Current.MainPage = new NavigationPage(new LogInPage());
             
         }
+
+        public void MoveToMainPage()
+        {
+            App.Current.MainPage = new MainPage();
+        }
+
         //void OnMainPage(object sender, EventArgs e)
         //{
 

@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RideShare.Common
+namespace DriverLocator.Models
 {
-    public interface ISignUpPageProcessor
+    public class UpdateUserLocationResponse : ResponseBase
     {
-        void MoveToLoginPage();
-        void MoveToMainPage();
     }
 }

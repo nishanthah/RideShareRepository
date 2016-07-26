@@ -21,7 +21,7 @@ namespace RideShare.Droid.DependecyServices
 
         public MapSocketServiceDroid()
         {
-            var socket = IO.Socket("http://192.168.1.3:8079");
+            var socket = IO.Socket("http://ridesharemain.herokuapp.com");
             socket.On("coordinate_changed", MapUpdated);
         }
 

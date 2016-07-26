@@ -21,7 +21,7 @@ namespace RideShare
             {
                 Title = "Edit Profile",
                 IconSource = "edit.png",
-                TargetType = typeof(EditProfilePage)
+                TargetType = typeof(RegisterPage)
             });
             masterPageItems.Add(new MasterPageItem
             {

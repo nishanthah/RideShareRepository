@@ -10,6 +10,8 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using UrbanAirship;
+using RideShare.Droid.Services;
+using System.Threading;
 
 namespace RideShare.Droid
 {
@@ -27,6 +29,12 @@ namespace RideShare.Droid
             {                
                 UAirship.Shared().PushManager.UserNotificationsEnabled = true;
             });
+
+            Thread t = new Thread(new ThreadStart(() => {
+                StartService(new Intent(this, typeof(LocationUpdatorService)));
+            }));
+            t.IsBackground = true;
+            t.Start();
         }
         
       

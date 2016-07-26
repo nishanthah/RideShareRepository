@@ -8,11 +8,13 @@ using Newtonsoft.Json;
 using ModernHttpClient;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Android.Util;
 
 namespace Common
 {
     public class BasicAuthorization
     {
+        
         public string UserName { get; set; }
         public string Password { get; set; }
 
@@ -31,6 +33,7 @@ namespace Common
 
     public class HttpRequestHandler
     {
+        private string TAG = "HttpRequestHandler";
         public string AccessToken { get; set; }
         public string Url { get; set; }
         public string Method { get; set; }
@@ -108,7 +111,11 @@ namespace Common
             }
             catch (Exception ex)
             {
-                throw ex;
+                Log.Debug(TAG + " ERROR", ex.Message);
+                Log.Debug(TAG + " ERROR", ex.StackTrace);
+                var formated = "{\"success\":\"false\",\"message\":\"" + ex.Message + "\"}";
+                return JsonConvert.DeserializeObject<TResult>(formated);
+                //throw ex;
             }
 
 

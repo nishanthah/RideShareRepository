@@ -11,6 +11,8 @@ using Xamarin.Forms.Maps;
 using RideShare.Common;
 using GoogleApiClient.Maps;
 using Common.Models;
+using Plugin.Toasts;
+using System.Collections.ObjectModel;
 
 namespace RideShare
 {
@@ -18,9 +20,11 @@ namespace RideShare
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
+        CustomPin selectedPin;
         IMapSocketService mapSocketService;
         SendRequestViewModel sendRequestViewModel;
         IBaseUrl baseResource;
+        List<CustomPin> customPins;
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
 
 
@@ -29,7 +33,7 @@ namespace RideShare
         {
             Init();
            
-            LoadUserData();
+            LoadUserData(true);
             //RenderLine();
         }
 
@@ -46,12 +50,17 @@ namespace RideShare
             //{
             //messageLabel.Text = pin.Id.ToString();
             //}
+            selectedPin = pin;
             ShowPopupBox();
         }
 
         private void Init()
         {
             InitializeComponent();
+
+            InitPopup();
+            notificationPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
+           
             mapSocketService = DependencyService.Get<IMapSocketService>();
             baseResource = DependencyService.Get<IBaseUrl>();
             
@@ -71,6 +80,35 @@ namespace RideShare
             mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
+
+        }
+
+        private void InitPopup()
+        {
+            sendingPopupForeground.BackgroundColor = new Color(0, 0, 0, 0.5);
+            sendRequestButon.Clicked += SendRequestButon_Clicked;
+        }
+
+        private void SendRequestButon_Clicked(object sender, EventArgs e)
+        {
+            RideHistory rideHistory = new RideHistory();
+            rideHistory.UserName = Session.CurrentUserName;
+            rideHistory.DiverUserName = selectedPin.UserName;
+            rideHistory.SourceName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, selectedPin.Pin.Position.Latitude, selectedPin.Pin.Position.Longitude);
+            rideHistory.SourceLongitude = selectedPin.Pin.Position.Longitude.ToString();
+            rideHistory.SourceLatitude = selectedPin.Pin.Position.Latitude.ToString() ;
+            rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, App.CurrentLoggedUser.Location.Latitude, App.CurrentLoggedUser.Location.Longitude);
+            rideHistory.DestinationLongitude = App.CurrentLoggedUser.Location.Longitude;
+            rideHistory.DestinationLatitude = App.CurrentLoggedUser.Location.Latitude;
+            var result = driverLocatorService.CreateHistory(rideHistory);
+            if (result.IsSuccess)
+            {
+                HidePopupBox();
+                DisplayAlert("Success", "Successfully sent the notification to driver", "Ok");
+                //this.ShowNotificationPopup("Successfully sent the notification to driver");
+                //var notificator = DependencyService.Get<IToastNotificator>();
+                //notificator.Notify(ToastNotificationType.Success, "Success", "Successfully sent the notification to driver", TimeSpan.FromSeconds(3));
+            }
         }
 
         private void CancelPopupButton_Clicked(object sender, EventArgs e)
@@ -80,10 +118,11 @@ namespace RideShare
 
         void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
         {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                LoadUserData();
-            });
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+                LoadUserData(false);
+           // });
+            
         }
 
         void OnLocationSelecteResult(LocationSearchResult result)
@@ -91,17 +130,31 @@ namespace RideShare
             destinationText.Text =String.Format("{0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
         }
 
-        private void LoadUserData()
+        private void LoadUserData(bool canMoveToLocation)
         {
+
             //var userCoordinates = driverLocatorService.ViewUserCoordinates();
             //ShowOnLabels(userCoordinates.UserCoordinates);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                map.Pins.Clear();
+                map.CustomPins.Clear();
+                customPins= new List<CustomPin>() ;
+                var drivers = driverLocatorService.GetDrivers();
+                var rider = App.CurrentLoggedUser;
+                var currentRiders = new List<UserLocation>();
+                currentRiders.Add(rider);
+                ShowOnMap(drivers.UserLocations, canMoveToLocation);
+                ShowOnMap(currentRiders, canMoveToLocation);
+                map.CustomPins = customPins;
 
-            var drivers = driverLocatorService.GetDrivers();
-            var rider = App.CurrentLoggedUser;
-            var currentRiders = new List<UserLocation>();
-            currentRiders.Add(rider);
-            ShowOnMap(drivers.UserLocations);
-            ShowOnMap(currentRiders);
+                if (canMoveToLocation)
+                {
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Distance.FromKilometers(2)));
+                }
+
+            });
+           
         }
 
         //private List<UserLocation> TestSeed()
@@ -121,18 +174,18 @@ namespace RideShare
         private void ShowNotificationInMap(NotificationInfo notificationInfo)
         {
             map.Pins.Clear();
-            map.CustomPins.Clear();
-            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(), notificationInfo.Source.LocationName,UserType.Driver, "", "userLogActive_icon.png");
-            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(), notificationInfo.Destination.LocationName,UserType.Rider,"", "driverLogActive_icon.png");
+            map.CustomPins = new List<CustomPin>();
+            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(),true, notificationInfo.Source.LocationName,UserType.Driver, String.Empty, "userLogActive_icon.png",String.Empty);
+            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(),true, notificationInfo.Destination.LocationName,UserType.Rider,String.Empty, "driverLogActive_icon.png",String.Empty);
             RenderLine(notificationInfo.Source, notificationInfo.Destination);
         }
 
-        private void ShowOnMap(List<UserLocation> userCoordinates)
+        private void ShowOnMap(List<UserLocation> userCoordinates,bool canMoveToLocation)
         {
 
             foreach (var item in userCoordinates)
             {
-                RenderPin(item.Location.Longitude, item.Location.Latitude, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png");
+                RenderPin(item.Location.Longitude, item.Location.Latitude, canMoveToLocation, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png",item.User.UserName);
             }
 
         }
@@ -159,7 +212,7 @@ namespace RideShare
             map.OnInfoWindowClicked = OnInfoWindowClicked;
         }
 
-        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate, string lable,UserType userType,string mobileNo,string image)
+        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate,bool canMoveToLoacation, string lable,UserType userType,string mobileNo,string image,string userName)
         {
             double latitude = 0;
             double longitude = 0;
@@ -181,14 +234,14 @@ namespace RideShare
                 UserType = userType,
                 MobileNo = "Mobile No:" + mobileNo,
                 Image = "profile_images/" + image,
+                UserName = userName,
                 Id = Guid.NewGuid()
             };
 
-            map.CustomPins.Add(pin);
-            
+            //map.CustomPins.Add(pin);
             map.Pins.Add(pin.Pin);
-
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(latitude, longitude), Distance.FromKilometers(3)));
+            customPins.Add(pin);
+   
         }
 
         private void RenderLine(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
@@ -200,27 +253,28 @@ namespace RideShare
             //var source = new GoogleApiClient.Models.Coordinate() { Latitude = 7.087310, Longitude = 80.014366 };
             //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
             var directions  = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
-
-            foreach(var route in directions.Routes)
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromKilometers(10)));
+            foreach (var route in directions.Routes)
             {
                 foreach(var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)
                 {
                     map.RouteCoordinates.Add(new Position(coordinates.Latitude, coordinates.Longitude));
                 }
             }
-            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromMiles(50)));
+            
         }
 
         private void ShowPopupBox()
         {
-            sendingPopupBack.IsVisible = true;
+            //sendingPopupBack.IsVisible = true;
             sendingPopupForeground.IsVisible = true;
         }
 
         private void HidePopupBox()
         {
-            sendingPopupBack.IsVisible = false;
+            //sendingPopupBack.IsVisible = false;
             sendingPopupForeground.IsVisible = false;
         }
+
     }
 }

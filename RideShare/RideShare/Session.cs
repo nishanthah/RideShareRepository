@@ -14,8 +14,8 @@ namespace RideShare
 
         public static string CurrentUserName { get; set; }
         public static UserType CurrentUserType { get; set; }
-        public static string AppKey { get { return "IsFOZ2ABTlKQOEvJJkEJ5Q"; } }
+        public static string AppKey { get { return "7RaPmFE0QP-L_pDKsTyLCA"; } }
         //public static string AppMasterSecret { get { return "bXBa8jeLTIObXeOEuNzFBQ"; } }
-        public static string AppMasterSecret { get { return "c7aYTrIvTZyVPomI04FQRA"; } }
+        public static string AppMasterSecret { get { return "JEf6KdsJRY-G7a6QOg19Jg"; } }
     }
 }
