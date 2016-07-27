@@ -116,23 +116,23 @@ namespace DriverLocator
             return result;
         }
 
-        public UserLocationResponse GetDrivers()
+        public async Task<UserLocationResponse> GetDrivers()
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = "GET";
             requestHandler.Url = GET_DRIVERS_URL;
-            var result = requestHandler.SendRequest<UserLocationResponse>();
+            var result = await requestHandler.SendRequestAsync<UserLocationResponse>();
             return result;
         }
 
-        public UserLocationResponse GetRiders()
+        public async Task<UserLocationResponse> GetRiders()
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = "GET";
             requestHandler.Url = GET_RIDERS_URL;
-            var result = requestHandler.SendRequest<UserLocationResponse>();
+            var result = await requestHandler.SendRequestAsync<UserLocationResponse>();
             return result;
         }
     }

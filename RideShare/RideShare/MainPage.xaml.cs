@@ -21,9 +21,10 @@ namespace RideShare
             {
                 Master.Icon = "swap.png";
             }
-            Detail = new NavigationPage(new MapView());
+            //Detail = new NavigationPage(new MapView());
         }
 
+     
         public MainPage(NotificationInfo notificationInfo) : this()
         {
             RenderMianPageWithNotificationInfo(notificationInfo);

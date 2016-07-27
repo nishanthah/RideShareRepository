@@ -37,7 +37,7 @@ namespace RideShare.Droid.Services
                 while(true)
                 {
                     locationUtility.UpdateCurrentLocation();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(5000);
                 }
             });
             t.IsBackground = false;
