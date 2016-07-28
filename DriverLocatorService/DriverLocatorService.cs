@@ -20,7 +20,7 @@ namespace DriverLocator
         private const string CREATE_RIDEHISTORY_URL = SERVER + "/api/ridehistory";
         private const string RIDEHISTORY_BY_FILTER_URL = SERVER + "/api/ridehistory/{0}/?filter={1}";
         private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/ridehistory/status/{0}";
-        private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/type";
+        private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/{0}/type";
         private const string UPDATE_USER_LOCATION_URL = SERVER + "/api/users/{0}/location";
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
@@ -106,12 +106,12 @@ namespace DriverLocator
             return result;
         }
 
-        public UpdateUserTypeResponse UpdateUserType(UpdateUserTypeRequest request)
+        public UpdateUserTypeResponse UpdateUserType(string userName,UpdateUserTypeRequest request)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = "PUT";
-            requestHandler.Url = UPDATE_USER_TYPE_URL;
+            requestHandler.Url =String.Format(UPDATE_USER_TYPE_URL,userName);
             var result = requestHandler.SendRequest<UpdateUserTypeRequest, UpdateUserTypeResponse>(request);
             return result;
         }

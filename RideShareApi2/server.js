@@ -228,9 +228,9 @@ apiRoutes.get('/users', function(req, res) {
 
 });
 
-apiRoutes.put('/users/type', function (req, res) {
+apiRoutes.put('/users/:userName/type', function (req, res) {
 	
-	UserCoordinate.findOne({ userName : req.userInfo.userName }, function (err, user) {
+	UserCoordinate.findOne({ userName : req.params.userName }, function (err, user) {
 		
 		if (err) res.json({ success: false, message: err });
 		
