@@ -57,7 +57,7 @@ namespace RideShare.ViewModels
 
             if (isValid)
             {
-
+                UpdateUserInLocal();
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;
@@ -73,7 +73,7 @@ namespace RideShare.ViewModels
                 }
                 else
                 {
-                    loginProcessor.MoveToCreateUserPage();
+                    loginProcessor.MoveToMainPage();
                 }
             }
             else
@@ -128,6 +128,18 @@ namespace RideShare.ViewModels
                 errorMessage = value;
                 OnPropertyChanged("ErrorMessage");
             }
+        }
+
+        public void UpdateUserInLocal()
+        {
+            var result = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken);
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+            DriverLocator.Models.User dlUser = new DriverLocator.Models.User();
+            dlUser.UserName = this.UserName;
+            dlUser.FirstName = result.FirstName;
+            dlUser.LastName = result.LastName;
+            dlUser.EMail = result.EMail;           
+            var response = driverLocatorService.SaveUserData(dlUser);
         }
     }
 }
