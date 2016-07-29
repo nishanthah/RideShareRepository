@@ -1,4 +1,7 @@
-﻿using RideShare.Common;
+﻿using GoogleApiClient.Maps;
+using GoogleApiClient.Models;
+using RideShare.Common;
+using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,9 +13,12 @@ namespace RideShare.ViewPresenter
     public class BaseMapViewPresenter
     {
         protected IMapPageProcessor mapPageProcessor;
-        public BaseMapViewPresenter(IMapPageProcessor mapPageProcessor)
+        protected IMapSocketService mapSocketService;
+        public BaseMapViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService)
         {
             this.mapPageProcessor = mapPageProcessor;
+            this.mapSocketService = mapSocketService;           
+            Init();
         }
 
         private void Init()
@@ -21,6 +27,12 @@ namespace RideShare.ViewPresenter
             mapPageProcessor.OnPopupCanceled = OnPopupCanceled;
             mapPageProcessor.OnPopupConfirmed = OnPopupConfirmed;
             mapPageProcessor.OnNewCoordinatesRecived = OnNewCoordinatesRecived;
+            mapSocketService.MapCoordinateChanged += OnNewCoordinateChanged;
+        }
+
+        private void OnNewCoordinateChanged(object sender, EventArgs e)
+        {
+            OnNewCoordinatesRecived();
         }
 
         protected virtual void OnMapInfoWindowClicked(CustomPin customPin) { }
@@ -28,9 +40,20 @@ namespace RideShare.ViewPresenter
         protected virtual void OnPopupConfirmed() { }
         protected virtual void OnNewCoordinatesRecived() { }
         protected virtual void LoadPinData() { }
-        protected virtual void RefreshPins()
+
+        protected virtual GetDirectionsResponse GetDirections(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
         {
-            mapPageProcessor.RefreshPins(true, LoadPinData);
+            GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
+            var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
+            var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
+            var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
+            return directions;
         }
+
+        protected virtual void RefreshPins(bool mooveToLocation)
+        {
+            mapPageProcessor.RefreshPins(mooveToLocation, LoadPinData);
+        }
+        
     }
 }

@@ -57,7 +57,7 @@ namespace RideShare.ViewModels
 
             if (isValid)
             {
-                UpdateUserInLocal();
+                //UpdateUserInLocal();
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;

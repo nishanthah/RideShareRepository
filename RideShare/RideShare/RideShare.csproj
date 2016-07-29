@@ -97,6 +97,7 @@
     <Compile Include="ViewModels\SendRequestViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewPresenter\BaseMapViewPresenter.cs" />
+    <Compile Include="ViewPresenter\DriverNavigationViewPresenter.cs" />
     <Compile Include="ViewPresenter\RiderNavigationViewPresenter.cs" />
     <Compile Include="ViewPresenter\RiderViewPresenter.cs" />
   </ItemGroup>

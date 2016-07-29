@@ -57,17 +57,18 @@ namespace RideShare
         public LocationSearchResult SelectedDestination { get; private set; }
 
         static NotificationInfo notificationInfo;
-
+        BaseMapViewPresenter precenter;
         public MapView()
         {
-            Init();
-            new RiderViewPresenter(this);    
+            Init();            
+            precenter = new RiderViewPresenter(this,mapSocketService);
+            
         }
 
         public MapView(NotificationInfo notificationInfoData)
         {
             Init();
-            notificationInfo = notificationInfoData;
+            precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo);
         }
 
         async void OnInfoWindowClicked(CustomPin pin)
@@ -78,55 +79,34 @@ namespace RideShare
 
         private void Init()
         {
+           
             InitializeComponent();
             InitMap();
             InitPopup();
             MapPins = new List<CustomPin>();
-            mapSocketService = DependencyService.Get<IMapSocketService>();
+           
                     
             notificationPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
             destinationSelector.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDestinationSelector));
 
-            mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
+            
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
+            sendRequestButon.Clicked += SendRequestButon_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
             this.OnMapInfoWindowClicked = OnInfoWindowClicked;
-            
+            mapSocketService = DependencyService.Get<IMapSocketService>();
+
 
         }
 
-        private void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
+        private void SendRequestButon_Clicked(object sender, EventArgs e)
         {
-            this.OnNewCoordinatesRecived();
+            OnPopupConfirmed();
         }
 
         private void InitPopup()
         {
             sendingPopupForeground.BackgroundColor = new Color(0, 0, 0, 0.5);
-            sendRequestButon.Clicked += SendRequestButon_Clicked;
-        }
-
-        private void SendRequestButon_Clicked(object sender, EventArgs e)
-        {
-            //RideHistory rideHistory = new RideHistory();
-            //rideHistory.UserName = Session.CurrentUserName;
-            //rideHistory.DiverUserName = selectedPin.UserName;
-            //rideHistory.SourceName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, selectedPin.Pin.Position.Latitude, selectedPin.Pin.Position.Longitude);
-            //rideHistory.SourceLongitude = selectedPin.Pin.Position.Longitude.ToString();
-            //rideHistory.SourceLatitude = selectedPin.Pin.Position.Latitude.ToString() ;
-            //rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, App.CurrentLoggedUser.Location.Latitude, App.CurrentLoggedUser.Location.Longitude);
-            //rideHistory.DestinationLongitude = App.CurrentLoggedUser.Location.Longitude;
-            //rideHistory.DestinationLatitude = App.CurrentLoggedUser.Location.Latitude;
-            //var result = driverLocatorService.CreateHistory(rideHistory);
-            //if (result.IsSuccess)
-            //{
-            //    HidePopupBox();
-            //    appData.Save("selected_pin_username", rideHistory.DiverUserName);
-            //    DisplayAlert("Success", "Successfully sent the notification to driver", "Ok");
-            //    //this.ShowNotificationPopup("Successfully sent the notification to driver");
-            //    //var notificator = DependencyService.Get<IToastNotificator>();
-            //    //notificator.Notify(ToastNotificationType.Success, "Success", "Successfully sent the notification to driver", TimeSpan.FromSeconds(3));
-            //}
         }
 
         //#region BusinessProcessRelatedFunctions
@@ -169,6 +149,8 @@ namespace RideShare
         ////    //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
         ////    var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
         ////    //map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromKilometers(10)));
+        List<Position> routeCoordinates = new List<Position>();
+
         ////    foreach (var route in directions.Routes)
         ////    {
         ////        foreach (var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)
@@ -291,7 +273,7 @@ namespace RideShare
 
         private void CancelPopupButton_Clicked(object sender, EventArgs e)
         {
-            HidePopupBox();
+            OnPopupCanceled();
         }
 
         void OnTapDestinationSelector(View sender, object e)
