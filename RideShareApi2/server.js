@@ -81,11 +81,9 @@ apiRoutes.post('/users', function(req, res) {
 	{
 		
 		userCoordinate.firstName= req.body.firstName;
-		userCoordinate.lastName= req.body.lastName;
-		userCoordinate.longitude= req.body.longitude;
-		userCoordinate.latitude= req.body.latitude;
-		userCoordinate.userType = req.body.userType;
-		userCoordinate.mobileNo = req.body.mobileNo;
+		userCoordinate.lastName= req.body.lastName;		
+		userCoordinate.email = req.body.email;
+		//userCoordinate.mobileNo = req.body.mobileNo;
 		userCoordinate.save(function(err) {
 			if (err) res.json({ success: false, message:err });
 
@@ -101,11 +99,8 @@ apiRoutes.post('/users', function(req, res) {
 			userName:req.body.userName,
 			email:req.body.email,
 			firstName:req.body.firstName,
-			lastName:req.body.lastName,
-			longitude: req.body.longitude,
-			latitude: req.body.latitude,
-			userType: req.body.userType,
-			mobileNo: req.body.mobileNo
+			lastName:req.body.lastName,			
+			//mobileNo: req.body.mobileNo
 		});
 		
 		newUserCoordinate.save(function(err) {
