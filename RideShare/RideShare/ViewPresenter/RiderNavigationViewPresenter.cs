@@ -21,9 +21,9 @@ namespace RideShare.ViewPresenter
             RefreshPins(true);
         }
 
-        protected override void LoadPinData()
+        protected override List<CustomPin> LoadPinData()
         {
-            mapPageProcessor.MapPins = new List<CustomPin>();
+            List<CustomPin> mapPins = new List<CustomPin>();
             var notification = driverLocatorService.GetRideHistoryByFilter("_id", rideHistoryId).RideHistories.FirstOrDefault();
             var driver = driverLocatorService.GetSelectedUserCoordinate(notification.DiverUserName).UserLocation;
             var rider = driverLocatorService.GetSelectedUserCoordinate(notification.UserName).UserLocation;
@@ -50,7 +50,7 @@ namespace RideShare.ViewPresenter
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
-            mapPageProcessor.AddPin(driverPin);
+            mapPins.Add(GetFromatted(driverPin));
 
             // Create rider pin
             var riderPin = new MapPin();
@@ -70,7 +70,8 @@ namespace RideShare.ViewPresenter
             riderPin.UserName = rider.User.UserName;
             riderPin.UserType = rider.User.UserType;
 
-            mapPageProcessor.AddPin(riderPin);
+            mapPins.Add(GetFromatted(riderPin));
+            return mapPins;
         }
    
         protected override void OnMapInfoWindowClicked(CustomPin customPin)
@@ -91,6 +92,29 @@ namespace RideShare.ViewPresenter
         protected override void OnNewCoordinatesRecived()
         {
             RefreshPins(false);
+        }
+
+
+        private CustomPin GetFromatted(MapPin mapPin)
+        {
+            var position = new Position(mapPin.Latitude, mapPin.Longitude);
+
+            var pin = new CustomPin
+            {
+                Pin = new Pin
+                {
+                    Type = PinType.Place,
+                    Position = position,
+                    Label = mapPin.Title,
+                },
+                Title = mapPin.Title,
+                UserType = mapPin.UserType,
+                MobileNo = "Mobile No:" + mapPin.PhoneNo,
+                Image = "profile_images/" + mapPin.ImageIcon,
+                UserName = mapPin.UserName,
+                Id = Guid.NewGuid()
+            };
+            return pin;
         }
 
     }

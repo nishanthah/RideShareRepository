@@ -7,11 +7,16 @@ using Xamarin.Forms.Maps;
 
 namespace RideShare.Common
 {
+    public class InfoWindowContent
+    {
+        public string Title { get; set; }
+        public string Description { get; set; }
+    }
     public interface IMapPageProcessor
     {
         Action<CustomPin> OnMapInfoWindowClicked { get; set; }
-        Action OnPopupConfirmed { get; set; }
-        Action OnPopupCanceled { get; set; }
+        Action OnSendNotificationPopupConfirmed { get; set; }
+        Action OnSendNotificationPopupCanceled { get; set; }
         Action OnNewCoordinatesRecived { get; set; }
         RouteData RouteResult { get; set; }
         List<CustomPin> MapPins { get; set; }
@@ -19,10 +24,12 @@ namespace RideShare.Common
         LocationSearchResult SelectedDestination { get; }
 
         void AddPin(MapPin mapPin);
-        void RefreshPins(bool canMoveToLocation, Action loadPinsAction);
-        void ShowRoute(Func<RouteData> getDataFunction);
-        void ShowPopupBox(string title);
-        void HidePopupBox();
+        void RefreshPins(bool canMoveToLocation, Func<List<CustomPin>> loadPinsFunction);
+        void RefreshRoute(bool canMoveToLocation, Func<RouteData> loadRouteFunction);
+        void ShowSendNotificationPopupBox(string title);
+        void HideSendNotificationPopupBoxPopupBox();
+        void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent);
+        void HideInfoWindowPopupBox();
 
     }
 }

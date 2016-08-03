@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms.Maps;
 
 namespace RideShare.ViewPresenter
 {
@@ -21,22 +22,23 @@ namespace RideShare.ViewPresenter
         bool isRideRequested = false;
         string rideHistoryId = String.Empty;
 
-        protected override void LoadPinData()
+        protected override List<CustomPin> LoadPinData()
         {
            if(isRideRequested)
             {
-                LoadOnlyRideData();
+                return LoadOnlyRideData();
             }
            else
             {
-                LoadAllData();
+                return LoadAllData();
             }
         }
 
-        private void LoadAllData()
+        private List<CustomPin> LoadAllData()
         {
-            mapPageProcessor.MapPins = new List<CustomPin>();
+            List<CustomPin> mapPins= new List<CustomPin>();
             var drivers = driverLocatorService.GetDrivers().Result;
+
             foreach (var driver in drivers.UserLocations)
             {
                 MapPin pin = new MapPin();
@@ -47,7 +49,7 @@ namespace RideShare.ViewPresenter
                 pin.Title = driver.User.FirstName + " " + driver.User.LastName + " | Position : " + driver.Location.Longitude + " , " + driver.Location.Latitude;
                 pin.UserName = driver.User.UserName;
                 pin.UserType = driver.User.UserType;
-                mapPageProcessor.AddPin(pin);
+                mapPins.Add(GetFromatted(pin));
             }
 
             var riderPin = new MapPin();
@@ -58,12 +60,14 @@ namespace RideShare.ViewPresenter
             riderPin.Title = App.CurrentLoggedUser.User.FirstName + " " + App.CurrentLoggedUser.User.LastName + " | Position : " + App.CurrentLoggedUser.Location.Longitude + " , " + App.CurrentLoggedUser.Location.Latitude;
             riderPin.UserName = App.CurrentLoggedUser.User.UserName;
             riderPin.UserType = App.CurrentLoggedUser.User.UserType;
-            mapPageProcessor.AddPin(riderPin);
+            mapPins.Add(GetFromatted(riderPin));
+
+            return mapPins;
         }
 
-        private void LoadOnlyRideData()
+        private List<CustomPin> LoadOnlyRideData()
         {
-            mapPageProcessor.MapPins = new List<CustomPin>();
+            List<CustomPin> mapPins = new List<CustomPin>();
             var notification = driverLocatorService.GetRideHistoryByFilter("_id", rideHistoryId).RideHistories.FirstOrDefault();
             var driver = driverLocatorService.GetSelectedUserCoordinate(notification.DiverUserName).UserLocation;
             var rider = driverLocatorService.GetSelectedUserCoordinate(notification.UserName).UserLocation;
@@ -90,7 +94,7 @@ namespace RideShare.ViewPresenter
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
-            mapPageProcessor.AddPin(driverPin);
+            mapPins.Add(GetFromatted(driverPin));
 
             // Create rider pin
             var riderPin = new MapPin();
@@ -109,18 +113,19 @@ namespace RideShare.ViewPresenter
 
             riderPin.UserName = rider.User.UserName;
             riderPin.UserType = rider.User.UserType;
+            mapPins.Add(GetFromatted(riderPin));
 
-            mapPageProcessor.AddPin(riderPin);
+            return mapPins;
         }
 
         protected override void OnMapInfoWindowClicked(CustomPin customPin)
         {
-            mapPageProcessor.ShowPopupBox("Are you sure you want to send the pickup request to this driver?");
+            mapPageProcessor.ShowSendNotificationPopupBox("Are you sure you want to send the pickup request to this driver?");
         }
 
         protected override void OnPopupCanceled()
         {
-            mapPageProcessor.HidePopupBox();
+            mapPageProcessor.HideSendNotificationPopupBoxPopupBox();
         }
 
         protected override void OnPopupConfirmed()
@@ -137,11 +142,33 @@ namespace RideShare.ViewPresenter
             var result = driverLocatorService.CreateHistory(rideHistory);
             if (result.IsSuccess)
             {
-                mapPageProcessor.HidePopupBox();
+                mapPageProcessor.HideSendNotificationPopupBoxPopupBox();
                 isRideRequested = true;
                 rideHistoryId = result.RequestId;
                 RefreshPins(true);
             }
+        }
+
+        private CustomPin GetFromatted(MapPin mapPin)
+        {
+            var position = new Position(mapPin.Latitude, mapPin.Longitude);
+
+            var pin = new CustomPin
+            {
+                Pin = new Pin
+                {
+                    Type = PinType.Place,
+                    Position = position,
+                    Label = mapPin.Title,
+                },
+                Title = mapPin.Title,
+                UserType = mapPin.UserType,
+                MobileNo = "Mobile No:" + mapPin.PhoneNo,
+                Image = "profile_images/" + mapPin.ImageIcon,
+                UserName = mapPin.UserName,
+                Id = Guid.NewGuid()
+            };
+            return pin;
         }
 
         protected override void OnNewCoordinatesRecived()

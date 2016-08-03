@@ -51,23 +51,23 @@ namespace RideShare.Utilities
 
                             App.CurrentLoggedUser.Location.Latitude = location.Latitude.ToString();
                             App.CurrentLoggedUser.Location.Longitude = location.Longitude.ToString();
-                            Log.Debug(TAG, System.String.Format("Updated App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                            //Log.Debug(TAG, System.String.Format("Updated App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
                         }
                         catch (System.Exception ex)
                         {
-                            Log.Debug(TAG, System.String.Format("Skipped Update App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                            //Log.Debug(TAG, System.String.Format("Skipped Update App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
                         }
                     }
                 }
                 else
                 {
-                    Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                   // Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
                 }
 
             }
             else
             {
-                Log.Debug(TAG, "User not logged in for update location");
+                //Log.Debug(TAG, "User not logged in for update location");
             }
             
         }

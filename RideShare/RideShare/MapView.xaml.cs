@@ -42,14 +42,14 @@ namespace RideShare
 
     public partial class MapView : ContentPage,IMapPageProcessor,ILocationSelectionResult
     {
-        
+        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
         IMapSocketService mapSocketService;
 
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
         public Action<CustomPin> OnMapInfoWindowClicked { get; set; }
-        public Action OnPopupConfirmed { get; set; }
-        public Action OnPopupCanceled { get; set; }
+        public Action OnSendNotificationPopupConfirmed { get; set; }
+        public Action OnSendNotificationPopupCanceled { get; set; }
         public Action OnNewCoordinatesRecived { get; set; }
         public RouteData RouteResult { get; set; }
         public List<CustomPin> MapPins { get; set; }
@@ -68,7 +68,27 @@ namespace RideShare
         public MapView(NotificationInfo notificationInfoData)
         {
             Init();
-            precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo);
+
+            Task<RideHistory>.Factory.StartNew(()=> {
+                return driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();               
+            }).ContinueWith((task) => {
+                var historyInfo = task.Result;
+                if(historyInfo.RequestStatus == RequestStatus.Requested)
+                {
+                    precenter = new DriverNavigationViewPresenter(this, mapSocketService, historyInfo);
+                }
+                else if(historyInfo.RequestStatus == RequestStatus.DriverAccepted)
+                {
+                    precenter = new RiderNavigationViewPresenter(this, mapSocketService, historyInfo.Id);
+                }
+
+                else if (historyInfo.RequestStatus == RequestStatus.DriverAccepted)
+                {
+                    precenter=new RiderViewPresenter(this, mapSocketService);
+                }
+            });
+
+            
         }
 
         async void OnInfoWindowClicked(CustomPin pin)
@@ -92,6 +112,7 @@ namespace RideShare
             
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
             sendRequestButon.Clicked += SendRequestButon_Clicked;
+            cancelinfoWindowPopupButton.Clicked += CancelinfoWindowPopupButton_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
             this.OnMapInfoWindowClicked = OnInfoWindowClicked;
             mapSocketService = DependencyService.Get<IMapSocketService>();
@@ -99,14 +120,20 @@ namespace RideShare
 
         }
 
+        private void CancelinfoWindowPopupButton_Clicked(object sender, EventArgs e)
+        {
+            HideInfoWindowPopupBox();
+        }
+
         private void SendRequestButon_Clicked(object sender, EventArgs e)
         {
-            OnPopupConfirmed();
+            OnSendNotificationPopupConfirmed();
         }
 
         private void InitPopup()
         {
             sendingPopupForeground.BackgroundColor = new Color(0, 0, 0, 0.5);
+            infoWindowPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
         }
 
         //#region BusinessProcessRelatedFunctions
@@ -169,7 +196,7 @@ namespace RideShare
         {
             map = new CustomMap
             {
-                IsShowingUser = true,
+                IsShowingUser = false,
                 HeightRequest = 100,
                 WidthRequest = 960,
                 VerticalOptions = LayoutOptions.FillAndExpand
@@ -202,24 +229,23 @@ namespace RideShare
                 Id = Guid.NewGuid()
             };
 
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                map.Pins.Add(pin.Pin);
-            });
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+            //    map.Pins.Add(pin.Pin);
+            //});
             MapPins.Add(pin);
 
         }
 
-        public void RefreshPins(bool canMoveToLocation,Action loadPinsAction)
+        public void RefreshPins(bool canMoveToLocation,Func<List<CustomPin>> loadPinsFunction)
         {
-            Task.Factory.StartNew(() => {
-                loadPinsAction();
-            }).ContinueWith((task) => {
+            Task<List<CustomPin>>.Factory.StartNew(loadPinsFunction).ContinueWith((task) => {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     map.Pins.Clear();
-                    map.CustomPins.Clear();
-                    map.CustomPins = MapPins;
+                    var result = task.Result;
+                    SetPins(MapPins);
+                    map.CustomPins = result;
 
                     if (canMoveToLocation)
                     {
@@ -229,7 +255,15 @@ namespace RideShare
             });
         }
  
-        public void ShowRoute(Func<RouteData> getDataFunction)
+        private void SetPins(List<CustomPin> customPins)
+        {
+           foreach(var pin in customPins)
+            {
+                map.Pins.Add(pin.Pin);
+            }
+        }
+
+        public void RefreshRoute(bool canMoveToLocation,Func<RouteData> getDataFunction)
         {
             Task<RouteData>.Factory.StartNew(getDataFunction).ContinueWith((task) => {
 
@@ -248,6 +282,10 @@ namespace RideShare
                         AddPin(destinationPin);
                         map.CustomPins = MapPins;
                         map.RouteCoordinates = routeCoordinates;
+                        if (canMoveToLocation)
+                        {
+                            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -258,22 +296,24 @@ namespace RideShare
 
         }
 
-        public void ShowPopupBox(string title)
+        public void ShowSendNotificationPopupBox(string title)
         {
-            notificationMessage.Text = title;
+            //notificationMessage.Text = title;
             //sendingPopupBack.IsVisible = true;
+            sendNotificationLable.Text = title;
             sendingPopupForeground.IsVisible = true;
         }
 
-        public void HidePopupBox()
+        public void HideSendNotificationPopupBoxPopupBox()
         {
+            sendNotificationLable.Text = String.Empty;
             //sendingPopupBack.IsVisible = false;
             sendingPopupForeground.IsVisible = false;
         }
 
         private void CancelPopupButton_Clicked(object sender, EventArgs e)
         {
-            OnPopupCanceled();
+            OnSendNotificationPopupCanceled();
         }
 
         void OnTapDestinationSelector(View sender, object e)
@@ -286,6 +326,20 @@ namespace RideShare
         {
             SelectedDestination = result;
             destinationText.Text = String.Format("{0} (Lat={1}, Lng={2})", result.LocationName, result.Latitude, result.Longitude);
+        }
+
+        public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
+        {
+            infoWindowTitle.Text = infoWindowContent.Title;
+            infoWindowDescription.Text = infoWindowContent.Description;
+            infoWindowPopup.IsVisible = true;            
+        }
+
+        public void HideInfoWindowPopupBox()
+        {
+            infoWindowTitle.Text = String.Empty;
+            infoWindowDescription.Text = String.Empty;
+            infoWindowPopup.IsVisible = false;
         }
 
         #endregion MapViewRelatedFunctions

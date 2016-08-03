@@ -14,6 +14,8 @@ namespace RideShare.ViewPresenter
     {
         protected IMapPageProcessor mapPageProcessor;
         protected IMapSocketService mapSocketService;
+        
+        
         public BaseMapViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService)
         {
             this.mapPageProcessor = mapPageProcessor;
@@ -24,8 +26,8 @@ namespace RideShare.ViewPresenter
         private void Init()
         {
             mapPageProcessor.OnMapInfoWindowClicked = OnMapInfoWindowClicked;
-            mapPageProcessor.OnPopupCanceled = OnPopupCanceled;
-            mapPageProcessor.OnPopupConfirmed = OnPopupConfirmed;
+            mapPageProcessor.OnSendNotificationPopupCanceled = OnPopupCanceled;
+            mapPageProcessor.OnSendNotificationPopupConfirmed = OnPopupConfirmed;
             mapPageProcessor.OnNewCoordinatesRecived = OnNewCoordinatesRecived;
             mapSocketService.MapCoordinateChanged += OnNewCoordinateChanged;
         }
@@ -39,7 +41,8 @@ namespace RideShare.ViewPresenter
         protected virtual void OnPopupCanceled() { }
         protected virtual void OnPopupConfirmed() { }
         protected virtual void OnNewCoordinatesRecived() { }
-        protected virtual void LoadPinData() { }
+        protected virtual List<CustomPin> LoadPinData() { return null; }
+        protected virtual RouteData LoadRouteData() { return null; }
 
         protected virtual GetDirectionsResponse GetDirections(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
         {
@@ -52,8 +55,14 @@ namespace RideShare.ViewPresenter
 
         protected virtual void RefreshPins(bool mooveToLocation)
         {
+            
             mapPageProcessor.RefreshPins(mooveToLocation, LoadPinData);
         }
-        
+
+        protected virtual void RefreshRoute(bool mooveToLocation)
+        {
+            mapPageProcessor.RefreshRoute(mooveToLocation, LoadRouteData);
+        }
+
     }
 }

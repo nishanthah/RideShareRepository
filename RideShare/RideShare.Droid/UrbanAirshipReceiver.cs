@@ -40,7 +40,6 @@ namespace RideShare.Droid
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
             ISharedPreferencesEditor editor = prefs.Edit();
             editor.PutString("urban_airship_client_id", channelId);
-            // editor.Commit();    // applies changes synchronously on older APIs
             editor.Apply();          
             Intent intent = new Intent(ACTION_CHANNEL_UPDATED);
             LocalBroadcastManager.GetInstance(context).SendBroadcast(intent);
@@ -48,38 +47,29 @@ namespace RideShare.Droid
             Intent intent1 = new Intent("com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
             intent1.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
             context.StartActivity(intent1);
-            //com.virtusa.driverlocatorforms.LOADINGCOMPLETED
-            //OnRegistrationSucceeded(this,new OnRegistrationSucceededEventArgs() {ChannelId = channelId });
         }
 
         protected override void OnChannelRegistrationFailed(Context context)
         {
             Log.Info(TAG, "Channel registration failed.");
-            //OnRegistrationFailed(this, null);
         }
 
         protected override void OnPushReceived(Context context, PushMessage message, bool notificationPosted)
         {
            
             Log.Info(TAG, "Received push message. Alert: " + message.Alert + ". Notification posted: " + notificationPosted);
-            //RichPushMessage message = UAirship.Shared().PushManager.
-            //OnPushMessageReceived(this, new OnPushMessageReceivedEventArgs() { Message = message.Alert });
+
             
         }
 
         protected override void OnNotificationPosted(Context context, AirshipReceiver.NotificationInfo notificationInfo)
         {
             Log.Info(TAG, "Notification posted. Alert: " + notificationInfo.Message.Alert + ". Notification ID: " + notificationInfo.NotificationId);
-            //OnPushNotificationPosted(this, new OnPushNotificationPostedEventArgs() { Message = notificationInfo.Message.Alert, NotificationId = notificationInfo.NotificationId });
         }
 
         protected override bool OnNotificationOpened(Context context, AirshipReceiver.NotificationInfo notificationInfo)
         {
             Log.Info(TAG, "Notification opened. Alert: " + notificationInfo.Message.Alert + ". Notification ID: " + notificationInfo.NotificationId);
-
-            //OnPushNotificationOpened(this, new OnPushNotificationOpenedEventArgs() { Message = notificationInfo.Message.Alert, NotificationId = notificationInfo.NotificationId, Button= ButtonType.None });
-            // Return false here to allow Urban Airship to auto launch the launcher
-            // activity for foreground notification action buttons
             return false;
         }
 
@@ -92,12 +82,6 @@ namespace RideShare.Droid
                 Intent intent = new Intent(KEY_NOTIFICATION_INTENT);
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
-                intent.PutExtra(MainActivity.KEY_SOURCE_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_NAME_EXTRA));
-                intent.PutExtra(MainActivity.KEY_SOURCE_LATITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_LATITUDE_EXTRA));
-                intent.PutExtra(MainActivity.KEY_SOURCE_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_SOURCE_LONGITUDE_EXTRA));
-                intent.PutExtra(MainActivity.KEY_DESTINATION_NAME_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_NAME_EXTRA));
-                intent.PutExtra(MainActivity.KEY_DESTINATION_LATITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_LATITUDE_EXTRA));
-                intent.PutExtra(MainActivity.KEY_DESTINATION_LONGITUDE_EXTRA, messageBundle.GetString(MainActivity.KEY_DESTINATION_LONGITUDE_EXTRA));
                 context.StartActivity(intent);
             }
             else
@@ -110,7 +94,6 @@ namespace RideShare.Droid
         protected override void OnNotificationDismissed(Context context, AirshipReceiver.NotificationInfo notificationInfo)
         {
             Log.Info(TAG, "Notification dismissed. Alert: " + notificationInfo.Message.Alert + ". Notification ID: " + notificationInfo.NotificationId);
-            //OnPushNotificationDismissed(this, new OnPushNotificationDismissedEventArgs() { Message = notificationInfo.Message.Alert, NotificationId = notificationInfo.NotificationId });
         }
     }
 }

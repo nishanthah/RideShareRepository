@@ -14,20 +14,20 @@ namespace RideShare.ViewPresenter
     public class DriverNavigationViewPresenter : BaseMapViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-        NotificationInfo notificationInfo;
+        RideHistory rideHistory;
 
-        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, NotificationInfo notificationInfo):base(mapPageProcessor,mapSocketService)
+        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory):base(mapPageProcessor,mapSocketService)
         {
-            this.notificationInfo = notificationInfo;
-            RefreshPins(true);
+            this.rideHistory = rideHistory;
+            //RefreshRoute(true);
         }
 
-        protected override void LoadPinData()
+        protected override RouteData LoadRouteData()
         {
-            mapPageProcessor.MapPins = new List<CustomPin>();
-            var notification = driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
-            var driver = driverLocatorService.GetSelectedUserCoordinate(notification.DiverUserName).UserLocation;
-            var rider = driverLocatorService.GetSelectedUserCoordinate(notification.UserName).UserLocation;
+            RouteData routeData = new RouteData();
+            
+            var driver = driverLocatorService.GetSelectedUserCoordinate(rideHistory.DiverUserName).UserLocation;
+            var rider = driverLocatorService.GetSelectedUserCoordinate(rideHistory.UserName).UserLocation;
 
             Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude), Longitude = double.Parse(driver.Location.Longitude) };
             Coordinate riderCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };
@@ -53,8 +53,8 @@ namespace RideShare.ViewPresenter
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
-            mapPageProcessor.AddPin(driverPin);
 
+            routeData.SourcePin = driverPin;          
             // Create rider pin
             var riderPin = new MapPin();
             riderPin.ImageIcon = "userLogActive_icon.png";
@@ -73,7 +73,9 @@ namespace RideShare.ViewPresenter
             riderPin.UserName = rider.User.UserName;
             riderPin.UserType = rider.User.UserType;
 
-            mapPageProcessor.AddPin(riderPin);
+            routeData.DestinationPin = riderPin;
+            routeData.RouteCoordinates = GetRouteCoordinates(GetDirections(driverCoordinate, riderCoordinate).Routes.SingleOrDefault());
+            return routeData;
         }
 
         private List<Position> GetRouteCoordinates(Route route)
@@ -105,7 +107,7 @@ namespace RideShare.ViewPresenter
 
         protected override void OnNewCoordinatesRecived()
         {
-            RefreshPins(false);
+            //RefreshRoute(false);
         }
 
     }

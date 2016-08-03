@@ -15,27 +15,10 @@ namespace RideShare
         public double Longitude { get; set; }
         public double Latitude { get; set; }
     }
+
     public class NotificationInfo
     {
         public string RequestId { get; set; }
-
-        private Coordinate source =new Coordinate();
-
-        public Coordinate Source
-        {
-            get { return source; }
-            set { source = value; }
-        }
-
-        private Coordinate destination = new Coordinate();
-
-        public Coordinate Destination
-        {
-            get { return destination; }
-            set { destination = value; }
-        }
-
-       
     }
 
     public class App : Application
