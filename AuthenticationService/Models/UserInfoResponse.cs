@@ -21,5 +21,8 @@ namespace Authentication.Models
         [JsonProperty("email")]
         public string EMail { get; set; }
 
+        [JsonProperty("profileImage")]
+        public string profileImageEncoded { get; set; }
+
     }
 }

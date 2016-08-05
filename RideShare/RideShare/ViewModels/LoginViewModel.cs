@@ -89,8 +89,7 @@ namespace RideShare.ViewModels
 
             if (isValid)
             {
-                //UpdateUserInLocal();
-
+                UpdateUserInLocal();
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;
@@ -174,6 +173,7 @@ namespace RideShare.ViewModels
             dlUser.FirstName = result.FirstName;
             dlUser.LastName = result.LastName;
             dlUser.EMail = result.EMail;
+            dlUser.profileImageEncoded = result.profileImageEncoded;
             var response = driverLocatorService.SaveUserData(dlUser);
         }
     }

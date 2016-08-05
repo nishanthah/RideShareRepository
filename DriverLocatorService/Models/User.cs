@@ -36,6 +36,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("userType")]
         public UserType UserType { get; set; }
+
+        [JsonProperty("profileImage")]
+        public string profileImageEncoded { get; set; }
     }
 
     public class UserLocation

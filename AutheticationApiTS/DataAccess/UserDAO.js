@@ -14,6 +14,7 @@ var UserMongooseDAO = (function () {
         userModel.lastName = user.lastName;
         userModel.email = user.email;
         userModel.password = user.password;
+        userModel.profileImage = user.profileImage;
         var status;
         var self = this;
         // save the sample user
@@ -38,6 +39,7 @@ var UserMongooseDAO = (function () {
                 selecteduser.lastName = user.lastName;
                 selecteduser.password = user.password;
                 selecteduser.userName = user.userName;
+                selecteduser.profileImage = user.profileImage;
                 selecteduser.save(function (err) {
                     if (err)
                         self.onUserUpdated(err, null);
@@ -61,6 +63,7 @@ var UserMongooseDAO = (function () {
                 userData.lastName = user.lastName;
                 userData.password = user.password;
                 userData.userName = user.userName;
+                userData.profileImage = user.profileImage;
                 self.onSelectedUserDataReceived(null, userData);
             }
         });

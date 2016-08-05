@@ -17,6 +17,7 @@ var AuthhenticationAPIController = (function () {
         user.lastName = req.body.lastName;
         user.password = req.body.password;
         user.userName = req.body.userName;
+        user.profileImage = req.body.profileImage;
         try {
             AuthhenticationAPIController.userDAO.addUser(user);
             AuthhenticationAPIController.userDAO.onUserAdded = function (error, status) {
@@ -72,6 +73,7 @@ var AuthhenticationAPIController = (function () {
                     userResponse.firstName = user.firstName;
                     userResponse.lastName = user.lastName;
                     userResponse.userName = user.userName;
+                    userResponse.profileImage = user.profileImage;
                     userResponse.success = true;
                     res.json(userResponse);
                 }
@@ -92,6 +94,7 @@ var AuthhenticationAPIController = (function () {
         user.lastName = req.body.lastName;
         user.password = req.body.password;
         user.userName = req.body.userName;
+        user.profileImage = req.body.profileImage;
         try {
             AuthhenticationAPIController.userDAO.updateUser(user);
             AuthhenticationAPIController.userDAO.onUserUpdated = function (error, status) {

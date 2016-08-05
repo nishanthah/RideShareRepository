@@ -15,14 +15,19 @@ namespace Authentication.Models
         [JsonProperty("lastName")]
         public string LastName { get; set; }
 
-		[JsonProperty("userName")]
-		public string UserName { get; set; }
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
 
-		[JsonProperty("email")]
-		public string EMail { get; set; }
+        [JsonProperty("email")]
+        public string EMail { get; set; }
 
         [JsonProperty("password")]
         public string Password { get; set; }
-        
+
+        public byte[] profileImageByte { get; set; }
+
+        [JsonProperty("profileImage")]
+        public string profileImageEncoded { get; set; }
+
     }
 }
