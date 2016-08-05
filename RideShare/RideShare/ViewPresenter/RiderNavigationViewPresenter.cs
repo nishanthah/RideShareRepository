@@ -1,4 +1,5 @@
-﻿using GoogleApiClient.Maps;
+﻿using DriverLocator.Models;
+using GoogleApiClient.Maps;
 using GoogleApiClient.Models;
 using RideShare.Common;
 using RideShare.SharedInterfaces;
@@ -14,19 +15,19 @@ namespace RideShare.ViewPresenter
     public class RiderNavigationViewPresenter : BaseMapViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-        string rideHistoryId;
-        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService,string rideHistoryId) :base(mapPageProcessor,mapSocketService)
+        RideHistory rideHistory;
+        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService,RideHistory rideHistory) :base(mapPageProcessor,mapSocketService)
         {
-            this.rideHistoryId = rideHistoryId;
+            this.rideHistory = rideHistory;
+            mapPageProcessor.SetDestination(rideHistory.DestinationName);
             RefreshPins(true);
         }
 
         protected override List<CustomPin> LoadPinData()
         {
             List<CustomPin> mapPins = new List<CustomPin>();
-            var notification = driverLocatorService.GetRideHistoryByFilter("_id", rideHistoryId).RideHistories.FirstOrDefault();
-            var driver = driverLocatorService.GetSelectedUserCoordinate(notification.DiverUserName).UserLocation;
-            var rider = driverLocatorService.GetSelectedUserCoordinate(notification.UserName).UserLocation;
+            var driver = driverLocatorService.GetSelectedUserCoordinate(rideHistory.DiverUserName).UserLocation;
+            var rider = driverLocatorService.GetSelectedUserCoordinate(rideHistory.UserName).UserLocation;
 
             Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude),Longitude = double.Parse(driver.Location.Longitude) };
             Coordinate riderCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };

@@ -15,7 +15,7 @@ namespace RideShare.Droid
 {
     //, Icon = "@drawable/app_icon"
     [Activity(Label = "RideShare", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATION", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED", "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED", "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
 
@@ -35,11 +35,32 @@ namespace RideShare.Droid
             {
                 LoadApplication(new App(false));
             }
-            else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATION")
+            else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED")
             {
                 if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
                 {
                     NotificationInfo notificationInfo = new NotificationInfo();
+                    notificationInfo.NotificationStatus = NotificationStatus.Rejected;
+                    notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
+                    LoadApplication(new App(notificationInfo));
+                }
+            }
+            else if (Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED")
+            {
+                if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
+                {
+                    NotificationInfo notificationInfo = new NotificationInfo();
+                    notificationInfo.NotificationStatus = NotificationStatus.Accepted;
+                    notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
+                    LoadApplication(new App(notificationInfo));
+                }
+            }
+            else if (Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED")
+            {
+                if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
+                {
+                    NotificationInfo notificationInfo = new NotificationInfo();
+                    notificationInfo.NotificationStatus = NotificationStatus.Opened;
                     notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
                     LoadApplication(new App(notificationInfo));
                 }

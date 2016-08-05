@@ -12,6 +12,16 @@ using Android.Util;
 
 namespace Common
 {
+    public class HttpMethod
+    {
+
+        public const string DELETE = "DELETE";
+        public const string GET = "GET";
+        public const string POST = "POST";
+        public const string PUT = "PUT";
+
+    }
+
     public class BasicAuthorization
     {
         
@@ -51,21 +61,7 @@ namespace Common
             HttpClient httpClinet = new HttpClient(new NativeMessageHandler());
             var request = new HttpRequestMessage();
 
-            switch (Method)
-            {
-                case "POST":
-                    request.Method = HttpMethod.Post;
-                    break;
-                case "GET":
-                    request.Method = HttpMethod.Get;
-                    break;
-                case "PUT":
-                    request.Method = HttpMethod.Put;
-                    break;
-                case "DELETE":
-                    request.Method = HttpMethod.Delete;
-                    break;
-            }
+            request.Method = GetSystemMethod(Method);
 
             if (!String.IsNullOrEmpty(AcceptHeders))
             {
@@ -132,21 +128,7 @@ namespace Common
             HttpClient httpClinet = new HttpClient(new NativeMessageHandler());
             var request = new HttpRequestMessage();
 
-            switch (Method)
-            {
-                case "POST":
-                    request.Method = HttpMethod.Post;
-                    break;
-                case "GET":
-                    request.Method = HttpMethod.Get;
-                    break;
-                case "PUT":
-                    request.Method = HttpMethod.Put;
-                    break;
-                case "DELETE":
-                    request.Method = HttpMethod.Delete;
-                    break;
-            }
+            request.Method = GetSystemMethod(Method);
 
             if (!String.IsNullOrEmpty(AcceptHeders))
             {
@@ -205,6 +187,23 @@ namespace Common
         public async Task<TResult> SendRequestAsync<TResult>()
         {
             return await SendRequestAsync<object, TResult>(null);
+        }
+
+        private System.Net.Http.HttpMethod GetSystemMethod(string httpMethod)
+        {
+            switch (httpMethod)
+            {
+                case HttpMethod.POST:
+                    return System.Net.Http.HttpMethod.Post;
+                case HttpMethod.GET:
+                    return System.Net.Http.HttpMethod.Get;
+                case HttpMethod.PUT:
+                    return System.Net.Http.HttpMethod.Put;
+                case HttpMethod.DELETE:
+                    return System.Net.Http.HttpMethod.Delete;
+                default:
+                    return System.Net.Http.HttpMethod.Get;
+            }
         }
     }
 

@@ -47,6 +47,15 @@ namespace DriverLocator.Models
         [JsonProperty("location")]
         public Location Location { get; set; }
 
-        
+        [JsonProperty("destination")]
+        public Destination Destination { get; set; }
+
+    }
+
+    public class Destination : Location
+    {
+        [JsonProperty("name")]
+        public string  Name { get; set; }
+
     }
 }

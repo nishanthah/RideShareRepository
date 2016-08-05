@@ -26,10 +26,12 @@ namespace RideShare.Common
         void AddPin(MapPin mapPin);
         void RefreshPins(bool canMoveToLocation, Func<List<CustomPin>> loadPinsFunction);
         void RefreshRoute(bool canMoveToLocation, Func<RouteData> loadRouteFunction);
-        void ShowSendNotificationPopupBox(string title);
-        void HideSendNotificationPopupBoxPopupBox();
+        void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText);
+        void HideDoubleButtonPopupBox();
         void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent);
         void HideInfoWindowPopupBox();
+        void NavigateToRiderView();
+        void SetDestination(string destinationName);
 
     }
 }

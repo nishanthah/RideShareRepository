@@ -19,9 +19,10 @@ namespace RideShare.ViewModels
         string userName;
         string password;
         string errorMessage;
-
+        bool isUserLoggedIn = false;
         ILoginPageProcessor loginProcessor;
         IUrbanAirshipNotificationService urbanAirshipNotificationService;
+        IAppDataService appDataService = DependencyService.Get<IAppDataService>();
 
         public ICommand LoginCommand { protected set; get; }
 
@@ -34,30 +35,62 @@ namespace RideShare.ViewModels
             Session.AuthenticationService = new AuthenticationService();
             this.LoginCommand = new RelayCommand(Login);
             this.SignUpCommand = new RelayCommand(SignUp);
+            InitRecentAuthntication();
+        }
+
+
+        void InitRecentAuthntication()
+        {
+            var accessToken = appDataService.Get("access_token");
+            if (accessToken != null)
+            {
+               var userInfo= Session.AuthenticationService.GetUserInfo(accessToken);
+               if(userInfo.IsSuccess)
+               {
+                    UserName = userInfo.UserName;
+                    Password = "********";
+                    isUserLoggedIn = true;
+                    Session.AuthenticationService.AuthenticationToken = accessToken;
+               }
+               else
+               {
+                    UserName = String.Empty;
+                    Password = String.Empty;
+                    isUserLoggedIn = false;
+                }
+            }
         }
 
         bool AreCredentialsCorrect(User user)
         {
-            if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
+            if(isUserLoggedIn)
             {
                 return true;
             }
+            if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
+            {
+                appDataService.Save("access_token", Session.AuthenticationService.AuthenticationToken);
+                return true;
+            }
+
             return false;
         }
 
         private void Login()
         {
+
             var user = new User
             {
                 UserName = this.UserName,
                 Password = this.Password
             };
-
+            
             var isValid = AreCredentialsCorrect(user);
 
             if (isValid)
             {
                 //UpdateUserInLocal();
+
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;
@@ -66,9 +99,11 @@ namespace RideShare.ViewModels
                 if (userCorrdinateResult.IsSuccess)
                 {
                     App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                    driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName,new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
-                    IAppDataService appDataService = DependencyService.Get<IAppDataService>();
+                    driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
+                    App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
+
                     appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+
                     loginProcessor.MoveToMainPage();
                 }
                 else
@@ -84,7 +119,7 @@ namespace RideShare.ViewModels
         }
 
         private void SignUp()
-        {            
+        {
             loginProcessor.MoveToCreateUserPage();
         }
 
@@ -138,7 +173,7 @@ namespace RideShare.ViewModels
             dlUser.UserName = this.UserName;
             dlUser.FirstName = result.FirstName;
             dlUser.LastName = result.LastName;
-            dlUser.EMail = result.EMail;           
+            dlUser.EMail = result.EMail;
             var response = driverLocatorService.SaveUserData(dlUser);
         }
     }

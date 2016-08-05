@@ -60,35 +60,37 @@ namespace RideShare
         BaseMapViewPresenter precenter;
         public MapView()
         {
-            Init();            
-            precenter = new RiderViewPresenter(this,mapSocketService);
-            
+            Init();
+            if (App.CurrentLoggedUser.User.UserType == UserType.Rider)
+            {
+                precenter = new RiderViewPresenter(this, mapSocketService);
+            }
+
+            if (App.CurrentLoggedUser.User.UserType == UserType.Driver)
+            {
+                precenter = new DriverViewPresenter(this, mapSocketService);
+            }
+
         }
 
         public MapView(NotificationInfo notificationInfoData)
         {
-            Init();
+                Init();
+                notificationInfo = notificationInfoData;
+                
 
-            Task<RideHistory>.Factory.StartNew(()=> {
-                return driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();               
-            }).ContinueWith((task) => {
-                var historyInfo = task.Result;
-                if(historyInfo.RequestStatus == RequestStatus.Requested)
+                var historyInfo= driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
+
+                if (historyInfo.RequestStatus == RequestStatus.Requested)
                 {
-                    precenter = new DriverNavigationViewPresenter(this, mapSocketService, historyInfo);
+                    precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo, historyInfo);
+                    driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = historyInfo.Id, Status = RequestStatus.DriverAccepted });
                 }
-                else if(historyInfo.RequestStatus == RequestStatus.DriverAccepted)
+                else if(App.CurrentLoggedUser.User.UserType == UserType.Rider && historyInfo.RequestStatus == RequestStatus.DriverAccepted)
                 {
-                    precenter = new RiderNavigationViewPresenter(this, mapSocketService, historyInfo.Id);
+                    precenter = new RiderNavigationViewPresenter(this, mapSocketService, historyInfo);
                 }
 
-                else if (historyInfo.RequestStatus == RequestStatus.DriverAccepted)
-                {
-                    precenter=new RiderViewPresenter(this, mapSocketService);
-                }
-            });
-
-            
         }
 
         async void OnInfoWindowClicked(CustomPin pin)
@@ -135,61 +137,6 @@ namespace RideShare
             sendingPopupForeground.BackgroundColor = new Color(0, 0, 0, 0.5);
             infoWindowPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
         }
-
-        //#region BusinessProcessRelatedFunctions
-
-        ////private RouteData GetRouteResult()
-        ////{
-        ////    try
-        ////    {
-        ////        LoadDriversAndRiders();
-        ////        RouteData routeResult = new RouteData();
-        ////        //RouteResult routeResult = new RouteResult();
-        ////        routeResult.RideHistoryItem = driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
-
-        ////        routeResult.RiderLocation = riderResponse.UserLocations.Find(x => x.User.UserName == routeResult.RideHistoryItem.UserName).Location;
-
-
-        ////        Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(routeResult.RiderLocation.Latitude), Longitude = double.Parse(routeResult.RiderLocation.Longitude) };
-        ////        Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(App.CurrentLoggedUser.Location.Latitude), Longitude = double.Parse(App.CurrentLoggedUser.Location.Longitude) };
-
-
-        ////        routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate);
-
-
-        ////        return routeResult;
-        ////    }
-        ////    catch (Exception ex)
-        ////    {
-        ////        throw ex;
-        ////    }
-        ////}
-
-        ////private List<Position> GetLineCoordinates(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
-        ////{
-        ////    List<Position> routeCoordinates = new List<Position>();
-        ////    GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
-        ////    var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
-        ////    var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
-
-        ////    //var source = new GoogleApiClient.Models.Coordinate() { Latitude = 7.087310, Longitude = 80.014366 };
-        ////    //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
-        ////    var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
-        ////    //map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromKilometers(10)));
-        List<Position> routeCoordinates = new List<Position>();
-
-        ////    foreach (var route in directions.Routes)
-        ////    {
-        ////        foreach (var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)
-        ////        {
-        ////            routeCoordinates.Add(new Position(coordinates.Latitude, coordinates.Longitude));
-        ////        }
-        ////    }
-
-        ////    return routeCoordinates;
-        ////}
-
-        //#endregion
 
         #region MapViewRelatedFunctions
         private void InitMap()
@@ -242,15 +189,23 @@ namespace RideShare
             Task<List<CustomPin>>.Factory.StartNew(loadPinsFunction).ContinueWith((task) => {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    map.Pins.Clear();
-                    var result = task.Result;
-                    SetPins(MapPins);
-                    map.CustomPins = result;
-
-                    if (canMoveToLocation)
+                    try
                     {
-                        map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
+                        map.Pins.Clear();
+                        var result = task.Result;
+                        SetPins(MapPins);
+                        map.CustomPins = result;
+
+                        if (canMoveToLocation)
+                        {
+                            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
+                        }
                     }
+                    catch(Exception ex)
+                    {
+
+                    }
+                   
                 });
             });
         }
@@ -296,15 +251,17 @@ namespace RideShare
 
         }
 
-        public void ShowSendNotificationPopupBox(string title)
+        public void ShowDoubleButtonPopup(string title,string buttonConfirmText,string buttonCancelText)
         {
             //notificationMessage.Text = title;
             //sendingPopupBack.IsVisible = true;
+            sendRequestButon.Text = buttonConfirmText;
+            cancelPopupButton.Text = buttonCancelText;
             sendNotificationLable.Text = title;
             sendingPopupForeground.IsVisible = true;
         }
 
-        public void HideSendNotificationPopupBoxPopupBox()
+        public void HideDoubleButtonPopupBox()
         {
             sendNotificationLable.Text = String.Empty;
             //sendingPopupBack.IsVisible = false;
@@ -325,9 +282,14 @@ namespace RideShare
         void OnLocationSelecteResult(LocationSearchResult result)
         {
             SelectedDestination = result;
-            destinationText.Text = String.Format("{0} (Lat={1}, Lng={2})", result.LocationName, result.Latitude, result.Longitude);
+            driverLocatorService.UpdateUserDestination(App.CurrentLoggedUser.User.UserName, new UpdateUserDestinationRequest() { DestinationName = result.LocationName, Latitude = result.Latitude, Longitude = result.Longitude });
+            SetDestination(result.LocationName);
         }
 
+        public void SetDestination(string destinationName)
+        {
+            destinationText.Text = String.Format("{0}", destinationName);
+        }
         public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
         {
             infoWindowTitle.Text = infoWindowContent.Title;
@@ -342,6 +304,11 @@ namespace RideShare
             infoWindowPopup.IsVisible = false;
         }
 
+
+        public void NavigateToRiderView()
+        {
+            App.Current.MainPage = new NavigationPage(new MapView());
+        }
         #endregion MapViewRelatedFunctions
 
 

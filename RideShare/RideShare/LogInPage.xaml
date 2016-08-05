@@ -33,7 +33,7 @@
       </StackLayout>
 
       <StackLayout Grid.Row="1">
-        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
+        <Entry x:Name="userNameEntry"  Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
         <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" WidthRequest="300" HorizontalOptions="Center"/>
         <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#467891" WidthRequest="300" HorizontalOptions="Center"/>
         <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="300" HorizontalOptions="Center"/>

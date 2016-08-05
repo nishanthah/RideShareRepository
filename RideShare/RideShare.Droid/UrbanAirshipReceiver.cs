@@ -31,7 +31,9 @@ namespace RideShare.Droid
 
         private const string TAG = "UrbanAirshipReceiver";
 
-        private const string KEY_NOTIFICATION_INTENT = "com.virtusa.driverlocatorforms.NOTIFICATION";
+        private const string KEY_NOTIFICATION_ACCEPTEDINTENT = "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED";
+        private const string KEY_NOTIFICATION_REJECTEDINTENT = "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED";
+        private const string KEY_NOTIFICATION_OPENEDINTENT = "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED";
 
         protected override void OnChannelRegistrationSucceeded(Context context, String channelId)
         {
@@ -70,6 +72,13 @@ namespace RideShare.Droid
         protected override bool OnNotificationOpened(Context context, AirshipReceiver.NotificationInfo notificationInfo)
         {
             Log.Info(TAG, "Notification opened. Alert: " + notificationInfo.Message.Alert + ". Notification ID: " + notificationInfo.NotificationId);
+
+            var messageBundle = notificationInfo.Message.PushBundle;
+            Intent intent = new Intent(KEY_NOTIFICATION_OPENEDINTENT);
+            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+            intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
+            context.StartActivity(intent);
+
             return false;
         }
 
@@ -79,14 +88,17 @@ namespace RideShare.Droid
 
             if (actionButtonInfo.ButtonId == KEY_ACCEPT_BUTTON)
             {
-                Intent intent = new Intent(KEY_NOTIFICATION_INTENT);
+                Intent intent = new Intent(KEY_NOTIFICATION_ACCEPTEDINTENT);
                 intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
                 intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
                 context.StartActivity(intent);
             }
             else
             {
-
+                Intent intent = new Intent(KEY_NOTIFICATION_REJECTEDINTENT);
+                intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
+                context.StartActivity(intent);
             }
             return false;
         }

@@ -16,6 +16,7 @@ namespace RideShare.ViewPresenter
 
         public RiderViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService):base(mapPageProcessor,mapSocketService)
         {
+            mapPageProcessor.SetDestination(App.CurrentLoggedUser.Destination.Name);
             RefreshPins(true);
         }
 
@@ -120,12 +121,12 @@ namespace RideShare.ViewPresenter
 
         protected override void OnMapInfoWindowClicked(CustomPin customPin)
         {
-            mapPageProcessor.ShowSendNotificationPopupBox("Are you sure you want to send the pickup request to this driver?");
+            mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to send the pickup request to this driver?","Send Request","Cancel");
         }
 
         protected override void OnPopupCanceled()
         {
-            mapPageProcessor.HideSendNotificationPopupBoxPopupBox();
+            mapPageProcessor.HideDoubleButtonPopupBox();
         }
 
         protected override void OnPopupConfirmed()
@@ -136,13 +137,27 @@ namespace RideShare.ViewPresenter
             rideHistory.SourceName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, mapPageProcessor.SelectedPin.Pin.Position.Latitude, mapPageProcessor.SelectedPin.Pin.Position.Longitude);
             rideHistory.SourceLongitude = mapPageProcessor.SelectedPin.Pin.Position.Longitude.ToString();
             rideHistory.SourceLatitude = mapPageProcessor.SelectedPin.Pin.Position.Latitude.ToString();
-            rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, App.CurrentLoggedUser.Location.Latitude, App.CurrentLoggedUser.Location.Longitude);
-            rideHistory.DestinationLongitude = App.CurrentLoggedUser.Location.Longitude;
-            rideHistory.DestinationLatitude = App.CurrentLoggedUser.Location.Latitude;
+
+            //rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, App.CurrentLoggedUser.Location.Latitude, App.CurrentLoggedUser.Location.Longitude);
+            //rideHistory.DestinationLongitude = App.CurrentLoggedUser.Location.Longitude;
+            //rideHistory.DestinationLatitude = App.CurrentLoggedUser.Location.Latitude;
+
+            if(mapPageProcessor.SelectedDestination!=null)
+            {
+                rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", mapPageProcessor.SelectedDestination.LocationName, mapPageProcessor.SelectedDestination.Latitude, mapPageProcessor.SelectedDestination.Longitude);
+                rideHistory.DestinationLongitude = mapPageProcessor.SelectedDestination.Longitude.ToString();
+                rideHistory.DestinationLatitude = mapPageProcessor.SelectedDestination.Latitude.ToString();
+            }
+            else
+            {
+                mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Title = "Information", Description = "Please set the destination" });
+                return;
+            }
+
             var result = driverLocatorService.CreateHistory(rideHistory);
             if (result.IsSuccess)
             {
-                mapPageProcessor.HideSendNotificationPopupBoxPopupBox();
+                mapPageProcessor.HideDoubleButtonPopupBox();
                 isRideRequested = true;
                 rideHistoryId = result.RequestId;
                 RefreshPins(true);

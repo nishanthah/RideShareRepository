@@ -26,12 +26,13 @@ namespace Authentication
         public string AuthenticationToken
         {
             get { return authenticationToken; }
+            set { authenticationToken = value; }
         }
 
         public CreateUserResponse CreateUser(User user)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
-            requestHandler.Method = "POST";
+            requestHandler.Method = HttpMethod.POST;
             requestHandler.Url = CREATE_USER_URL;
             return requestHandler.SendRequest<User, CreateUserResponse>(user);
         }
@@ -40,7 +41,7 @@ namespace Authentication
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Url = AUTHENCATION_URL;
-            requestHandler.Method = "POST";
+            requestHandler.Method = HttpMethod.POST;
             var user = new User() {UserName=userName,Password=password};
             var authenticationResult=requestHandler.SendRequest<User, AuthenticationResponse>(user);
 
@@ -58,7 +59,7 @@ namespace Authentication
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Url = USER_INFO_URL;
             requestHandler.AccessToken = token;
-            requestHandler.Method = "GET";
+            requestHandler.Method = HttpMethod.GET;
             var userInfo = requestHandler.SendRequest<UserInfoResponse>();
             return userInfo;
         }
@@ -66,7 +67,7 @@ namespace Authentication
         public UpdateUserResponse UpdateUser(User user)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
-            requestHandler.Method = "PUT";
+            requestHandler.Method = HttpMethod.PUT;
             requestHandler.Url = CREATE_USER_URL;
             requestHandler.AccessToken = authenticationToken;
             return requestHandler.SendRequest<User, UpdateUserResponse>(user);

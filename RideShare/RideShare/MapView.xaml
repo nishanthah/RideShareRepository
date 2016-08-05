@@ -41,7 +41,7 @@
         <Label FontSize="18" x:Name ="infoWindowTitle" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
           <Label FontSize="15" x:Name ="infoWindowDescription" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
         <StackLayout Orientation="Horizontal" >        
-        <Button x:Name="cancelinfoWindowPopupButton" Text="Cancel" BackgroundColor="#ed910c" HorizontalOptions="FillAndExpand" Margin="5"/>
+        <Button x:Name="cancelinfoWindowPopupButton" Text="Ok" BackgroundColor="#ed910c" HorizontalOptions="FillAndExpand" Margin="5"/>
        </StackLayout>
       </StackLayout>
     

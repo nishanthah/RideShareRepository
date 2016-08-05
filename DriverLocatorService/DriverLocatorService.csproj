@@ -36,6 +36,8 @@
     <Compile Include="Models\RideHistory.cs" />
     <Compile Include="Models\UpdateRideHistoryRequest.cs" />
     <Compile Include="Models\UpdateRideHistoryStatusResponse.cs" />
+    <Compile Include="Models\UpdateUserDestinationRequest.cs" />
+    <Compile Include="Models\UpdateUserDestinationResponse.cs" />
     <Compile Include="Models\UpdateUserLocationRequest.cs" />
     <Compile Include="Models\UpdateUserLocationResponse.cs" />
     <Compile Include="Models\UpdateUserTypeRequest.cs" />

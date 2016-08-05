@@ -16,10 +16,17 @@ namespace RideShare
         public double Latitude { get; set; }
     }
 
+    public enum NotificationStatus
+    {
+        Accepted,
+        Rejected,
+        Opened
+    }
     public class NotificationInfo
     {
         public string RequestId { get; set; }
-    }
+        public NotificationStatus NotificationStatus { get; set; }
+}
 
     public class App : Application
     {
@@ -51,6 +58,7 @@ namespace RideShare
             }
             else
             {
+                
                 MainPage = new NavigationPage(new LogInPage());
             }
 

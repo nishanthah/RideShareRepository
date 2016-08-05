@@ -15,11 +15,30 @@ namespace RideShare.ViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         RideHistory rideHistory;
+        NotificationInfo notificationInfo;
 
-        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory):base(mapPageProcessor,mapSocketService)
+        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService,NotificationInfo notificationInfo, RideHistory rideHistory):base(mapPageProcessor,mapSocketService)
         {
+            this.notificationInfo = notificationInfo;
             this.rideHistory = rideHistory;
-            //RefreshRoute(true);
+            mapPageProcessor.SetDestination(rideHistory.DestinationName);
+            RefreshRoute(true);
+
+            if(notificationInfo.NotificationStatus == NotificationStatus.Opened)
+            {
+                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No");
+            }
+
+            else if (notificationInfo.NotificationStatus == NotificationStatus.Accepted)
+            {
+                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to accept this ride?", "Yes", "No");
+            }
+
+            else if (notificationInfo.NotificationStatus == NotificationStatus.Rejected)
+            {
+                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to reject this ride?", "Yes", "No");
+            }
+
         }
 
         protected override RouteData LoadRouteData()
@@ -62,7 +81,7 @@ namespace RideShare.ViewPresenter
             riderPin.Longitude = double.Parse(rider.Location.Longitude);
             riderPin.PhoneNo = rider.User.MobileNo;
 
-            driverPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
+            riderPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
                                     rider.User.FirstName,
                                     rider.User.LastName,
                                     rider.Location.Latitude,
@@ -97,17 +116,47 @@ namespace RideShare.ViewPresenter
 
         protected override void OnPopupCanceled()
         {
-
+            if(notificationInfo.NotificationStatus == NotificationStatus.Accepted)
+            {
+                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverRejected }).IsSuccess;
+                if (isSuccess)
+                {
+                    mapPageProcessor.NavigateToRiderView();
+                }
+            }
+           
+            else
+            {
+                mapPageProcessor.NavigateToRiderView();
+            }
         }
 
         protected override void OnPopupConfirmed()
         {
-            
+            if(notificationInfo.NotificationStatus == NotificationStatus.Opened || notificationInfo.NotificationStatus == NotificationStatus.Accepted)
+            {
+                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverAccepted }).IsSuccess;
+
+                if (isSuccess)
+                {
+                    mapPageProcessor.HideDoubleButtonPopupBox();
+                }
+            }
+            else
+            {
+                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverRejected }).IsSuccess;
+
+                if (isSuccess)
+                {
+                    mapPageProcessor.NavigateToRiderView();
+                }
+            }
+
         }
 
         protected override void OnNewCoordinatesRecived()
         {
-            //RefreshRoute(false);
+            RefreshRoute(false);
         }
 
     }
