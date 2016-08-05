@@ -13,7 +13,7 @@ class UserMongooseDAO implements IUserDAO
         mongoose.connect(Config.database);
     }
     addUser(user: IUser)
-    {
+    {        
         // create a sample user
         var userModel = new User();
         userModel.userName = user.userName;
@@ -21,6 +21,7 @@ class UserMongooseDAO implements IUserDAO
         userModel.lastName = user.lastName;
         userModel.email = user.email;
         userModel.password = user.password;
+        userModel.profileImage = user.profileImage;
 
         var status: boolean;
         var self = this;
@@ -48,6 +49,7 @@ class UserMongooseDAO implements IUserDAO
                 selecteduser.lastName = user.lastName;
                 selecteduser.password = user.password;
                 selecteduser.userName = user.userName;
+                selecteduser.profileImage = user.profileImage;
                 selecteduser.save(function (err) {
                     if (err) self.onUserUpdated(err, null);
 
@@ -74,6 +76,7 @@ class UserMongooseDAO implements IUserDAO
                  userData.lastName = user.lastName;
                  userData.password = user.password;
                  userData.userName = user.userName;
+                 userData.profileImage = user.profileImage;
                  self.onSelectedUserDataReceived(null, userData);
              }
 

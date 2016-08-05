@@ -12,137 +12,154 @@ using System.Windows.Input;
 namespace RideShare.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
-        {
-            string firstName;
-            string lastName;
-            string userName;
-            string password;
-            string email;
-            ISignUpPageProcessor signUpPageProcessor;
+    {
+        string firstName;
+        string lastName;
+        string userName;
+        string password;
+        string email;
+        byte[] _profilePhoto;
+        ISignUpPageProcessor signUpPageProcessor;
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
-            {
+        {
             this.signUpPageProcessor = signUpPageProcessor;
 
             if (Session.AuthenticationService.IsAuthenticated)
-                {
-                    var currentUserDetails = App.CurrentLoggedUser.User;
-                    this.FirstName = currentUserDetails.FirstName;
-                    this.LastName = currentUserDetails.LastName;
-                    this.UserName = currentUserDetails.UserName;
-                    this.Email = currentUserDetails.EMail;
-                    this.SignUpCommand = new RelayCommand(Update);
+            {
+                var currentUserDetails = App.CurrentLoggedUser.User;
+                this.FirstName = currentUserDetails.FirstName;
+                this.LastName = currentUserDetails.LastName;
+                this.UserName = currentUserDetails.UserName;
+                this.Email = currentUserDetails.EMail;
+                this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
+                this.SignUpCommand = new RelayCommand(Update);
             }
             else
-                {
-                    Session.AuthenticationService = new AuthenticationService();
-                    this.SignUpCommand = new RelayCommand(SignUp);
-                }
-                    
-            }
-
-            public ICommand SignUpCommand { protected set; get; }
-
-            public bool isAuthenticated
             {
-                get { return Session.AuthenticationService.IsAuthenticated; }                
+                Session.AuthenticationService = new AuthenticationService();
+                this.SignUpCommand = new RelayCommand(SignUp);
             }
+
+        }
+
+        public ICommand SignUpCommand { protected set; get; }
+
+        public bool isAuthenticated
+        {
+            get { return Session.AuthenticationService.IsAuthenticated; }
+        }
+
+        public byte[] ProfilePhoto
+        {
+            get
+            {
+                return _profilePhoto;
+            }
+
+            set
+            {
+                _profilePhoto = value;
+                OnPropertyChanged("ProfilePhoto");
+            }
+        }
 
         public string FirstName
+        {
+            get
             {
-                get
-                {
-                    return firstName;
-                }
-
-                set
-                {
-                    firstName = value;
-                    OnPropertyChanged("FirstName");
-                }
+                return firstName;
             }
 
-            public string LastName
+            set
             {
-                get
-                {
-                    return lastName;
-                }
+                firstName = value;
+                OnPropertyChanged("FirstName");
+            }
+        }
 
-                set
-                {
-                    lastName = value;
-                    OnPropertyChanged("LastName");
-                }
+        public string LastName
+        {
+            get
+            {
+                return lastName;
             }
 
-            public string UserName
+            set
             {
-                get
-                {
-                    return userName;
-                }
+                lastName = value;
+                OnPropertyChanged("LastName");
+            }
+        }
 
-                set
-                {
-                    userName = value;
-                    OnPropertyChanged("UserName");
-                }
+        public string UserName
+        {
+            get
+            {
+                return userName;
             }
 
-            public string Password
+            set
             {
-                get
-                {
-                    return password;
-                }
+                userName = value;
+                OnPropertyChanged("UserName");
+            }
+        }
 
-                set
-                {
-                    password = value;
-                    OnPropertyChanged("Password");
-                }
+        public string Password
+        {
+            get
+            {
+                return password;
             }
 
-            public string Email
+            set
             {
-                get
-                {
-                    return email;
-                }
+                password = value;
+                OnPropertyChanged("Password");
+            }
+        }
 
-                set
-                {
-                    email = value;
-                    OnPropertyChanged("Email");
-                }
+        public string Email
+        {
+            get
+            {
+                return email;
             }
 
-            private void SignUp()
+            set
             {
-                var user = new User()
-                {
-                    FirstName = this.FirstName,
-                    LastName = this.LastName,
-                    UserName = this.UserName,
-                    EMail = this.Email,
-                    Password = this.Password
-                };
-
-
-                var signUpSucceeded = AreDetailsValid(user);
-
-                if (signUpSucceeded)
-                {
-
-                    var result = Session.AuthenticationService.CreateUser(user);
-                    this.signUpPageProcessor.MoveToLoginPage();
-                }
-                else
-                {
-                    ErrorMessage = "Sign up failed";
-                }
+                email = value;
+                OnPropertyChanged("Email");
             }
+        }
+
+        private void SignUp()
+        {
+            var user = new User()
+            {
+                FirstName = this.FirstName,
+                LastName = this.LastName,
+                UserName = this.UserName,
+                EMail = this.Email,
+                Password = this.Password,
+                profileImageEncoded = Convert.ToBase64String(this.ProfilePhoto)
+            };
+
+
+            var signUpSucceeded = AreDetailsValid(user);
+
+            if (signUpSucceeded)
+            {
+
+                var result = Session.AuthenticationService.CreateUser(user);
+                this.signUpPageProcessor.MoveToLoginPage();
+            }
+            else
+            {
+                ErrorMessage = "Sign up failed";
+            }
+        }
 
         private void Update()
         {
@@ -152,7 +169,8 @@ namespace RideShare.ViewModels
                 LastName = this.LastName,
                 UserName = this.UserName,
                 EMail = this.Email,
-                Password = this.Password
+                Password = this.Password,
+                profileImageEncoded = Convert.ToBase64String(this.ProfilePhoto)
             };
 
             var Isvalid = AreDetailsValid(user);
@@ -166,18 +184,18 @@ namespace RideShare.ViewModels
             {
                 ErrorMessage = "Update failed";
             }
-            
-           
+
+
         }
 
 
         bool AreDetailsValid(User user)
-            {
-                return (!string.IsNullOrWhiteSpace(user.UserName) &&
-                    !string.IsNullOrWhiteSpace(user.Password) &&
-                    !string.IsNullOrWhiteSpace(user.UserName) &&
-                    !string.IsNullOrWhiteSpace(user.EMail));
-            }
-
+        {
+            return (!string.IsNullOrWhiteSpace(user.UserName) &&
+                !string.IsNullOrWhiteSpace(user.Password) &&
+                !string.IsNullOrWhiteSpace(user.UserName) &&
+                !string.IsNullOrWhiteSpace(user.EMail));
         }
+
+    }
 }

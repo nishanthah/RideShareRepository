@@ -6,6 +6,7 @@ class User implements IUser{
     email: string;
     password: string;
     userName: string;
+    profileImage: string;
 }
 
 export = User;
