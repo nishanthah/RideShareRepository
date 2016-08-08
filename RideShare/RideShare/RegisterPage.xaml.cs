@@ -52,6 +52,7 @@ namespace RideShare
                 profileImage = vm.ProfilePhoto;
                 imageSource = GetImageSourceFromByteArray(profileImage);
                 profilePhoto.Source = imageSource;
+                this.Title = "Edit Profile";
             }
             else
             {
