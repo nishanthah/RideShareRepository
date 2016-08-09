@@ -101,7 +101,7 @@ namespace RideShare.Droid
             var polylineOptions = new PolylineOptions();
             polylineOptions.InvokeColor(Android.Graphics.Color.Blue);
 
-            if(routeCoordinates!=null)
+            if (routeCoordinates != null)
             {
                 foreach (var position in routeCoordinates)
                 {
@@ -110,7 +110,7 @@ namespace RideShare.Droid
 
                 map.AddPolyline(polylineOptions);
             }
-            
+
         }
 
         private void ChangePinRender()

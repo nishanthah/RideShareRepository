@@ -356,6 +356,35 @@ apiRoutes.put('/ridehistory/status/:id', function (req, res) {
    
 });
 
+apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
+    
+    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (!rideHistoryItem) {
+            res.json({ success: false, message: "Ride History Not Found" });
+        }
+        else {
+            
+            rideHistoryItem[req.params.timeCol] = req.body.time;
+            
+            rideHistoryItem.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Updated history item status successfully');
+                res.json({ success: true });
+            });
+
+        }
+
+    });
+
+   
+});
+
+
+
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
 

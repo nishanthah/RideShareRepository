@@ -22,9 +22,46 @@ namespace RideShare
 
     public class CustomMap : Map
     {
-        public static readonly BindableProperty RouteCoordinatesProperty = BindableProperty.Create(nameof(RouteCoordinates), typeof(List<Position>), typeof(CustomMap), new List<Position>(), BindingMode.TwoWay);
-        public static readonly BindableProperty CustomPinsProperty = BindableProperty.Create(nameof(CustomPins), typeof(List<CustomPin>), typeof(CustomMap), new List<CustomPin>(), BindingMode.TwoWay);
+        public static readonly BindableProperty RouteCoordinatesProperty = BindableProperty.Create("RouteCoordinates", typeof(List<Position>), typeof(CustomMap), new List<Position>(), BindingMode.TwoWay);
+        public static readonly BindableProperty CustomPinsProperty = BindableProperty.Create("CustomPins", typeof(List<CustomPin>), typeof(CustomMap), new List<CustomPin>(), BindingMode.TwoWay);
 
+        public static readonly BindableProperty BaseLatitudeProperty = BindableProperty.Create("BaseLatitude", typeof(double), typeof(CustomMap), 0.0D, propertyChanged: OnLatitudeOrLongitudeChanged);
+        public static readonly BindableProperty BaseLongitudeProperty = BindableProperty.Create("BaseLongitude", typeof(double), typeof(CustomMap), 0.0D, propertyChanged: OnLatitudeOrLongitudeChanged);
+        //public static readonly BindableProperty IsShowingUserProperty = BindableProperty.Create("IsShowingUser", typeof(bool), typeof(CustomMap), false, BindingMode.TwoWay);
+
+        public double BaseLatitude
+        {
+            get { return (double)GetValue(BaseLatitudeProperty); }
+            set { SetValue(BaseLatitudeProperty, value); }
+        }
+
+        public double BaseLongitude
+        {
+            get { return (double)GetValue(BaseLongitudeProperty); }
+            set { SetValue(BaseLongitudeProperty, value); }
+        }
+
+        //public bool IsShowingUser
+        //{
+        //    get { return (bool)GetValue(IsShowingUserProperty); }
+        //    set { SetValue(IsShowingUserProperty, value); }
+        //}
+
+        static void OnLatitudeOrLongitudeChanged(BindableObject bindable, object oldValue, object newValue)
+        {
+            var map = bindable as CustomMap;
+
+            if (map != null)
+            {
+                MoveMapToRegion(map);
+            }
+        }
+
+        static void MoveMapToRegion(CustomMap map)
+        {
+            if (map.BaseLatitude > 0 && map.BaseLongitude > 0)
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(map.BaseLatitude, map.BaseLongitude), Distance.FromKilometers(10)));
+        }
         
 
         public List<CustomPin> CustomPins
