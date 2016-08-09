@@ -69,6 +69,18 @@ namespace DriverLocator.Models
         [JsonProperty("polyline")]
         public string PolyLine { get; set; }
 
+        [JsonProperty("requestAcceptTime")]
+        public DateTime RequestAcceptTime { get; set; }
+
+        [JsonProperty("requestRejectTime")]
+        public DateTime RequestRejectTime { get; set; }
+
+        [JsonProperty("riderMeetTime")]
+        public DateTime RiderMeetTime { get; set; }
+
+        [JsonProperty("riderEndTime")]
+        public DateTime RiderEndTime { get; set; }
+
         public IList<Coordinate> DecodedOverviewPolyLine{ get { return PolyLineDecoder.Decode(this.PolyLine); } }
     }
 }

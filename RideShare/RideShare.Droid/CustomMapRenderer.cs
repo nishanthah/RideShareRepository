@@ -38,7 +38,7 @@ namespace RideShare.Droid
         List<CustomPin> customPins;
         Action<CustomPin> onInfoWindowClicked;
         bool isDrawn;
-        
+
         public void OnMapReady(GoogleMap googleMap)
         {
             map = googleMap;
@@ -46,22 +46,13 @@ namespace RideShare.Droid
             map.InfoWindowClick += OnInfoWindowClick;
             map.SetInfoWindowAdapter(this);
 
-            var polylineOptions = new PolylineOptions();
-            polylineOptions.InvokeColor(Android.Graphics.Color.Blue);
-
-            foreach (var position in routeCoordinates)
-            {
-                polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
-            }
-
-            map.AddPolyline(polylineOptions);
-            
+            RenderPolyLine();
         }
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.View> e)
         {
             base.OnElementChanged(e);
-            
+
             if (e.OldElement != null)
             {
                 map.InfoWindowClick -= OnInfoWindowClick;
@@ -70,9 +61,9 @@ namespace RideShare.Droid
 
             if (e.NewElement != null)
             {
-                
+
                 var formsMap = (CustomMap)e.NewElement;
-                
+
                 routeCoordinates = formsMap.RouteCoordinates;
                 customPins = formsMap.CustomPins;
                 onInfoWindowClicked = formsMap.OnInfoWindowClicked;
@@ -85,17 +76,42 @@ namespace RideShare.Droid
             base.OnElementPropertyChanged(sender, e);
             map = ((Android.Gms.Maps.MapView)Control).Map;
 
-            if (e.PropertyName.Equals ("VisibleRegion") && !isDrawn)
+
+            if (e.PropertyName.Equals("VisibleRegion"))
             {
 
-                ChangePinRender();
-                isDrawn = true;
+                if (!isDrawn)
+                {
+                    ChangePinRender();
+                    isDrawn = true;
+                }
             }
 
-            else if(e.PropertyName.Equals("CustomPins"))
+            else if (e.PropertyName.Equals("CustomPins"))
             {
                 ChangePinRender();
             }
+           
+            RenderPolyLine();             
+        }
+
+
+        private void RenderPolyLine()
+        {
+            routeCoordinates = ((CustomMap)Element).RouteCoordinates;
+            var polylineOptions = new PolylineOptions();
+            polylineOptions.InvokeColor(Android.Graphics.Color.Blue);
+
+            if (routeCoordinates != null)
+            {
+                foreach (var position in routeCoordinates)
+                {
+                    polylineOptions.Add(new LatLng(position.Latitude, position.Longitude));
+                }
+
+                map.AddPolyline(polylineOptions);
+            }
+
         }
 
         private void ChangePinRender()
@@ -122,6 +138,7 @@ namespace RideShare.Droid
                 map.AddMarker(marker);
             }
         }
+
         protected override void OnLayout(bool changed, int l, int t, int r, int b)
         {
             base.OnLayout(changed, l, t, r, b);
@@ -139,7 +156,7 @@ namespace RideShare.Droid
 
         private CustomPin GetCustomPin(Marker marker)
         {
-            return customPins.ToList().Find(x => x.Id.ToString() ==marker.Title.ToString());
+            return customPins.ToList().Find(x => x.Id.ToString() == marker.Title.ToString());
         }
 
         public Android.Views.View GetInfoContents(Marker marker)
@@ -162,12 +179,12 @@ namespace RideShare.Droid
                 var infoSummary = view.FindViewById<TextView>(Resource.Id.markerInfoSummary);
 
 
-               
+
                 System.IO.Stream ims = Context.Assets.Open(customPin.Image);
-                
+
                 // load image as Drawable
                 Drawable d = Drawable.CreateFromStream(ims, null);
-                
+
                 // set image to ImageView
                 infoImage.SetImageDrawable(d);
 
@@ -177,11 +194,11 @@ namespace RideShare.Droid
                 //var resource=ResourceManager.GetDrawableByName("driverLogActive_icon.png");
                 //infoImage.SetImageResource(resource);
                 //infoImag = customPin.Title;
-               
+
                 infoTitle.Text = customPin.Title;
-                
+
                 infoSummary.Text = customPin.MobileNo;
-                
+
                 return view;
             }
             return null;
