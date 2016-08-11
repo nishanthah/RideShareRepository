@@ -9,8 +9,8 @@
         <ListView.ItemTemplate>
           <DataTemplate>
             <ViewCell >
-              <StackLayout VerticalOptions="FillAndExpand" Padding="10"  x:Name="SL">
-                <Grid>
+              <StackLayout VerticalOptions="FillAndExpand" Padding="10"  x:Name="SL" BackgroundColor="#c0c0c0">
+                <Grid Margin="5" BackgroundColor="#ffffff">
                   <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="1*" />
                     <ColumnDefinition Width="9*" />
@@ -22,13 +22,14 @@
                     <RowDefinition Height="1*" />
                   </Grid.RowDefinitions>
                   <maps:CustomMap  WidthRequest="{Binding Path=WidthRequest}" HeightRequest="{Binding Path=HeightRequest}" RouteCoordinates="{Binding Path=RouteCoordinates}"
-                  x:Name="MyMap" IsShowingUser="{Binding Path=IsShowingUser}" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                  <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"/>
-                  <Label TextColor="#77d065" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
-                  <Label TextColor="#77d065" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
+                  x:Name="MyMap"    HasScrollEnabled ="false" HasZoomEnabled="false" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2"></maps:CustomMap>
+                  <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2" AbsoluteLayout.LayoutBounds=".5,0,100,25"
+                  AbsoluteLayout.LayoutFlags="PositionProportional" />
+                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
+                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
                 </Grid>
               </StackLayout>
-            </ViewCell>
+            </ViewCell>         
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>

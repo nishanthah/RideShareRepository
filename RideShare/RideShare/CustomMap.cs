@@ -41,6 +41,26 @@ namespace RideShare
             set { SetValue(BaseLongitudeProperty, value); }
         }
 
+        private bool hasScrollEnabled;
+
+        public bool HasScrollEnabled
+        {
+            get { return hasScrollEnabled; }
+            set { hasScrollEnabled = value; }
+        }
+        private bool hasZoomEnabled;
+        public bool HasZoomEnabled
+        {
+            get { return hasZoomEnabled; }
+            set { hasZoomEnabled = value; }
+        }
+
+        private bool isShowingUser;
+        public bool IsShowingUser
+        {
+            get { return isShowingUser; }
+            set { isShowingUser = value; }
+        }
         //public bool IsShowingUser
         //{
         //    get { return (bool)GetValue(IsShowingUserProperty); }
