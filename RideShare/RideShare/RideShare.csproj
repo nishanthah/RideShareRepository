@@ -93,6 +93,7 @@
     <Compile Include="Utilities\LocationUtility.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
+    <Compile Include="ViewModels\MasterPageViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\SendRequestViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

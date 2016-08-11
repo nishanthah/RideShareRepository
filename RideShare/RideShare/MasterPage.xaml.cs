@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ImageCircle.Forms.Plugin.Abstractions;
+using RideShare.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,10 +13,23 @@ namespace RideShare
     public partial class MasterPage : ContentPage
     {
         public ListView ListView { get { return listView; } }
+        CircleImage profilePhoto;
 
         public MasterPage()
         {
             InitializeComponent();
+            Content.BindingContext = new MasterPageViewModel();
+
+            var vm = Content.BindingContext as MasterPageViewModel;
+            profilePhoto = new CircleImage()
+            {
+                HeightRequest = 75,
+                WidthRequest = 75,
+                VerticalOptions = LayoutOptions.Center,
+                Source = vm.ProfileImageSource
+            };
+
+            profilePictureStackLayout.Children.Add(profilePhoto);
 
             var masterPageItems = new List<MasterPageItem>();
             masterPageItems.Add(new MasterPageItem
