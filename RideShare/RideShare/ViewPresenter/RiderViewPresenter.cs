@@ -16,7 +16,7 @@ namespace RideShare.ViewPresenter
 
         public RiderViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService):base(mapPageProcessor,mapSocketService)
         {
-            mapPageProcessor.SetDestination(App.CurrentLoggedUser.Destination.Name);
+            base.InitDestination();
             RefreshPins(true);
         }
 
@@ -42,27 +42,33 @@ namespace RideShare.ViewPresenter
 
             foreach (var driver in drivers.UserLocations)
             {
-                MapPin pin = new MapPin();
-                pin.ImageIcon = "userLogActive_icon.png";
-                pin.Latitude = double.Parse(driver.Location.Latitude);
-                pin.Longitude = double.Parse(driver.Location.Longitude);
-                pin.PhoneNo = driver.User.MobileNo;
-                pin.Title = driver.User.FirstName + " " + driver.User.LastName + " | Position : " + driver.Location.Longitude + " , " + driver.Location.Latitude;
-                pin.UserName = driver.User.UserName;
-                pin.UserType = driver.User.UserType;
-                mapPins.Add(GetFromatted(pin));
+                if(driver.Location.Latitude != null && driver.Location.Longitude != null)
+                {
+                    MapPin pin = new MapPin();
+                    pin.ImageIcon = "userLogActive_icon.png";
+                    pin.Latitude = double.Parse(driver.Location.Latitude);
+                    pin.Longitude = double.Parse(driver.Location.Longitude);
+                    pin.PhoneNo = driver.User.MobileNo;
+                    pin.Title = driver.User.FirstName + " " + driver.User.LastName + " | Position : " + driver.Location.Longitude + " , " + driver.Location.Latitude;
+                    pin.UserName = driver.User.UserName;
+                    pin.UserType = driver.User.UserType;
+                    mapPins.Add(GetFromatted(pin));
+                }
+                
             }
 
-            var riderPin = new MapPin();
-            riderPin.ImageIcon = "userLogActive_icon.png";
-            riderPin.Latitude = double.Parse(App.CurrentLoggedUser.Location.Latitude);
-            riderPin.Longitude = double.Parse(App.CurrentLoggedUser.Location.Longitude);
-            riderPin.PhoneNo = App.CurrentLoggedUser.User.MobileNo;
-            riderPin.Title = App.CurrentLoggedUser.User.FirstName + " " + App.CurrentLoggedUser.User.LastName + " | Position : " + App.CurrentLoggedUser.Location.Longitude + " , " + App.CurrentLoggedUser.Location.Latitude;
-            riderPin.UserName = App.CurrentLoggedUser.User.UserName;
-            riderPin.UserType = App.CurrentLoggedUser.User.UserType;
-            mapPins.Add(GetFromatted(riderPin));
-
+            if (App.CurrentLoggedUser.Location.Latitude != null && App.CurrentLoggedUser.Location.Longitude != null)
+            {
+                var riderPin = new MapPin();
+                riderPin.ImageIcon = "userLogActive_icon.png";
+                riderPin.Latitude = double.Parse(App.CurrentLoggedUser.Location.Latitude);
+                riderPin.Longitude = double.Parse(App.CurrentLoggedUser.Location.Longitude);
+                riderPin.PhoneNo = App.CurrentLoggedUser.User.MobileNo;
+                riderPin.Title = App.CurrentLoggedUser.User.FirstName + " " + App.CurrentLoggedUser.User.LastName + " | Position : " + App.CurrentLoggedUser.Location.Longitude + " , " + App.CurrentLoggedUser.Location.Latitude;
+                riderPin.UserName = App.CurrentLoggedUser.User.UserName;
+                riderPin.UserType = App.CurrentLoggedUser.User.UserType;
+                mapPins.Add(GetFromatted(riderPin));
+            }
             return mapPins;
         }
 
@@ -181,7 +187,7 @@ namespace RideShare.ViewPresenter
                 MobileNo = "Mobile No:" + mapPin.PhoneNo,
                 Image = "profile_images/" + mapPin.ImageIcon,
                 UserName = mapPin.UserName,
-                Id = Guid.NewGuid()
+                Id = mapPin.UserName
             };
             return pin;
         }

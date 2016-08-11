@@ -64,5 +64,14 @@ namespace RideShare.ViewPresenter
             mapPageProcessor.RefreshRoute(mooveToLocation, LoadRouteData);
         }
 
+        protected virtual void InitDestination()
+        {
+            if (!String.IsNullOrEmpty(App.CurrentLoggedUser.Destination.Name))
+            {
+                var destination = new LocationSearchResult() { Latitude = double.Parse(App.CurrentLoggedUser.Destination.Latitude), Longitude = double.Parse(App.CurrentLoggedUser.Destination.Longitude), LocationName = App.CurrentLoggedUser.Destination.Name };
+                mapPageProcessor.SetDestination(destination);
+            }
+        }
+
     }
 }

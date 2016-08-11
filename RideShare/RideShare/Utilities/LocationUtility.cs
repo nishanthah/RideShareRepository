@@ -38,7 +38,11 @@ namespace RideShare.Utilities
                 request.Latitude = location.Latitude;
                 request.Longitude = location.Longitude;
 
+                
+
                 var isUserLocationUpdated = App.CurrentLoggedUser != null
+                                                && App.CurrentLoggedUser.Location.Latitude != null
+                                                && App.CurrentLoggedUser.Location.Longitude != null
                                                 && double.Parse(App.CurrentLoggedUser.Location.Latitude) != location.Latitude
                                                 && double.Parse(App.CurrentLoggedUser.Location.Longitude) != location.Longitude;
                 if (isUserLocationUpdated)
@@ -61,7 +65,7 @@ namespace RideShare.Utilities
                 }
                 else
                 {
-                   // Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                    // Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
                 }
 
             }

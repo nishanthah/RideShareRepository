@@ -13,15 +13,15 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace TryXamarinForms.UWP
+namespace RideShare.UWP
 {
     public sealed partial class MainPage
     {
         public MainPage()
         {
             this.InitializeComponent();
-
-            LoadApplication(new TryXamarinForms.App());
+            Xamarin.FormsMaps.Init("IjEnMQF6phKHvfFCM4xi~v44o8YfbJrlwghx_takbCw~Ar9W5w48T74aHZf5T_RTthpLsA72s916agdG9duZSCYSYv8tSFs6qiqlkd6jBqhP");
+            LoadApplication(new RideShare.App(false));
         }
     }
 }

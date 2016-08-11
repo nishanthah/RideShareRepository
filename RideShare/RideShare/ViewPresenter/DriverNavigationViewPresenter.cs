@@ -21,7 +21,7 @@ namespace RideShare.ViewPresenter
         {
             this.notificationInfo = notificationInfo;
             this.rideHistory = rideHistory;
-            mapPageProcessor.SetDestination(rideHistory.DestinationName);
+            base.InitDestination();
             RefreshRoute(true);
 
             if(notificationInfo.NotificationStatus == NotificationStatus.Opened)

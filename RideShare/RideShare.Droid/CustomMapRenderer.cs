@@ -38,15 +38,29 @@ namespace RideShare.Droid
         List<CustomPin> customPins;
         Action<CustomPin> onInfoWindowClicked;
         bool isDrawn;
+        Marker selectedMarker = null;
         
         public void OnMapReady(GoogleMap googleMap)
         {
             map = googleMap;
 
             map.InfoWindowClick += OnInfoWindowClick;
+            map.MarkerClick += Map_MarkerClick;
+            map.MapClick += Map_MapClick;
             map.SetInfoWindowAdapter(this);
-
             RenderPolyLine();
+        }
+
+        private void Map_MapClick(object sender, GoogleMap.MapClickEventArgs e)
+        {
+            selectedMarker = null;
+        }
+
+       
+        private void Map_MarkerClick(object sender, GoogleMap.MarkerClickEventArgs e)
+        {
+            selectedMarker =  e.Marker;
+            selectedMarker.ShowInfoWindow();
         }
 
         protected override void OnElementChanged(Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.View> e)
@@ -94,7 +108,6 @@ namespace RideShare.Droid
             RenderPolyLine();
         }
 
-
         private void RenderPolyLine()
         {
             routeCoordinates = ((CustomMap)Element).RouteCoordinates;
@@ -133,8 +146,14 @@ namespace RideShare.Droid
                 {
                     marker.SetIcon(BitmapDescriptorFactory.FromResource(Resource.Drawable.person));
                 }
+                
+                var addedMarker = map.AddMarker(marker);
 
-                map.AddMarker(marker);
+                if(selectedMarker != null && selectedMarker.Title == addedMarker.Title)
+                {
+                    addedMarker.ShowInfoWindow();
+                }
+                
             }
         }
 
@@ -164,7 +183,6 @@ namespace RideShare.Droid
             if (inflater != null)
             {
                 Android.Views.View view;
-
                 var customPin = GetCustomPin(marker);
                 if (customPin == null)
                 {
@@ -177,7 +195,7 @@ namespace RideShare.Droid
                 var infoTitle = view.FindViewById<TextView>(Resource.Id.markerInfoTitle);
                 var infoSummary = view.FindViewById<TextView>(Resource.Id.markerInfoSummary);
 
-
+                
                
                 System.IO.Stream ims = Context.Assets.Open(customPin.Image);
                 

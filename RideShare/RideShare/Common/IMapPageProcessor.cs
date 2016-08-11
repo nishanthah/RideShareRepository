@@ -31,7 +31,7 @@ namespace RideShare.Common
         void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent);
         void HideInfoWindowPopupBox();
         void NavigateToRiderView();
-        void SetDestination(string destinationName);
+        void SetDestination(LocationSearchResult destination);
 
     }
 }

@@ -77,7 +77,6 @@ namespace RideShare
         {
                 Init();
                 notificationInfo = notificationInfoData;
-                
 
                 var historyInfo= driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
 
@@ -88,7 +87,7 @@ namespace RideShare
                 }
                 else if(App.CurrentLoggedUser.User.UserType == UserType.Rider && historyInfo.RequestStatus == RequestStatus.DriverAccepted)
                 {
-                    precenter = new RiderNavigationViewPresenter(this, mapSocketService, historyInfo);
+                    precenter = new RiderNavigationViewPresenter(this, mapSocketService,notificationInfo,historyInfo);
                 }
 
         }
@@ -173,7 +172,7 @@ namespace RideShare
                 MobileNo = "Mobile No:" + mapPin.PhoneNo,
                 Image = "profile_images/" + mapPin.ImageIcon,
                 UserName = mapPin.UserName,
-                Id = Guid.NewGuid()
+                Id = mapPin.UserName
             };
 
             //Device.BeginInvokeOnMainThread(() =>
@@ -283,12 +282,13 @@ namespace RideShare
         {
             SelectedDestination = result;
             driverLocatorService.UpdateUserDestination(App.CurrentLoggedUser.User.UserName, new UpdateUserDestinationRequest() { DestinationName = result.LocationName, Latitude = result.Latitude, Longitude = result.Longitude });
-            SetDestination(result.LocationName);
+            SetDestination(result);
         }
 
-        public void SetDestination(string destinationName)
+        public void SetDestination(LocationSearchResult destination)
         {
-            destinationText.Text = String.Format("{0}", destinationName);
+            destinationText.Text = String.Format("{0}", destination.LocationName);
+            SelectedDestination = destination;
         }
         public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
         {
@@ -303,7 +303,6 @@ namespace RideShare
             infoWindowDescription.Text = String.Empty;
             infoWindowPopup.IsVisible = false;
         }
-
 
         public void NavigateToRiderView()
         {

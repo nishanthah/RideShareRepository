@@ -12,7 +12,7 @@ namespace RideShare
     public class CustomPin
     {
         public Pin Pin { get; set; }
-        public Guid Id { get; set; }
+        public string Id { get; set; }
         public string Title { get; set; }
         public string MobileNo { get; set; }
         public string Image { get; set; }
