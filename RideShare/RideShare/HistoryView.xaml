@@ -29,7 +29,7 @@
                   <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
                 </Grid>
               </StackLayout>
-            </ViewCell>         
+            </ViewCell>
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
