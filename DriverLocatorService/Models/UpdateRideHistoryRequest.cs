@@ -11,7 +11,7 @@ namespace DriverLocator.Models
     {
         public string Id { get; set; }
 
-        [JsonProperty("status")]
+        [JsonProperty("requestStatus")]
         public RequestStatus Status { get; set; }
     }
 }

@@ -22,9 +22,6 @@ namespace GoogleApiClient.Models
         [JsonProperty("distance")]
         public Distance Distance { get; set; }
 
-        [JsonProperty("duration")]
-        public Distance Duration { get; set; }
-
         [JsonProperty("start_address")]
         public string StartAddress { get; set; }
 
@@ -39,12 +36,6 @@ namespace GoogleApiClient.Models
     }
 
     public class Distance
-    {
-        [JsonProperty("text")]
-        public string Text { get; set; }
-    }
-
-    public class Duration
     {
         [JsonProperty("text")]
         public string Text { get; set; }

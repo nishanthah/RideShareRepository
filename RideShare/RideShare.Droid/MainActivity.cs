@@ -15,11 +15,17 @@ namespace RideShare.Droid
 {
     //, Icon = "@drawable/app_icon"
     [Activity(Label = "RideShare", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED", "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED", "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATION", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
 
         public const string KEY_REQUEST_ID_EXTRA = "request_id";
+        public const string KEY_SOURCE_NAME_EXTRA = "source_name";
+        public const string KEY_SOURCE_LONGITUDE_EXTRA = "source_longitude";
+        public const string KEY_SOURCE_LATITUDE_EXTRA = "source_latitude";
+        public const string KEY_DESTINATION_NAME_EXTRA = "destination_name";
+        public const string KEY_DESTINATION_LONGITUDE_EXTRA = "destination_longitude";
+        public const string KEY_DESTINATION_LATITUDE_EXTRA = "destination_latitude";
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -35,33 +41,19 @@ namespace RideShare.Droid
             {
                 LoadApplication(new App(false));
             }
-            else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED")
+            else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATION")
             {
                 if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
                 {
                     NotificationInfo notificationInfo = new NotificationInfo();
-                    notificationInfo.NotificationStatus = NotificationStatus.Rejected;
                     notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
-                    LoadApplication(new App(notificationInfo));
-                }
-            }
-            else if (Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED")
-            {
-                if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
-                {
-                    NotificationInfo notificationInfo = new NotificationInfo();
-                    notificationInfo.NotificationStatus = NotificationStatus.Accepted;
-                    notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
-                    LoadApplication(new App(notificationInfo));
-                }
-            }
-            else if (Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED")
-            {
-                if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
-                {
-                    NotificationInfo notificationInfo = new NotificationInfo();
-                    notificationInfo.NotificationStatus = NotificationStatus.Opened;
-                    notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
+                    notificationInfo.Source.LocationName = Intent.GetStringExtra(KEY_SOURCE_NAME_EXTRA);
+                    notificationInfo.Source.Longitude = double.Parse(Intent.GetStringExtra(KEY_SOURCE_LONGITUDE_EXTRA));
+                    notificationInfo.Source.Latitude = double.Parse(Intent.GetStringExtra(KEY_SOURCE_LATITUDE_EXTRA));
+                    notificationInfo.Destination.LocationName = Intent.GetStringExtra(KEY_DESTINATION_NAME_EXTRA);
+                    notificationInfo.Destination.Longitude = double.Parse(Intent.GetStringExtra(KEY_DESTINATION_LONGITUDE_EXTRA));
+                    notificationInfo.Destination.Latitude = double.Parse(Intent.GetStringExtra(KEY_DESTINATION_LATITUDE_EXTRA));
+
                     LoadApplication(new App(notificationInfo));
                 }
             }

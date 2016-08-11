@@ -41,16 +41,38 @@ namespace RideShare
             set { SetValue(BaseLongitudeProperty, value); }
         }
 
+        private bool hasScrollEnabled;
+
+        public bool HasScrollEnabled
+        {
+            get { return hasScrollEnabled; }
+            set { hasScrollEnabled = value; }
+        }
+        private bool hasZoomEnabled;
+        public bool HasZoomEnabled
+        {
+            get { return hasZoomEnabled; }
+            set { hasZoomEnabled = value; }
+        }
+
+        private bool isShowingUser;
+        public bool IsShowingUser
+        {
+            get { return isShowingUser; }
+            set { isShowingUser = value; }
+        }
         //public bool IsShowingUser
         //{
         //    get { return (bool)GetValue(IsShowingUserProperty); }
         //    set { SetValue(IsShowingUserProperty, value); }
         //}
 
+        //public static readonly BindableProperty RCoordinatesProperty = BindableProperty.Create("RCoordinates", typeof(List<Position>), typeof(CustomMap), null, propertyChanged: OnRCoordinatesChanged);
+
         static void OnLatitudeOrLongitudeChanged(BindableObject bindable, object oldValue, object newValue)
         {
             var map = bindable as CustomMap;
-
+            
             if (map != null)
             {
                 MoveMapToRegion(map);
@@ -59,7 +81,7 @@ namespace RideShare
 
         static void MoveMapToRegion(CustomMap map)
         {
-            if (map.BaseLatitude > 0 && map.BaseLongitude > 0)
+            if(map.BaseLatitude > 0 && map.BaseLongitude >0)
                 map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(map.BaseLatitude, map.BaseLongitude), Distance.FromKilometers(10)));
         }
         

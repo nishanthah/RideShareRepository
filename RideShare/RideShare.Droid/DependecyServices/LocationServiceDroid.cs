@@ -34,7 +34,7 @@ namespace RideShare.Droid.DependecyServices
             };
             IList<string> acceptableLocationProviders = locationManger.GetProviders(criteriaForLocationService, true);
 
-            locationManger.RequestLocationUpdates(acceptableLocationProviders.First(), 1000,1, this);
+            locationManger.RequestLocationUpdates(acceptableLocationProviders.First(), 2000,1, this);
         }
   
         public  CommonModels.Location GetCurrentLocation()

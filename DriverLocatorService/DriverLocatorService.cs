@@ -9,7 +9,6 @@ using DriverLocator.Models;
 
 namespace DriverLocator
 {
-   
     public class DriverLocatorService
     {
         //private const string SERVER = "http://172.28.40.120:8079";
@@ -20,10 +19,9 @@ namespace DriverLocator
         private const string SELECTED_USER_COORDINATE_URL = SERVER + "/api/users/{0}";
         private const string CREATE_RIDEHISTORY_URL = SERVER + "/api/ridehistory";
         private const string RIDEHISTORY_BY_FILTER_URL = SERVER + "/api/ridehistory/{0}/?filter={1}";
-        private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/api/ridehistory/status/{0}";
-        private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/{0}/type";
+        private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/ridehistory/status/{0}";
+        private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/type";
         private const string UPDATE_USER_LOCATION_URL = SERVER + "/api/users/{0}/location";
-        private const string UPDATE_USER_DESTINATION_URL = SERVER + "/api/users/{0}/destination";
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
@@ -42,7 +40,7 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Method = "GET";
             requestHandler.Url = GET_USERS_URL;
             var userCoordinateResponse=requestHandler.SendRequest<UserLocationResponse>();
             return userCoordinateResponse;
@@ -52,7 +50,7 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.POST;
+            requestHandler.Method = "POST";
             requestHandler.Url = SAVE_USERS_URL;
             var result=requestHandler.SendRequest<User, SaveUserDataResponse>(userCoordinate);
             return result;
@@ -62,19 +60,9 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Method = "PUT";
             requestHandler.Url = String.Format(UPDATE_USER_LOCATION_URL, userName);
             var result = requestHandler.SendRequest<UpdateUserLocationRequest, UpdateUserLocationResponse>(request);
-            return result;
-        }
-
-        public UpdateUserDestinationResponse UpdateUserDestination(string userName, UpdateUserDestinationRequest request)
-        {
-            HttpRequestHandler requestHandler = new HttpRequestHandler();
-            requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.PUT;
-            requestHandler.Url = String.Format(UPDATE_USER_DESTINATION_URL, userName);
-            var result = requestHandler.SendRequest<UpdateUserDestinationRequest, UpdateUserDestinationResponse>(request);
             return result;
         }
 
@@ -82,7 +70,7 @@ namespace DriverLocator
 		{
 			HttpRequestHandler requestHandler = new HttpRequestHandler();
 			requestHandler.AccessToken = authenticationService.AuthenticationToken;
-			requestHandler.Method = HttpMethod.GET;
+			requestHandler.Method = "GET";
 			requestHandler.Url = String.Format(SELECTED_USER_COORDINATE_URL,userName);
 			var result=requestHandler.SendRequest<SelectedUserCoordinateResponse>();
 			return result;
@@ -92,7 +80,7 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.POST;
+            requestHandler.Method = "POST";
             requestHandler.Url = CREATE_RIDEHISTORY_URL;
             var result = requestHandler.SendRequest<RideHistory, CreateRideHistoryResponse>(rideHistory);
             return result;
@@ -102,7 +90,7 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Method = "GET";
             requestHandler.Url = String.Format(RIDEHISTORY_BY_FILTER_URL, value, filterFieldName);
             var result = requestHandler.SendRequest<FilteredRideHistoryResponse>();
             return result;
@@ -112,39 +100,39 @@ namespace DriverLocator
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Method = "PUT";
             requestHandler.Url = String.Format(RIDEHISTORY_UPDATE_STATUS_URL, request.Id);
             var result = requestHandler.SendRequest<UpdateRideHistoryRequest, UpdateRideHistoryStatusResponse>(request);
             return result;
         }
 
-        public UpdateUserTypeResponse UpdateUserType(string userName,UpdateUserTypeRequest request)
+        public UpdateUserTypeResponse UpdateUserType(UpdateUserTypeRequest request)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.PUT;
-            requestHandler.Url =String.Format(UPDATE_USER_TYPE_URL,userName);
+            requestHandler.Method = "PUT";
+            requestHandler.Url = UPDATE_USER_TYPE_URL;
             var result = requestHandler.SendRequest<UpdateUserTypeRequest, UpdateUserTypeResponse>(request);
             return result;
         }
 
-        public async Task<UserLocationResponse> GetDrivers()
+        public UserLocationResponse GetDrivers()
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Method = "GET";
             requestHandler.Url = GET_DRIVERS_URL;
-            var result = await requestHandler.SendRequestAsync<UserLocationResponse>();
+            var result = requestHandler.SendRequest<UserLocationResponse>();
             return result;
         }
 
-        public async Task<UserLocationResponse> GetRiders()
+        public UserLocationResponse GetRiders()
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Method = "GET";
             requestHandler.Url = GET_RIDERS_URL;
-            var result = await requestHandler.SendRequestAsync<UserLocationResponse>();
+            var result = requestHandler.SendRequest<UserLocationResponse>();
             return result;
         }
     }

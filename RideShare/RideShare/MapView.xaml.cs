@@ -13,137 +13,194 @@ using GoogleApiClient.Maps;
 using Common.Models;
 using Plugin.Toasts;
 using System.Collections.ObjectModel;
-using GoogleApiClient.Models;
-using Android.OS;
-using Android.Util;
-using RideShare.ViewPresenter;
 
 namespace RideShare
 {
-    public class RouteData
-    {
-        public MapPin SourcePin { get; set; }
-        public MapPin DestinationPin { get; set; }
-        public List<Position> RouteCoordinates { get; set; } 
-    }
-
-
-    public class MapPin
-    {
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
-        public string Title { get; set; }
-        public string PhoneNo { get; set; }
-        public string ImageIcon { get; set; }
-        public UserType UserType { get; set; }
-        public string UserName { get; set; }
-    }
-
-
     public partial class MapView : ContentPage,IMapPageProcessor,ILocationSelectionResult
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
+        CustomPin selectedPin;
         IMapSocketService mapSocketService;
-
+        SendRequestViewModel sendRequestViewModel;
+        IBaseUrl baseResource;
+        List<CustomPin> customPins;
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
-        public Action<CustomPin> OnMapInfoWindowClicked { get; set; }
-        public Action OnSendNotificationPopupConfirmed { get; set; }
-        public Action OnSendNotificationPopupCanceled { get; set; }
-        public Action OnNewCoordinatesRecived { get; set; }
-        public RouteData RouteResult { get; set; }
-        public List<CustomPin> MapPins { get; set; }
-        public CustomPin SelectedPin { get; set; }
-        public LocationSearchResult SelectedDestination { get; private set; }
 
-        static NotificationInfo notificationInfo;
-        BaseMapViewPresenter precenter;
+
+        bool ShowTestSimulator = false;
         public MapView()
         {
             Init();
-            if (App.CurrentLoggedUser.User.UserType == UserType.Rider)
-            {
-                precenter = new RiderViewPresenter(this, mapSocketService);
-            }
-
-            if (App.CurrentLoggedUser.User.UserType == UserType.Driver)
-            {
-                precenter = new DriverViewPresenter(this, mapSocketService);
-            }
-
+           
+            LoadUserData(true);
+            //RenderLine();
         }
 
-        public MapView(NotificationInfo notificationInfoData)
+        public MapView(NotificationInfo notificationInfo)
         {
-                Init();
-                notificationInfo = notificationInfoData;
-                
-
-                var historyInfo= driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
-
-                if (historyInfo.RequestStatus == RequestStatus.Requested)
-                {
-                    precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo, historyInfo);
-                    driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = historyInfo.Id, Status = RequestStatus.DriverAccepted });
-                }
-                else if(App.CurrentLoggedUser.User.UserType == UserType.Rider && historyInfo.RequestStatus == RequestStatus.DriverAccepted)
-                {
-                    precenter = new RiderNavigationViewPresenter(this, mapSocketService, historyInfo);
-                }
-
+            Init();
+            ShowNotificationInMap(notificationInfo);
         }
 
         async void OnInfoWindowClicked(CustomPin pin)
         {
-            SelectedPin = pin;
-            OnMapInfoWindowClicked(pin);
+            //var answer = await DisplayAlert("Select Driver?", "Do you want to select this driver?", "Yes", "No");
+            //if(answer)
+            //{
+            //messageLabel.Text = pin.Id.ToString();
+            //}
+            selectedPin = pin;
+            ShowPopupBox();
         }
 
         private void Init()
         {
-           
             InitializeComponent();
-            InitMap();
+
             InitPopup();
-            MapPins = new List<CustomPin>();
-           
-                    
             notificationPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
+           
+            mapSocketService = DependencyService.Get<IMapSocketService>();
+            baseResource = DependencyService.Get<IBaseUrl>();
+            
             destinationSelector.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDestinationSelector));
 
-            
+            //if (ShowTestSimulator)
+            //{
+            //    simulatorView.IsVisible = true;
+            //}
+            //else
+            //{
+            //    simulatorView.IsVisible = false;
+            //}
+            //sendRequestViewModel = new SendRequestViewModel(this, driverLocatorService);
+            //requestArea.BindingContext = sendRequestViewModel;
+            InitMap();
+            mapSocketService.MapCoordinateChanged += mapSocketService_MapCoordinateChanged;
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
-            sendRequestButon.Clicked += SendRequestButon_Clicked;
-            cancelinfoWindowPopupButton.Clicked += CancelinfoWindowPopupButton_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
-            this.OnMapInfoWindowClicked = OnInfoWindowClicked;
-            mapSocketService = DependencyService.Get<IMapSocketService>();
 
-
-        }
-
-        private void CancelinfoWindowPopupButton_Clicked(object sender, EventArgs e)
-        {
-            HideInfoWindowPopupBox();
-        }
-
-        private void SendRequestButon_Clicked(object sender, EventArgs e)
-        {
-            OnSendNotificationPopupConfirmed();
         }
 
         private void InitPopup()
         {
             sendingPopupForeground.BackgroundColor = new Color(0, 0, 0, 0.5);
-            infoWindowPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
+            sendRequestButon.Clicked += SendRequestButon_Clicked;
         }
 
-        #region MapViewRelatedFunctions
+        private void SendRequestButon_Clicked(object sender, EventArgs e)
+        {
+            RideHistory rideHistory = new RideHistory();
+            rideHistory.UserName = Session.CurrentUserName;
+            rideHistory.DiverUserName = selectedPin.UserName;
+            rideHistory.SourceName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, selectedPin.Pin.Position.Latitude, selectedPin.Pin.Position.Longitude);
+            rideHistory.SourceLongitude = selectedPin.Pin.Position.Longitude.ToString();
+            rideHistory.SourceLatitude = selectedPin.Pin.Position.Latitude.ToString() ;
+            rideHistory.DestinationName = String.Format("{0}(Lat = {1}, Lng = {2}", String.Empty, App.CurrentLoggedUser.Location.Latitude, App.CurrentLoggedUser.Location.Longitude);
+            rideHistory.DestinationLongitude = App.CurrentLoggedUser.Location.Longitude;
+            rideHistory.DestinationLatitude = App.CurrentLoggedUser.Location.Latitude;
+            var result = driverLocatorService.CreateHistory(rideHistory);
+            if (result.IsSuccess)
+            {
+                HidePopupBox();
+                DisplayAlert("Success", "Successfully sent the notification to driver", "Ok");
+                //this.ShowNotificationPopup("Successfully sent the notification to driver");
+                //var notificator = DependencyService.Get<IToastNotificator>();
+                //notificator.Notify(ToastNotificationType.Success, "Success", "Successfully sent the notification to driver", TimeSpan.FromSeconds(3));
+            }
+        }
+
+        private void CancelPopupButton_Clicked(object sender, EventArgs e)
+        {
+            HidePopupBox();
+        }
+
+        void mapSocketService_MapCoordinateChanged(object sender, EventArgs e)
+        {
+            //Device.BeginInvokeOnMainThread(() =>
+            //{
+                LoadUserData(false);
+           // });
+            
+        }
+
+        void OnLocationSelecteResult(LocationSearchResult result)
+        {
+            destinationText.Text =String.Format("{0} (Lat={1}, Lng={2})",result.LocationName,result.Latitude,result.Longitude);
+        }
+
+        private void LoadUserData(bool canMoveToLocation)
+        {
+
+            //var userCoordinates = driverLocatorService.ViewUserCoordinates();
+            //ShowOnLabels(userCoordinates.UserCoordinates);
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                map.Pins.Clear();
+                map.CustomPins.Clear();
+                customPins= new List<CustomPin>() ;
+                var drivers = driverLocatorService.GetDrivers();
+                var rider = App.CurrentLoggedUser;
+                var currentRiders = new List<UserLocation>();
+                currentRiders.Add(rider);
+                ShowOnMap(drivers.UserLocations, canMoveToLocation);
+                ShowOnMap(currentRiders, canMoveToLocation);
+                map.CustomPins = customPins;
+
+                if (canMoveToLocation)
+                {
+                    map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Distance.FromKilometers(2)));
+                }
+
+            });
+           
+        }
+
+        //private List<UserLocation> TestSeed()
+        //{
+        //    var userLocations = new List<UserLocation>();
+            
+        //}
+        private void ShowOnLabels(List<UserLocation> userCoordinates)
+        {
+            //messageLabel.Text = "";
+            //foreach (var userCorrdinate in userCoordinates)
+            //{
+            //    messageLabel.Text += userCorrdinate.User.UserName + "|" + userCorrdinate.User.EMail + "|" + userCorrdinate.User.FirstName + "|" + userCorrdinate.Location.Longitude + "|" + userCorrdinate.Location.Latitude + Environment.NewLine;
+            //}
+        }
+
+        private void ShowNotificationInMap(NotificationInfo notificationInfo)
+        {
+            map.Pins.Clear();
+            map.CustomPins = new List<CustomPin>();
+            RenderPin(notificationInfo.Source.Longitude.ToString(), notificationInfo.Source.Latitude.ToString(),true, notificationInfo.Source.LocationName,UserType.Driver, String.Empty, "userLogActive_icon.png",String.Empty);
+            RenderPin(notificationInfo.Destination.Longitude.ToString(), notificationInfo.Destination.Latitude.ToString(),true, notificationInfo.Destination.LocationName,UserType.Rider,String.Empty, "driverLogActive_icon.png",String.Empty);
+            RenderLine(notificationInfo.Source, notificationInfo.Destination);
+        }
+
+        private void ShowOnMap(List<UserLocation> userCoordinates,bool canMoveToLocation)
+        {
+
+            foreach (var item in userCoordinates)
+            {
+                RenderPin(item.Location.Longitude, item.Location.Latitude, canMoveToLocation, item.User.FirstName + " " + item.User.LastName + " | Position : " + item.Location.Longitude + " , " + item.Location.Latitude,item.User.UserType,item.User.MobileNo, "userLogActive_icon.png",item.User.UserName);
+            }
+
+        }
+
+        void OnTapDestinationSelector(View sender, object e)
+        {
+            //App.Current.MainPage = new NavigationPage(new LocationSearch());
+            Navigation.PushAsync(new LocationSearch(this));
+        }
+
         private void InitMap()
         {
             map = new CustomMap
             {
-                IsShowingUser = false,
+                IsShowingUser = true,
                 HeightRequest = 100,
                 WidthRequest = 960,
                 VerticalOptions = LayoutOptions.FillAndExpand
@@ -155,10 +212,15 @@ namespace RideShare
             map.OnInfoWindowClicked = OnInfoWindowClicked;
         }
 
-        public void AddPin(MapPin mapPin)
+        private void RenderPin(string longitudeCoordinate, string latitudeCoordinate,bool canMoveToLoacation, string lable,UserType userType,string mobileNo,string image,string userName)
         {
+            double latitude = 0;
+            double longitude = 0;
 
-            var position = new Position(mapPin.Latitude, mapPin.Longitude);
+            double.TryParse(latitudeCoordinate, out latitude);
+            double.TryParse(longitudeCoordinate, out longitude);
+
+            var position = new Position(latitude, longitude);
 
             var pin = new CustomPin
             {
@@ -166,152 +228,53 @@ namespace RideShare
                 {
                     Type = PinType.Place,
                     Position = position,
-                    Label = mapPin.Title,
+                    Label = lable,
                 },
-                Title = mapPin.Title,
-                UserType = mapPin.UserType,
-                MobileNo = "Mobile No:" + mapPin.PhoneNo,
-                Image = "profile_images/" + mapPin.ImageIcon,
-                UserName = mapPin.UserName,
+                Title = lable,
+                UserType = userType,
+                MobileNo = "Mobile No:" + mobileNo,
+                Image = "profile_images/" + image,
+                UserName = userName,
                 Id = Guid.NewGuid()
             };
 
-            //Device.BeginInvokeOnMainThread(() =>
-            //{
-            //    map.Pins.Add(pin.Pin);
-            //});
-            MapPins.Add(pin);
-
+            //map.CustomPins.Add(pin);
+            map.Pins.Add(pin.Pin);
+            customPins.Add(pin);
+   
         }
 
-        public void RefreshPins(bool canMoveToLocation,Func<List<CustomPin>> loadPinsFunction)
-        {
-            Task<List<CustomPin>>.Factory.StartNew(loadPinsFunction).ContinueWith((task) => {
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    try
-                    {
-                        map.Pins.Clear();
-                        var result = task.Result;
-                        SetPins(MapPins);
-                        map.CustomPins = result;
+        private void RenderLine(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
+        {            
+            GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
+            var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
+            var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
 
-                        if (canMoveToLocation)
-                        {
-                            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-
-                    }
-                   
-                });
-            });
-        }
- 
-        private void SetPins(List<CustomPin> customPins)
-        {
-           foreach(var pin in customPins)
+            //var source = new GoogleApiClient.Models.Coordinate() { Latitude = 7.087310, Longitude = 80.014366 };
+            //var destination = new GoogleApiClient.Models.Coordinate() { Latitude = 7.209709, Longitude = 79.842796 };
+            var directions  = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
+            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(source.Latitude, source.Longitude), Distance.FromKilometers(10)));
+            foreach (var route in directions.Routes)
             {
-                map.Pins.Add(pin.Pin);
-            }
-        }
-
-        public void RefreshRoute(bool canMoveToLocation,Func<RouteData> getDataFunction)
-        {
-            Task<RouteData>.Factory.StartNew(getDataFunction).ContinueWith((task) => {
-
-                Device.BeginInvokeOnMainThread(() =>
+                foreach(var coordinates in route.OverViewPolyLine.DecodedOverViewPolyLine)
                 {
-                    try
-                    {
-                        map.Pins.Clear();
-                        map.CustomPins = new List<CustomPin>();
-                        map.RouteCoordinates = new List<Position>();
-                        var data = task.Result;
-                        var sourcePin = data.SourcePin;
-                        var destinationPin = data.DestinationPin;
-                        var routeCoordinates = data.RouteCoordinates;
-                        AddPin(sourcePin);
-                        AddPin(destinationPin);
-                        map.CustomPins = MapPins;
-                        map.RouteCoordinates = routeCoordinates;
-                        if (canMoveToLocation)
-                        {
-                            map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-
-                    }
-                });
-            });
-
+                    map.RouteCoordinates.Add(new Position(coordinates.Latitude, coordinates.Longitude));
+                }
+            }
+            
         }
 
-        public void ShowDoubleButtonPopup(string title,string buttonConfirmText,string buttonCancelText)
+        private void ShowPopupBox()
         {
-            //notificationMessage.Text = title;
             //sendingPopupBack.IsVisible = true;
-            sendRequestButon.Text = buttonConfirmText;
-            cancelPopupButton.Text = buttonCancelText;
-            sendNotificationLable.Text = title;
             sendingPopupForeground.IsVisible = true;
         }
 
-        public void HideDoubleButtonPopupBox()
+        private void HidePopupBox()
         {
-            sendNotificationLable.Text = String.Empty;
             //sendingPopupBack.IsVisible = false;
             sendingPopupForeground.IsVisible = false;
         }
-
-        private void CancelPopupButton_Clicked(object sender, EventArgs e)
-        {
-            OnSendNotificationPopupCanceled();
-        }
-
-        void OnTapDestinationSelector(View sender, object e)
-        {
-            //App.Current.MainPage = new NavigationPage(new LocationSearch());
-            Navigation.PushAsync(new LocationSearch(this));
-        }
-
-        void OnLocationSelecteResult(LocationSearchResult result)
-        {
-            SelectedDestination = result;
-            driverLocatorService.UpdateUserDestination(App.CurrentLoggedUser.User.UserName, new UpdateUserDestinationRequest() { DestinationName = result.LocationName, Latitude = result.Latitude, Longitude = result.Longitude });
-            SetDestination(result.LocationName);
-        }
-
-        public void SetDestination(string destinationName)
-        {
-            destinationText.Text = String.Format("{0}", destinationName);
-        }
-        public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
-        {
-            infoWindowTitle.Text = infoWindowContent.Title;
-            infoWindowDescription.Text = infoWindowContent.Description;
-            infoWindowPopup.IsVisible = true;            
-        }
-
-        public void HideInfoWindowPopupBox()
-        {
-            infoWindowTitle.Text = String.Empty;
-            infoWindowDescription.Text = String.Empty;
-            infoWindowPopup.IsVisible = false;
-        }
-
-
-        public void NavigateToRiderView()
-        {
-            App.Current.MainPage = new NavigationPage(new MapView());
-        }
-        #endregion MapViewRelatedFunctions
-
-
 
     }
 }

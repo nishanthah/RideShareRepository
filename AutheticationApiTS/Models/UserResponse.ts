@@ -7,7 +7,6 @@ class UserResponse extends BaseResponse{
     email: string;
     password: string;
     userName: string;
-    profileImage: string;
 }
 
 export = UserResponse;

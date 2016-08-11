@@ -1,4 +1,3 @@
-"use strict";
 var User = require("../models/User");
 var UserResponse = require("../models/UserResponse");
 var TokenPayload = require("../models/TokenPayload");
@@ -17,7 +16,6 @@ var AuthhenticationAPIController = (function () {
         user.lastName = req.body.lastName;
         user.password = req.body.password;
         user.userName = req.body.userName;
-        user.profileImage = req.body.profileImage;
         try {
             AuthhenticationAPIController.userDAO.addUser(user);
             AuthhenticationAPIController.userDAO.onUserAdded = function (error, status) {
@@ -64,54 +62,6 @@ var AuthhenticationAPIController = (function () {
     };
     // /userinfo
     AuthhenticationAPIController.prototype.userinfo = function (req, res) {
-        try {
-            var user = AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
-            AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = function (error, user) {
-                if (req.body.canAccessUserInfo) {
-                    var userResponse = new UserResponse();
-                    userResponse.email = user.email;
-                    userResponse.firstName = user.firstName;
-                    userResponse.lastName = user.lastName;
-                    userResponse.userName = user.userName;
-                    userResponse.profileImage = user.profileImage;
-                    userResponse.success = true;
-                    res.json(userResponse);
-                }
-                else {
-                    return res.json({ success: false, message: 'No Permissions to access' });
-                }
-            };
-        }
-        catch (e) {
-            return res.json({ success: false, message: 'Failed to find user.' });
-        }
-    };
-    // /account
-    AuthhenticationAPIController.prototype.account = function (req, res) {
-        var user = new User();
-        user.email = req.body.email;
-        user.firstName = req.body.firstName;
-        user.lastName = req.body.lastName;
-        user.password = req.body.password;
-        user.userName = req.body.userName;
-        user.profileImage = req.body.profileImage;
-        try {
-            AuthhenticationAPIController.userDAO.updateUser(user);
-            AuthhenticationAPIController.userDAO.onUserUpdated = function (error, status) {
-                if (status) {
-                    res.json({ success: true });
-                }
-                else {
-                    res.json({ success: false, message: "Cant update the User" });
-                }
-            };
-        }
-        catch (e) {
-            res.json({ success: false, message: e.message });
-        }
-    };
-    // 
-    AuthhenticationAPIController.prototype.token = function (req, res, next) {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         var self = this;
         // decode token
@@ -122,13 +72,21 @@ var AuthhenticationAPIController = (function () {
                 }
                 else {
                     try {
-                        if (decoded.userName) {
-                            req.body.userName = decoded.userName;
-                            req.body.canAccessUserInfo = decoded.canAccessUserInfo;
-                            next();
-                        }
-                        else
-                            return res.json({ success: false, message: 'No user found' });
+                        var user = AuthhenticationAPIController.userDAO.getSelectedUser(decoded.userName);
+                        AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = function (error, user) {
+                            if (decoded.canAccessUserInfo) {
+                                var userResponse = new UserResponse();
+                                userResponse.email = user.email;
+                                userResponse.firstName = user.firstName;
+                                userResponse.lastName = user.lastName;
+                                userResponse.userName = user.userName;
+                                userResponse.success = true;
+                                res.json(userResponse);
+                            }
+                            else {
+                                return res.json({ success: false, message: 'No Permissions to access' });
+                            }
+                        };
                     }
                     catch (e) {
                         return res.json({ success: false, message: 'Failed to find user.' });
@@ -136,10 +94,8 @@ var AuthhenticationAPIController = (function () {
                 }
             });
         }
-        else
-            return res.json({ success: false, message: 'Token not found.' });
     };
     return AuthhenticationAPIController;
-}());
+})();
 module.exports = AuthhenticationAPIController;
 //# sourceMappingURL=AuthenticationApiController.js.map

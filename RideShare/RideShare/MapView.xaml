@@ -30,21 +30,13 @@
       </StackLayout>
       
      <StackLayout x:Name ="sendingPopupForeground" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="1, 1, 1, 100" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="5">        
-        <Label FontSize="17" x:Name ="sendNotificationLable" Text="Are you sure you want to send pickup request to this driver? " TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+        <Label FontSize="17" Text="Are you sure you want to send pickup request to this driver? " TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
         <StackLayout Orientation="Horizontal" >        
         <Button x:Name="sendRequestButon" Text="Send Pickup Request" BackgroundColor="#467891"  HorizontalOptions="FillAndExpand" Margin="5"/>
         <Button x:Name="cancelPopupButton" Text="Cancel" BackgroundColor="#ed910c" HorizontalOptions="FillAndExpand" Margin="5"/>
        </StackLayout>
       </StackLayout>
 
-       <StackLayout x:Name ="infoWindowPopup" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="1, 1, 1, 100" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="5">        
-        <Label FontSize="18" x:Name ="infoWindowTitle" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
-          <Label FontSize="15" x:Name ="infoWindowDescription" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
-        <StackLayout Orientation="Horizontal" >        
-        <Button x:Name="cancelinfoWindowPopupButton" Text="Ok" BackgroundColor="#ed910c" HorizontalOptions="FillAndExpand" Margin="5"/>
-       </StackLayout>
-      </StackLayout>
-    
       <StackLayout x:Name ="notificationPopup" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, AutoSize" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="10">
         <Label FontSize="15" x:Name="notificationMessage"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"  />
       </StackLayout>

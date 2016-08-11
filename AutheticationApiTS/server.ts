@@ -8,8 +8,8 @@ import RouteConfig = require('./routes/routeconfig');
 var port = process.env.PORT || 8078; 
 
 var app = express();
-app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 

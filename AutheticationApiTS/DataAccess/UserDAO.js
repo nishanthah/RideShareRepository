@@ -1,4 +1,3 @@
-"use strict";
 var mongoose = require("mongoose");
 var User = require("../models/mongoose/UserMongooseModel");
 var Config = require("../config");
@@ -14,7 +13,6 @@ var UserMongooseDAO = (function () {
         userModel.lastName = user.lastName;
         userModel.email = user.email;
         userModel.password = user.password;
-        userModel.profileImage = user.profileImage;
         var status;
         var self = this;
         // save the sample user
@@ -25,28 +23,6 @@ var UserMongooseDAO = (function () {
         });
     };
     UserMongooseDAO.prototype.updateUser = function (user) {
-        var status;
-        var self = this;
-        User.findOne({ userName: user.userName }, function (err, selecteduser) {
-            if (err)
-                self.onUserUpdated(err, null);
-            if (!selecteduser) {
-                self.onUserUpdated(new Error("User not found."), null);
-            }
-            else if (selecteduser) {
-                selecteduser.email = user.email;
-                selecteduser.firstName = user.firstName;
-                selecteduser.lastName = user.lastName;
-                selecteduser.password = user.password;
-                selecteduser.userName = user.userName;
-                selecteduser.profileImage = user.profileImage;
-                selecteduser.save(function (err) {
-                    if (err)
-                        self.onUserUpdated(err, null);
-                    self.onUserUpdated(null, true);
-                });
-            }
-        });
     };
     UserMongooseDAO.prototype.getSelectedUser = function (userName) {
         var userData = new User();
@@ -63,12 +39,11 @@ var UserMongooseDAO = (function () {
                 userData.lastName = user.lastName;
                 userData.password = user.password;
                 userData.userName = user.userName;
-                userData.profileImage = user.profileImage;
                 self.onSelectedUserDataReceived(null, userData);
             }
         });
     };
     return UserMongooseDAO;
-}());
+})();
 module.exports = UserMongooseDAO;
 //# sourceMappingURL=UserDAO.js.map

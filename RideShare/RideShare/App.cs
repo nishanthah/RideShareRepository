@@ -15,18 +15,28 @@ namespace RideShare
         public double Longitude { get; set; }
         public double Latitude { get; set; }
     }
-
-    public enum NotificationStatus
-    {
-        Accepted,
-        Rejected,
-        Opened
-    }
     public class NotificationInfo
     {
         public string RequestId { get; set; }
-        public NotificationStatus NotificationStatus { get; set; }
-}
+
+        private Coordinate source =new Coordinate();
+
+        public Coordinate Source
+        {
+            get { return source; }
+            set { source = value; }
+        }
+
+        private Coordinate destination = new Coordinate();
+
+        public Coordinate Destination
+        {
+            get { return destination; }
+            set { destination = value; }
+        }
+
+       
+    }
 
     public class App : Application
     {
@@ -58,7 +68,6 @@ namespace RideShare
             }
             else
             {
-                
                 MainPage = new NavigationPage(new LogInPage());
             }
 

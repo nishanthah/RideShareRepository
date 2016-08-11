@@ -8,12 +8,11 @@ class UserMongooseDAO implements IUserDAO
 {
     onSelectedUserDataReceived: (error: Error, userData: IUser) => void ;
     onUserAdded: (error: Error, status: boolean) => void;
-    onUserUpdated: (error: Error, status: boolean) => void;
     constructor() {
         mongoose.connect(Config.database);
     }
     addUser(user: IUser)
-    {        
+    {
         // create a sample user
         var userModel = new User();
         userModel.userName = user.userName;
@@ -21,7 +20,6 @@ class UserMongooseDAO implements IUserDAO
         userModel.lastName = user.lastName;
         userModel.email = user.email;
         userModel.password = user.password;
-        userModel.profileImage = user.profileImage;
 
         var status: boolean;
         var self = this;
@@ -35,29 +33,7 @@ class UserMongooseDAO implements IUserDAO
 
     updateUser(user: IUser)
     {
-        var status: boolean;
-        var self = this;
-        User.findOne({ userName: user.userName }, function (err, selecteduser) {
 
-            if (err) self.onUserUpdated(err, null);
-
-            if (!selecteduser) {
-                self.onUserUpdated(new Error("User not found."), null);
-            } else if (selecteduser) {
-                selecteduser.email = user.email;
-                selecteduser.firstName = user.firstName;
-                selecteduser.lastName = user.lastName;
-                selecteduser.password = user.password;
-                selecteduser.userName = user.userName;
-                selecteduser.profileImage = user.profileImage;
-                selecteduser.save(function (err) {
-                    if (err) self.onUserUpdated(err, null);
-
-                    self.onUserUpdated(null, true);
-                });
-            }
-
-        });
     }
 
     getSelectedUser(userName: string)
@@ -76,7 +52,6 @@ class UserMongooseDAO implements IUserDAO
                  userData.lastName = user.lastName;
                  userData.password = user.password;
                  userData.userName = user.userName;
-                 userData.profileImage = user.profileImage;
                  self.onSelectedUserDataReceived(null, userData);
              }
 

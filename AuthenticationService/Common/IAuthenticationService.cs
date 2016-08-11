@@ -13,7 +13,7 @@ namespace Authentication.Common
         UserInfoResponse GetUserInfo(string token);
         CreateUserResponse CreateUser(User user);
         UpdateUserResponse UpdateUser(User user);
-        string AuthenticationToken { get; set; }
+        string AuthenticationToken { get; }
 
         bool IsAuthenticated { get; }
     }

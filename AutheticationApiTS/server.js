@@ -1,4 +1,3 @@
-"use strict";
 var express = require('express');
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
@@ -6,8 +5,8 @@ var RouteConfig = require('./routes/routeconfig');
 // all environments
 var port = process.env.PORT || 8078;
 var app = express();
-app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
-app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 // use morgan to log requests to the console
 app.use(morgan('dev'));
 app.listen(port);
