@@ -4,14 +4,34 @@
              x:Class="RideShare.MasterPage"
              Title="Personal Organizer" Icon="@drawable/menuIcon">
   <ContentPage.Content>
-    <StackLayout VerticalOptions="FillAndExpand">
-      <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}"/>
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
+    <StackLayout Orientation="Vertical" >
+      <StackLayout BackgroundColor="#262626" HeightRequest="100">
+        <Grid RowSpacing="0" >
+          <Grid.RowDefinitions>
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="9*" />
+            <RowDefinition Height="2*" />
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+          </Grid.ColumnDefinitions>
+          <StackLayout x:Name="profilePictureStackLayout" Grid.Row="1" Grid.RowSpan="3" Margin="0,10,0,10">
+          </StackLayout>
+          <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="3"  TextColor="White" />
+        </Grid>
+      </StackLayout>
+      <StackLayout VerticalOptions="FillAndExpand">
+        <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}"/>
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
     </StackLayout>
   </ContentPage.Content>
 </ContentPage>
