@@ -8,20 +8,14 @@ module.exports = function () {
 		var args = {
 			data: {
 				"audience" : {
-					"named_user" : notificationData.driverUserName
+					"named_user" : notificationData.userName
 				},
 				"device_types": ["android"],
 				"notification": {
 					"android": {
-						"alert": "New Pickup Request",
+						"alert": notificationData.title,
 						"extra": {
-							"request_id": notificationData.id,
-							"source_name": notificationData.sourseName,
-							"source_longitude": notificationData.sourceLongitude,
-							"source_latitude": notificationData.sourceLatitude,
-							"destination_name": notificationData.destinationName,
-							"destination_longitude": notificationData.destinationLongitude,
-							"destination_latitude": notificationData.destinationLatitude
+							"request_id": notificationData.id
 						},
 						"interactive": {
 							"type": "ua_accept_decline_foreground",
@@ -61,6 +55,7 @@ module.exports = function () {
 
     }
     
+	
     return {
         sendNotification: sendNotification
     };

@@ -11,7 +11,10 @@ module.exports = mongoose.model('UserCoordinate', new Schema({
 	userName: String,
 	longitude: String,
 	latitude: String,
+	destinationName:String,
+	destinationLongitude:String,
+	destinationLatitude:String,
     userType: Number,
-    isLoggedIn: Boolean,
-    profileImage: String
+    isLoggedIn:Boolean,
+	profileImage: String
 }));
