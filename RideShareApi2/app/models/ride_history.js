@@ -14,5 +14,9 @@ module.exports = mongoose.model('RideHistory', new Schema({
     sourceLatitude: String,
     destinationLongitude: String,
     destinationLatitude: String,
+    requestAcceptTime: Date,
+    requestRejectTime: Date,
+    riderMeetTime: Date,
+    riderEndTime: Date,
     polyLine:String
 }));

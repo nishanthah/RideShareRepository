@@ -125,8 +125,7 @@ namespace RideShare.ViewModels
             return routeCoordinates;
         }
 
-
-
+        
         private void InitMap(List<Position> RouteCoordinates, DateTime RiderMeetTime)
         {
             string _time = String.Format("{0:dd-MM-yyyy}", RiderMeetTime) + "/" + RiderMeetTime.ToString("h:mm tt");

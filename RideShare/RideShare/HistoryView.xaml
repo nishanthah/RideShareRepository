@@ -1,11 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:maps="clr-namespace:RideShare;assembly=RideShare"
              x:Class="RideShare.HistoryView">
   <ContentPage.Content>
-    <AbsoluteLayout>      
-      <StackLayout  x:Name="mapContainer"  AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">
-      </StackLayout>    
-    </AbsoluteLayout>
+    <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand">
+      <ListView  x:Name="listView1" ItemsSource="{Binding MapList}" HasUnevenRows="true">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell >
+              <StackLayout VerticalOptions="FillAndExpand" Padding="10"  x:Name="SL" BackgroundColor="#c0c0c0">
+                <Grid Margin="5" BackgroundColor="#ffffff">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*" />
+                    <ColumnDefinition Width="9*" />
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="4*" />
+                    <RowDefinition Height="1*" />
+                    <RowDefinition Height="1*" />
+                  </Grid.RowDefinitions>
+                  <maps:CustomMap  WidthRequest="{Binding Path=WidthRequest}" HeightRequest="{Binding Path=HeightRequest}" RouteCoordinates="{Binding Path=RouteCoordinates}"
+                  x:Name="MyMap" HasScrollEnabled ="false" HasZoomEnabled="false" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                  <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"/>
+                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
+                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
+                </Grid>
+              </StackLayout>
+            </ViewCell>         
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+    </ScrollView>
   </ContentPage.Content>
 </ContentPage>

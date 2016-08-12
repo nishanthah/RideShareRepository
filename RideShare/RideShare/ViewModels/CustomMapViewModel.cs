@@ -115,6 +115,7 @@ namespace RideShare.ViewModels
             }
         }
 
+
         private double baseLongitude;
 
         public double BaseLongitude
