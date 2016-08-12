@@ -49,9 +49,17 @@ namespace RideShare
 
             if (vm.isAuthenticated)
             {
-                profileImage = vm.ProfilePhoto;
-                imageSource = GetImageSourceFromByteArray(profileImage);
-                profilePhoto.Source = imageSource;
+                if(vm.ProfilePhoto != null && vm.ProfilePhoto.Length != 0)
+                {
+                    profileImage = vm.ProfilePhoto;
+                    imageSource = GetImageSourceFromByteArray(profileImage);
+                    profilePhoto.Source = imageSource;
+                }
+                else
+                {
+                    profilePhoto.Source = "add_picture.png";
+                }
+                
             }
             else
             {

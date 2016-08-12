@@ -61,6 +61,14 @@ namespace Authentication
             requestHandler.AccessToken = token;
             requestHandler.Method = HttpMethod.GET;
             var userInfo = requestHandler.SendRequest<UserInfoResponse>();
+            if(userInfo.IsSuccess)
+            {
+                IsAuthenticated = true;                
+            }
+            else
+            {
+                IsAuthenticated = false;                
+            }
             return userInfo;
         }
 

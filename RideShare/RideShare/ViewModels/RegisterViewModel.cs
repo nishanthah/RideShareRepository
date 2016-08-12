@@ -19,6 +19,8 @@ namespace RideShare.ViewModels
         string password;
         string email;
         byte[] _profilePhoto;
+        string profilePictureEncoded = string.Empty;
+
         ISignUpPageProcessor signUpPageProcessor;
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
@@ -32,7 +34,10 @@ namespace RideShare.ViewModels
                 this.LastName = currentUserDetails.LastName;
                 this.UserName = currentUserDetails.UserName;
                 this.Email = currentUserDetails.EMail;
-                this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
+                if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
+                {
+                    this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
+                }
                 this.SignUpCommand = new RelayCommand(Update);
             }
             else
@@ -143,7 +148,7 @@ namespace RideShare.ViewModels
                 UserName = this.UserName,
                 EMail = this.Email,
                 Password = this.Password,
-                profileImageEncoded = Convert.ToBase64String(this.ProfilePhoto)
+                profileImageEncoded = GetProfilePictureEncoded()
             };
 
 
@@ -170,7 +175,7 @@ namespace RideShare.ViewModels
                 UserName = this.UserName,
                 EMail = this.Email,
                 Password = this.Password,
-                profileImageEncoded = Convert.ToBase64String(this.ProfilePhoto)
+                profileImageEncoded = GetProfilePictureEncoded()
             };
 
             var Isvalid = AreDetailsValid(user);
@@ -186,6 +191,15 @@ namespace RideShare.ViewModels
             }
 
 
+        }
+
+        public string GetProfilePictureEncoded()
+        {
+            if (this.ProfilePhoto != null && this.ProfilePhoto.Length != 0)
+            {
+                profilePictureEncoded = Convert.ToBase64String(this.ProfilePhoto);
+            }
+            return profilePictureEncoded;
         }
 
 

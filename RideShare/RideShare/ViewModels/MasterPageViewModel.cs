@@ -44,8 +44,13 @@ namespace RideShare.ViewModels
         public MasterPageViewModel()
         {
             var currentUserDetails = App.CurrentLoggedUser.User;
-            byte[] ImageData = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
-            ProfileImageSource = ImageSource.FromStream(() => new MemoryStream(ImageData));
+            if(!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
+            {
+                byte[] ImageData = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
+                ProfileImageSource = ImageSource.FromStream(() => new MemoryStream(ImageData));
+            }
+            else
+                ProfileImageSource = "add_picture.png";
             UserName = App.CurrentLoggedUser.User.UserName;
         }
     }
