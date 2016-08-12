@@ -83,7 +83,7 @@ namespace RideShare
                 if (historyInfo.RequestStatus == RequestStatus.Requested)
                 {
                     precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo, historyInfo);
-                    driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = historyInfo.Id, Status = RequestStatus.DriverAccepted });
+                    
                 }
                 else if(App.CurrentLoggedUser.User.UserType == UserType.Rider && historyInfo.RequestStatus == RequestStatus.DriverAccepted)
                 {
@@ -113,12 +113,18 @@ namespace RideShare
             
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
             sendRequestButon.Clicked += SendRequestButon_Clicked;
+            btnToolBarChangeStatus.Text = "Set PikedUp";
             cancelinfoWindowPopupButton.Clicked += CancelinfoWindowPopupButton_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
             this.OnMapInfoWindowClicked = OnInfoWindowClicked;
             mapSocketService = DependencyService.Get<IMapSocketService>();
 
 
+        }
+
+        private void BtnToolBarChangeStatus_Clicked(object sender, EventArgs e)
+        {
+            
         }
 
         private void CancelinfoWindowPopupButton_Clicked(object sender, EventArgs e)
