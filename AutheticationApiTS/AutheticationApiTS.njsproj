@@ -36,18 +36,18 @@
   <ItemGroup>
     <TypeScriptCompile Include="Scripts\typings\express\express.d.ts" />
     <TypeScriptCompile Include="server.ts" />
-    <TypeScriptCompile Include="Common\IUserDAO.ts" />
+    <TypeScriptCompile Include="common\IUserDAO.ts" />
     <TypeScriptCompile Include="config.ts" />
-    <TypeScriptCompile Include="DataAccess\UserDAO.ts" />
-    <TypeScriptCompile Include="Models\AccessToken.ts" />
-    <TypeScriptCompile Include="Models\common\BaseResponse.ts" />
-    <TypeScriptCompile Include="Models\common\IUser.ts" />
-    <TypeScriptCompile Include="Models\TokenPayload.ts" />
-    <TypeScriptCompile Include="Models\User.ts" />
-    <TypeScriptCompile Include="Models\mongoose\UserMongooseModel.ts" />
-    <TypeScriptCompile Include="Models\UserResponse.ts" />
-    <TypeScriptCompile Include="Routes\AuthenticationApiController.ts" />
-    <TypeScriptCompile Include="Routes\RouteConfig.ts" />
+    <TypeScriptCompile Include="dataaccess\UserDAO.ts" />
+    <TypeScriptCompile Include="models\AccessToken.ts" />
+    <TypeScriptCompile Include="models\common\BaseResponse.ts" />
+    <TypeScriptCompile Include="models\common\IUser.ts" />
+    <TypeScriptCompile Include="models\TokenPayload.ts" />
+    <TypeScriptCompile Include="models\User.ts" />
+    <TypeScriptCompile Include="models\mongoose\UserMongooseModel.ts" />
+    <TypeScriptCompile Include="models\UserResponse.ts" />
+    <TypeScriptCompile Include="routes\AuthenticationApiController.ts" />
+    <TypeScriptCompile Include="routes\RouteConfig.ts" />
     <TypeScriptCompile Include="Scripts\typings\body-parser\body-parser.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\express-serve-static-core\express-serve-static-core.d.ts" />
     <TypeScriptCompile Include="Scripts\typings\jsonwebtoken\jsonwebtoken.d.ts" />
@@ -61,12 +61,12 @@
     <Content Include="README.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="DataAccess\" />
-    <Folder Include="Models\" />
-    <Folder Include="Common\" />
-    <Folder Include="Models\mongoose\" />
-    <Folder Include="Models\common\" />
-    <Folder Include="Routes\" />
+    <Folder Include="dataaccess\" />
+    <Folder Include="models\" />
+    <Folder Include="common\" />
+    <Folder Include="models\mongoose\" />
+    <Folder Include="models\common\" />
+    <Folder Include="routes\" />
     <Folder Include="Scripts\" />
     <Folder Include="Scripts\typings\" />
     <Folder Include="Scripts\typings\express\" />

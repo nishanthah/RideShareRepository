@@ -18,8 +18,8 @@ namespace DriverLocator.Models
         Requested = 1,
         DriverAccepted = 2,
         DriverRejected = 3,
-        Canceled = 4,
-        Done = 5
+        RiderMet = 4,
+        RideCompleted = 5
     }
     /* Sample Request Body
       {     

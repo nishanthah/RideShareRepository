@@ -51,6 +51,7 @@ namespace RideShare
         public Action OnSendNotificationPopupConfirmed { get; set; }
         public Action OnSendNotificationPopupCanceled { get; set; }
         public Action OnNewCoordinatesRecived { get; set; }
+        public Action OnNewStatusChanged { get; set; }
         public RouteData RouteResult { get; set; }
         public List<CustomPin> MapPins { get; set; }
         public CustomPin SelectedPin { get; set; }
@@ -124,7 +125,7 @@ namespace RideShare
 
         private void BtnToolBarChangeStatus_Clicked(object sender, EventArgs e)
         {
-            
+            OnNewStatusChanged();
         }
 
         private void CancelinfoWindowPopupButton_Clicked(object sender, EventArgs e)
@@ -314,6 +315,21 @@ namespace RideShare
         {
             App.Current.MainPage = new NavigationPage(new MapView());
         }
+
+        public void LoadCurrentStatus(string status)
+        {
+            if(status!=null)
+            { 
+                
+                //toolBar1.IsVisible = true;
+                btnToolBarChangeStatus.Text = status;
+            }
+            else
+            {
+                //toolBar1.IsVisible = false;
+            }
+        }
+
         #endregion MapViewRelatedFunctions
 
 

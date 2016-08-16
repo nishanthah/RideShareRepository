@@ -38,6 +38,8 @@ namespace RideShare.Utilities
                 request.Latitude = location.Latitude;
                 request.Longitude = location.Longitude;
 
+                bool canUpdateLocation = false;
+
                 
 
                 var isUserLocationUpdated = App.CurrentLoggedUser != null
@@ -45,7 +47,17 @@ namespace RideShare.Utilities
                                                 && App.CurrentLoggedUser.Location.Longitude != null
                                                 && double.Parse(App.CurrentLoggedUser.Location.Latitude) != location.Latitude
                                                 && double.Parse(App.CurrentLoggedUser.Location.Longitude) != location.Longitude;
-                if (isUserLocationUpdated)
+
+                var isLocationNull = App.CurrentLoggedUser != null
+                                      && App.CurrentLoggedUser.Location.Latitude == null
+                                      && App.CurrentLoggedUser.Location.Longitude == null;
+
+                if (isLocationNull || isUserLocationUpdated)
+                {
+                    canUpdateLocation = true;
+                }
+
+                if (canUpdateLocation)
                 {
                     var result = driverLocatorService.UpdateUserLocation(currentUser, request);
                     if (result.IsSuccess)

@@ -1,4 +1,5 @@
-﻿using GoogleApiClient.Maps;
+﻿using DriverLocator.Models;
+using GoogleApiClient.Maps;
 using GoogleApiClient.Models;
 using RideShare.Common;
 using RideShare.SharedInterfaces;
@@ -30,6 +31,7 @@ namespace RideShare.ViewPresenter
             mapPageProcessor.OnSendNotificationPopupConfirmed = OnPopupConfirmed;
             mapPageProcessor.OnNewCoordinatesRecived = OnNewCoordinatesRecived;
             mapSocketService.MapCoordinateChanged += OnNewCoordinateChanged;
+            mapPageProcessor.OnNewStatusChanged = OnNewStatusChanged;
         }
 
         private void OnNewCoordinateChanged(object sender, EventArgs e)
@@ -72,6 +74,8 @@ namespace RideShare.ViewPresenter
                 mapPageProcessor.SetDestination(destination);
             }
         }
+
+        protected virtual void OnNewStatusChanged() { }
 
     }
 }

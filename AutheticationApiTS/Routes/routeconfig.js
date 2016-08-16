@@ -20,4 +20,4 @@ var RouteConfig = (function () {
     return RouteConfig;
 }());
 module.exports = RouteConfig;
-//# sourceMappingURL=routeconfig.js.map
+//# sourceMappingURL=RouteConfig.js.map

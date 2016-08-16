@@ -26,7 +26,7 @@ app.set('superSecret', config.secret); // secret variable
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));
-app.use(bodyParser.json(({ limit: '50mb' }));
+app.use(bodyParser.json({ limit: '50mb' }));
 
 // use morgan to log requests to the console
 app.use(morgan('dev'));
@@ -293,7 +293,7 @@ apiRoutes.put('/users/:userName/type', function (req, res) {
 
 //});
 
-// Request Ststus : 1-Pending, 2-Driver Accepted, 3-Driver Rejected
+// Request Ststus : 1-Pending, 2-Driver Accepted, 3-Driver Rejected, 4-Driver Met, 5-Ride Completed
 apiRoutes.post('/ridehistory', function (req, res) {
 	
 	var newRideHistory = new RideHistory({

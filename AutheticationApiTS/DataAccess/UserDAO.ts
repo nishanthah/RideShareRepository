@@ -70,7 +70,8 @@ class UserMongooseDAO implements IUserDAO
 
              if (!user) {
                  self.onSelectedUserDataReceived(new Error("User not found."), null);
-             } else if (user) {
+             }
+             else if (user) {
                  userData.email = user.email;
                  userData.firstName = user.firstName;
                  userData.lastName = user.lastName;

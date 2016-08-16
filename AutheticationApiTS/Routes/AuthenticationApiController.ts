@@ -48,13 +48,15 @@ class AuthhenticationAPIController{
     // /accesstoken
     accesstoken(req: express.Request, res: express.Response) {
 
-        try {
-   
             AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
             AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
-                if (user.password != req.body.password) {
+                if (error) {
+                    res.json({ success: false, message: error.message });
+                }
+                else if (user.password != req.body.password) {
                     res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-                } else {
+                }
+                else {
 
                     // if user is found and password is right
                     // create a token
@@ -74,25 +76,21 @@ class AuthhenticationAPIController{
                     res.json(accessToken);
                 }
             };
-             
-           
 
-        }
-        catch (e) {
-            res.json({ success: false, message: 'Authentication failed.' });
-        }
-        
     }
 
     // /userinfo
     userinfo(req: express.Request, res: express.Response) {              
 
-        try {
-
             var user = AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
 
             AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
-                if (req.body.canAccessUserInfo) {
+
+                if (error) {
+                    res.json({ success: false, message: error.message });
+                }
+
+                else if (req.body.canAccessUserInfo) {
 
                     var userResponse = new UserResponse();
                     userResponse.email = user.email;
@@ -104,16 +102,10 @@ class AuthhenticationAPIController{
                     res.json(userResponse);
                 }
                 else {
-                    return res.json({ success: false, message: 'No Permissions to access' });
+                    res.json({ success: false, message: 'No Permissions to access' });
                 }
             };
 
-                      
-                       
-        }
-        catch(e){
-            return res.json({ success: false, message: 'Failed to find user.' });
-        } 
     }
 
     // /account
@@ -126,10 +118,14 @@ class AuthhenticationAPIController{
         user.password = req.body.password;
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
-        try {
-
+        
             AuthhenticationAPIController.userDAO.updateUser(user);
             AuthhenticationAPIController.userDAO.onUserUpdated = (error: Error, status: boolean) => {
+
+                if (error) {
+                    res.json({ success: false, message: error.message });
+                }
+
                 if (status) {
                     res.json({ success: true });
                 }
@@ -138,14 +134,9 @@ class AuthhenticationAPIController{
                 }
             };
 
-        }
-        catch (e) {
-            res.json({ success: false, message: e.message });
-        }
-
+       
     }
 
-    // 
     token(req: express.Request, res: express.Response, next: express.NextFunction) {
 
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -154,22 +145,20 @@ class AuthhenticationAPIController{
         if (token) {
             jwt.verify(token, Config.secret, function (err, decoded) {
                 if (err) {
-                    return res.json({ success: false, message: 'Failed to authenticate token.' });
-                } else {
+                    res.json({ success: false, message: 'Failed to authenticate token.' });
+                }
 
-                    try {
-                        if (decoded.userName)
-                        {
-                            req.body.userName = decoded.userName;
-                            req.body.canAccessUserInfo =decoded.canAccessUserInfo;
-                            next();
-                        }
-                        else
-                            return res.json({ success: false, message: 'No user found' });
+                else if (decoded) {
+
+                    if (decoded.userName) {
+                        req.body.userName = decoded.userName;
+                        req.body.canAccessUserInfo = decoded.canAccessUserInfo;
+                        next();
                     }
-                    catch (e) {
-                        return res.json({ success: false, message: 'Failed to find user.' });
-                    }
+                    else res.json({ success: false, message: 'No user found' });
+                }
+                else {
+                    res.json({ success: false, message: 'Cant decode user data' });
                 }
             });
         }

@@ -18,6 +18,7 @@ namespace RideShare.Common
         Action OnSendNotificationPopupConfirmed { get; set; }
         Action OnSendNotificationPopupCanceled { get; set; }
         Action OnNewCoordinatesRecived { get; set; }
+        Action OnNewStatusChanged { get; set; }
         RouteData RouteResult { get; set; }
         List<CustomPin> MapPins { get; set; }
         CustomPin SelectedPin { get; set; }
@@ -32,6 +33,7 @@ namespace RideShare.Common
         void HideInfoWindowPopupBox();
         void NavigateToRiderView();
         void SetDestination(LocationSearchResult destination);
+        void LoadCurrentStatus(string status);
 
     }
 }
