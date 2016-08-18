@@ -1,19 +1,22 @@
-"use strict";
 var express = require('express');
-var AuthenticationAPI = require('./authapi');
+var AuthenticationAPI = require('./AuthenticationApiController');
 var UserMongooseDAO = require('../dataaccess/UserDAO');
 var RouteConfig = (function () {
-    function RouteConfig() {
+    function RouteConfig(app) {
         this.apiRoutes = express.Router();
-        this.initApiRoutes();
+        this.app = app;
     }
     RouteConfig.prototype.initApiRoutes = function () {
         var authenticationApi = new AuthenticationAPI(new UserMongooseDAO());
         this.apiRoutes.post('/useraccount', authenticationApi.useraccount);
         this.apiRoutes.post('/accesstoken', authenticationApi.accesstoken);
-        this.apiRoutes.post('/userinfo', authenticationApi.userinfo);
+        // route middleware to verify a token
+        this.apiRoutes.use((authenticationApi.token).bind(authenticationApi));
+        this.apiRoutes.put('/useraccount', authenticationApi.account);
+        this.apiRoutes.get('/userinfo', authenticationApi.userinfo);
+        this.app.use('/authapp', this.apiRoutes);
     };
     return RouteConfig;
-}());
+})();
 module.exports = RouteConfig;
-//# sourceMappingURL=routes.js.map
+//# sourceMappingURL=routeconfig.js.map
