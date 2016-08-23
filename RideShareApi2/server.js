@@ -293,7 +293,7 @@ apiRoutes.put('/users/:userName/type', function (req, res) {
 
 //});
 
-// Request Ststus : 1-Pending, 2-Driver Accepted, 3-Driver Rejected, 4-Driver Met, 5-Ride Completed
+// Request Ststus : 1-Pending, 2-Driver Accepted, 3-Driver Rejected
 apiRoutes.post('/ridehistory', function (req, res) {
 	
 	var newRideHistory = new RideHistory({
@@ -325,6 +325,33 @@ apiRoutes.post('/ridehistory', function (req, res) {
 		res.json({ success: true, id : saved._id });
 	});
 
+});
+
+apiRoutes.put('/ridehistory/:id/:polyLine', function (req, res) {
+    
+    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (!rideHistoryItem) {
+            res.json({ success: false, message: "Ride History Not Found" });
+        }
+        else {
+            
+            rideHistoryItem[polyLine] = req.body.polyLine;
+            
+            rideHistoryItem.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Updated The Ride History');
+                res.json({ success: true });
+            });
+
+        }
+
+    });
+
+   
 });
 
 apiRoutes.get('/ridehistory/:queryString', function (req, res) {

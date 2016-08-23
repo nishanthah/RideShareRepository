@@ -1,9 +1,9 @@
 ﻿using DriverLocator.Models;
+using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
 using Xamarin.Forms;
 //using RideShare.Data;
 
@@ -32,7 +32,7 @@ namespace RideShare
     {
         //public static UserManager User_Manager { get; private set; }
         public static UserLocation CurrentLoggedUser { get; set; }
-
+        IAppDataService appDataService = DependencyService.Get<IAppDataService>();
         public App(bool isLoading)
         {
             //remove dead code
@@ -73,7 +73,10 @@ namespace RideShare
         public App(NotificationInfo notificationInfo)
         {
             // The root page of your application
+            appDataService.Save("currentRequestId", notificationInfo.RequestId);
             MainPage = new MainPage(notificationInfo);
+
+
         }
 
         protected override void OnStart()

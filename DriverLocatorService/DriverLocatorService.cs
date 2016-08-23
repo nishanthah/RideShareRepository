@@ -14,11 +14,13 @@ namespace DriverLocator
     {
         //private const string SERVER = "http://172.28.40.120:8079";
         private const string SERVER = "http://ridesharemain.herokuapp.com";
+        //private const string SERVER = "http://172.28.40.49:8079";
         private const string GET_USERS_URL = SERVER+"/api/users";
         private const string SAVE_USERS_URL = SERVER+"/api/users";
         private const string UPDATE_USER_COORDINATE_URL = SERVER + "/api/updatecoordinates";
         private const string SELECTED_USER_COORDINATE_URL = SERVER + "/api/users/{0}";
         private const string CREATE_RIDEHISTORY_URL = SERVER + "/api/ridehistory";
+        private const string UPDATE_POLYLINE_URL = SERVER + "/api/ridehistory/{0}/Polyline";
         private const string RIDEHISTORY_BY_FILTER_URL = SERVER + "/api/ridehistory/{0}/?filter={1}";
         private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/api/ridehistory/status/{0}";
         private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/{0}/type";
@@ -95,6 +97,16 @@ namespace DriverLocator
             requestHandler.Method = HttpMethod.POST;
             requestHandler.Url = CREATE_RIDEHISTORY_URL;
             var result = requestHandler.SendRequest<RideHistory, CreateRideHistoryResponse>(rideHistory);
+            return result;
+        }
+
+        public UpdatePolylineResponse UpdatePolyline(string id, UpdatePolylineRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = String.Format(UPDATE_POLYLINE_URL, id);
+            var result = requestHandler.SendRequest<UpdatePolylineRequest, UpdatePolylineResponse>(request);
             return result;
         }
 

@@ -7,10 +7,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace RideShare.ViewPresenter
 {
+    public class Coordinate
+    {
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+    }
     public class DriverNavigationViewPresenter : BaseMapViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
@@ -199,8 +205,69 @@ namespace RideShare.ViewPresenter
             }
         }
 
-        protected override void OnNewStatusChanged()
+        /// <summary>
+        /// Encodes the list of coordinates to a Google Maps encoded coordinate string.
+        /// </summary>
+        /// <param name="coordinates">The coordinates.</param>
+        /// <returns>Encoded coordinate string</returns>
+        public static string EncodeCoordinates(List<Coordinate> coordinates)
         {
+            int plat = 0;
+            int plng = 0;
+            System.Text.StringBuilder encodedCoordinates = new System.Text.StringBuilder();
+            foreach (Coordinate coordinate in coordinates)
+            {
+                // Round to 5 decimal places and drop the decimal
+                int late5 = (int)(coordinate.Latitude * 1e5);
+                int lnge5 = (int)(coordinate.Longitude * 1e5);
+                // Encode the differences between the coordinates
+                encodedCoordinates.Append(EncodeSignedNumber(late5 - plat));
+                encodedCoordinates.Append(EncodeSignedNumber(lnge5 - plng));
+                // Store the current coordinates
+                plat = late5;
+                plng = lnge5;
+            }
+            return encodedCoordinates.ToString();
+        }
+        /// <summary>
+        /// Encode a signed number in the encode format.
+        /// </summary>
+        /// <param name="num">The signed number</param>
+        /// <returns>The encoded string</returns>
+        private static string EncodeSignedNumber(int num)
+        {
+            int sgn_num = num << 1; //shift the binary value
+            if (num < 0) //if negative invert
+            {
+                sgn_num = ~(sgn_num);
+            }
+            return (EncodeNumber(sgn_num));
+        }
+
+        /// <summary>
+        /// Encode an unsigned number in the encode format.
+        /// </summary>
+        /// <param name="num">The unsigned number</param>
+        /// <returns>The encoded string</returns>
+        private static string EncodeNumber(int num)
+        {
+            System.Text.StringBuilder encodeString = new System.Text.StringBuilder();
+            while (num >= 0x20)
+            {
+                encodeString.Append((char)((0x20 | (num & 0x1f)) + 63));
+                num >>= 5;
+            }
+            encodeString.Append((char)(num + 63));
+            // All backslashes needs to be replaced with double backslashes
+            // before being used in a Javascript string.
+            return encodeString.ToString().Replace(@"\", @"\\");
+        }
+
+        List<Coordinate> coordinates = new List<Coordinate>();
+        protected override void OnNewStatusChanged()
+        {            
+            IAppDataService appDataService = DependencyService.Get<IAppDataService>();          
+
             var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
 
             if (historyInfo.RequestStatus == RequestStatus.DriverAccepted)
@@ -208,6 +275,24 @@ namespace RideShare.ViewPresenter
                 var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = historyInfo.Id, Status = RequestStatus.RiderMet }).IsSuccess;
                 currentStatus = RequestStatus.RiderMet;
                 mapPageProcessor.LoadCurrentStatus("Set As Ride Completed");
+
+                //Update Polyline
+                Task t = Task.Run(() =>
+                {
+                    var currentUser = appDataService.Get("current_user");
+                    ILocationService locService = DependencyService.Get<ILocationService>();
+                    var location = locService.GetCurrentLocation();
+                    if (!System.String.IsNullOrEmpty(currentUser) && location != null)
+                    {
+                        Coordinate _Coordinate = new Coordinate()
+                        {
+                            Latitude = location.Latitude,
+                            Longitude = location.Longitude
+                        };
+                        coordinates.Add(_Coordinate);
+                    }
+                });          
+
             }
 
             if (historyInfo.RequestStatus == RequestStatus.RiderMet)
@@ -215,8 +300,10 @@ namespace RideShare.ViewPresenter
                 var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = historyInfo.Id, Status = RequestStatus.RideCompleted }).IsSuccess;
                 currentStatus = RequestStatus.RideCompleted;
                 mapPageProcessor.NavigateToRiderView();
-            }
 
+                string history = EncodeCoordinates(coordinates);
+                driverLocatorService.UpdatePolyline(appDataService.Get("appDataService"), new DriverLocator.Models.UpdatePolylineRequest() { PolyLine = history });
+            }
         }
 
         private CustomPin GetFromatted(MapPin mapPin)

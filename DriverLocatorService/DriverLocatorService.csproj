@@ -34,6 +34,8 @@
     <Compile Include="Models\DriversResponse.cs" />
     <Compile Include="Models\FilteredRideHistoryResponse.cs" />
     <Compile Include="Models\RideHistory.cs" />
+    <Compile Include="Models\UpdatePolylineRequest.cs" />
+    <Compile Include="Models\UpdatePolylineResponse.cs" />
     <Compile Include="Models\UpdateRideHistoryRequest.cs" />
     <Compile Include="Models\UpdateRideHistoryStatusResponse.cs" />
     <Compile Include="Models\UpdateUserDestinationRequest.cs" />
