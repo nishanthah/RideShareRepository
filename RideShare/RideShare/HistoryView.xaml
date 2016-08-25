@@ -5,33 +5,59 @@
              x:Class="RideShare.HistoryView">
   <ContentPage.Content>
     <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand">
-      <ListView  x:Name="listView1" ItemsSource="{Binding MapList}" HasUnevenRows="true">
-        <ListView.ItemTemplate>
-          <DataTemplate>
-            <ViewCell >
-              <StackLayout VerticalOptions="FillAndExpand" Padding="10"  x:Name="SL" BackgroundColor="#c0c0c0">
-                <Grid Margin="5" BackgroundColor="#ffffff">
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="1*" />
-                    <ColumnDefinition Width="9*" />
-                  </Grid.ColumnDefinitions>
-                  <Grid.RowDefinitions>
-                    <RowDefinition Height="4*" />
-                    <RowDefinition Height="4*" />
-                    <RowDefinition Height="1*" />
-                    <RowDefinition Height="1*" />
-                  </Grid.RowDefinitions>
-                  <maps:CustomMap  WidthRequest="{Binding Path=WidthRequest}" HeightRequest="{Binding Path=HeightRequest}" RouteCoordinates="{Binding Path=RouteCoordinates}"
-                  x:Name="MyMap" HasScrollEnabled ="false" HasZoomEnabled="false" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2" />
-                  <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"/>
-                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
-                  <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
-                </Grid>
-              </StackLayout>
-            </ViewCell>         
-          </DataTemplate>
-        </ListView.ItemTemplate>
-      </ListView>
+      <RelativeLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+        <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" VerticalOptions="FillAndExpand"
+                        HorizontalOptions="FillAndExpand"
+                        Orientation="Vertical"
+                        Spacing="15">
+          <ListView  x:Name="listView1" ItemsSource="{Binding MapList}" HasUnevenRows="true">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell >
+                  <StackLayout VerticalOptions="FillAndExpand" Padding="10"  x:Name="SL" BackgroundColor="#c0c0c0">
+                    <Grid Margin="5" BackgroundColor="#ffffff">
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="9*" />
+                      </Grid.ColumnDefinitions>
+                      <Grid.RowDefinitions>
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="4*" />
+                        <RowDefinition Height="1*" />
+                        <RowDefinition Height="1*" />
+                      </Grid.RowDefinitions>
+                      <maps:CustomMap  WidthRequest="{Binding Path=WidthRequest}" HeightRequest="{Binding Path=HeightRequest}" RouteCoordinates="{Binding Path=RouteCoordinates}"
+                      x:Name="MyMap" HasScrollEnabled ="false" HasZoomEnabled="false" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                      <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"/>
+                      <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
+                      <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
+                    </Grid>
+                  </StackLayout>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+
+        </StackLayout>
+        <StackLayout>
+          <Grid Grid.Row="1" IsVisible="{Binding IsBusy}" BackgroundColor="Transparent" VerticalOptions="Center" HorizontalOptions="Center">
+              <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+              </Grid.RowDefinitions>
+
+              <ActivityIndicator  Grid.Row="0" Color="Blue"
+                                  IsVisible="{Binding IsBusy}"
+                                  IsRunning="{Binding IsBusy}"
+                                  VerticalOptions="End"
+                                  HorizontalOptions="Center"/>
+              <Label Grid.Row="1" TextColor="Blue"
+                     Text="Please wait..."
+                     VerticalOptions="Start"
+                     HorizontalOptions="Center"/>
+                        </Grid>
+        </StackLayout>      
+      </RelativeLayout>     
     </ScrollView>
   </ContentPage.Content>
 </ContentPage>

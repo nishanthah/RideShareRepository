@@ -21,5 +21,16 @@ namespace RideShare.ViewModels
         }
 
         public string ErrorMessage { get; set; }
+
+        private bool _isBusy;
+        public bool IsBusy
+        {
+            get { return _isBusy; }
+            set
+            {
+                _isBusy = value;
+                OnPropertyChanged("IsBusy");
+            }
+        }
     }
 }

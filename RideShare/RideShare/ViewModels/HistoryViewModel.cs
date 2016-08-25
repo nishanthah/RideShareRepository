@@ -63,10 +63,16 @@ namespace RideShare.ViewModels
 
         public HistoryViewModel()
         {
-           
-            GetRouteResult();
-        }
+            IsBusy = true;
+            Task<RouteResult>.Factory.StartNew(GetRouteResult).ContinueWith((task) => {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    IsBusy = false;
+                });
+            });            
+        }             
 
+        
         double l1 = 0;
         double l2 = 0;
         private RouteResult GetRouteResult()
