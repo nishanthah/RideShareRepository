@@ -6,14 +6,13 @@ import UserResponse = require("../models/UserResponse");
 import TokenPayload = require("../models/TokenPayload");
 import AccessToken = require("../models/AccessToken");
 import Config = require("../config");
+import ApplicationContext = require("../ApplicationContext");
 import jwt = require('jsonwebtoken'); 
 
 class AuthhenticationAPIController{
 
-    static userDAO: IUserDAO;
-
-    constructor(userDAO: IUserDAO) {
-        AuthhenticationAPIController.userDAO = userDAO;
+    constructor() {
+       
     }
 
     // /useraccount
@@ -27,9 +26,9 @@ class AuthhenticationAPIController{
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
         try {
-
-            AuthhenticationAPIController.userDAO.addUser(user);
-            AuthhenticationAPIController.userDAO.onUserAdded = (error: Error, status: boolean) => {
+            var dataAccess = ApplicationContext.getDB();
+            dataAccess.addUser(user);
+            dataAccess.onUserAdded = (error: Error, status: boolean) => {
                 if (status) {
                     res.json({ success: true });
                 }
@@ -47,9 +46,9 @@ class AuthhenticationAPIController{
 
     // /accesstoken
     accesstoken(req: express.Request, res: express.Response) {
-
-            AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
-            AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.getSelectedUser(req.body.userName);
+        dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
                 if (error) {
                     res.json({ success: false, message: error.message });
                 }
@@ -81,10 +80,10 @@ class AuthhenticationAPIController{
 
     // /userinfo
     userinfo(req: express.Request, res: express.Response) {              
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser(req.body.userName);
 
-            var user = AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
-
-            AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = (error: Error, user: IUser) => {
+        dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
                 if (error) {
                     res.json({ success: false, message: error.message });
@@ -118,9 +117,9 @@ class AuthhenticationAPIController{
         user.password = req.body.password;
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
-        
-            AuthhenticationAPIController.userDAO.updateUser(user);
-            AuthhenticationAPIController.userDAO.onUserUpdated = (error: Error, status: boolean) => {
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.updateUser(user);
+        dataAccess.onUserUpdated = (error: Error, status: boolean) => {
 
                 if (error) {
                     res.json({ success: false, message: error.message });

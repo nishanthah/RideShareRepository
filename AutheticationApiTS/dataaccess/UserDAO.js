@@ -1,9 +1,6 @@
-var mongoose = require("mongoose");
 var User = require("../models/mongoose/UserMongooseModel");
-var Config = require("../config");
 var UserMongooseDAO = (function () {
     function UserMongooseDAO() {
-        mongoose.connect(Config.database);
     }
     UserMongooseDAO.prototype.addUser = function (user) {
         // create a sample user

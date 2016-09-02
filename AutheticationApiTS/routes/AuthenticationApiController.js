@@ -3,10 +3,10 @@ var UserResponse = require("../models/UserResponse");
 var TokenPayload = require("../models/TokenPayload");
 var AccessToken = require("../models/AccessToken");
 var Config = require("../config");
+var ApplicationContext = require("../ApplicationContext");
 var jwt = require('jsonwebtoken');
 var AuthhenticationAPIController = (function () {
-    function AuthhenticationAPIController(userDAO) {
-        AuthhenticationAPIController.userDAO = userDAO;
+    function AuthhenticationAPIController() {
     }
     // /useraccount
     AuthhenticationAPIController.prototype.useraccount = function (req, res) {
@@ -18,8 +18,9 @@ var AuthhenticationAPIController = (function () {
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
         try {
-            AuthhenticationAPIController.userDAO.addUser(user);
-            AuthhenticationAPIController.userDAO.onUserAdded = function (error, status) {
+            var dataAccess = ApplicationContext.getDB();
+            dataAccess.addUser(user);
+            dataAccess.onUserAdded = function (error, status) {
                 if (status) {
                     res.json({ success: true });
                 }
@@ -34,8 +35,9 @@ var AuthhenticationAPIController = (function () {
     };
     // /accesstoken
     AuthhenticationAPIController.prototype.accesstoken = function (req, res) {
-        AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
-        AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = function (error, user) {
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.getSelectedUser(req.body.userName);
+        dataAccess.onSelectedUserDataReceived = function (error, user) {
             if (error) {
                 res.json({ success: false, message: error.message });
             }
@@ -61,8 +63,9 @@ var AuthhenticationAPIController = (function () {
     };
     // /userinfo
     AuthhenticationAPIController.prototype.userinfo = function (req, res) {
-        var user = AuthhenticationAPIController.userDAO.getSelectedUser(req.body.userName);
-        AuthhenticationAPIController.userDAO.onSelectedUserDataReceived = function (error, user) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser(req.body.userName);
+        dataAccess.onSelectedUserDataReceived = function (error, user) {
             if (error) {
                 res.json({ success: false, message: error.message });
             }
@@ -90,8 +93,9 @@ var AuthhenticationAPIController = (function () {
         user.password = req.body.password;
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
-        AuthhenticationAPIController.userDAO.updateUser(user);
-        AuthhenticationAPIController.userDAO.onUserUpdated = function (error, status) {
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.updateUser(user);
+        dataAccess.onUserUpdated = function (error, status) {
             if (error) {
                 res.json({ success: false, message: error.message });
             }

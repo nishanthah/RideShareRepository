@@ -1,5 +1,4 @@
-﻿import mongoose = require("mongoose");
-import IUserDAO = require("../common/IUserDAO");
+﻿import IUserDAO = require("../common/IUserDAO");
 import IUser = require("../models/common/IUser");
 import User = require("../models/mongoose/UserMongooseModel");
 import Config = require("../config");
@@ -10,7 +9,7 @@ class UserMongooseDAO implements IUserDAO
     onUserAdded: (error: Error, status: boolean) => void;
     onUserUpdated: (error: Error, status: boolean) => void;
     constructor() {
-        mongoose.connect(Config.database);
+        
     }
     addUser(user: IUser)
     {        
