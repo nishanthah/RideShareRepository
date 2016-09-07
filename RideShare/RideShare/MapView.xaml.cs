@@ -56,41 +56,18 @@ namespace RideShare
         public List<CustomPin> MapPins { get; set; }
         public CustomPin SelectedPin { get; set; }
         public LocationSearchResult SelectedDestination { get; private set; }
-
-        static NotificationInfo notificationInfo;
         BaseMapViewPresenter precenter;
+
         public MapView()
         {
             Init();
-            if (App.CurrentLoggedUser.User.UserType == UserType.Rider)
-            {
-                precenter = new RiderViewPresenter(this, mapSocketService);
-            }
-
-            if (App.CurrentLoggedUser.User.UserType == UserType.Driver)
-            {
-                precenter = new DriverViewPresenter(this, mapSocketService);
-            }
-
+            precenter = new PresenterLocator(this, driverLocatorService).GetPrecenter(null);
         }
 
         public MapView(NotificationInfo notificationInfoData)
         {
                 Init();
-                notificationInfo = notificationInfoData;
-
-                var historyInfo= driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
-
-                if (historyInfo.RequestStatus == RequestStatus.Requested)
-                {
-                    precenter = new DriverNavigationViewPresenter(this, mapSocketService,notificationInfo, historyInfo);
-                    
-                }
-                else if(App.CurrentLoggedUser.User.UserType == UserType.Rider && historyInfo.RequestStatus == RequestStatus.DriverAccepted)
-                {
-                    precenter = new RiderNavigationViewPresenter(this, mapSocketService,notificationInfo,historyInfo);
-                }
-
+                precenter = new PresenterLocator(this, driverLocatorService).GetPrecenter(notificationInfoData);
         }
 
         async void OnInfoWindowClicked(CustomPin pin)

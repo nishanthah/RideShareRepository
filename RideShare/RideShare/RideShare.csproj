@@ -102,6 +102,7 @@
     <Compile Include="ViewPresenter\BaseMapViewPresenter.cs" />
     <Compile Include="ViewPresenter\DriverNavigationViewPresenter.cs" />
     <Compile Include="ViewPresenter\DriverViewPresenter.cs" />
+    <Compile Include="ViewPresenter\PresenterLocator.cs" />
     <Compile Include="ViewPresenter\RiderNavigationViewPresenter.cs" />
     <Compile Include="ViewPresenter\RiderViewPresenter.cs" />
   </ItemGroup>

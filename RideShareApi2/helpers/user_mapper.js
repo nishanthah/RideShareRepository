@@ -20,7 +20,8 @@
         user.lastName = singleUser.lastName;
         user.mobileNo = singleUser.mobileNo;
         user.userType = singleUser.userType;
-		user.profileImage = singleUser.profileImage;        
+		user.profileImage = singleUser.profileImage;
+		user.resentRequest = singleUser.resentRequest;
         var location = {};
         location.longitude = singleUser.longitude;      
         location.latitude = singleUser.latitude;

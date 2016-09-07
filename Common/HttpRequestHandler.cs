@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using ModernHttpClient;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Android.Util;
+//using Android.Util;
 
 namespace Common
 {
@@ -107,8 +107,8 @@ namespace Common
             }
             catch (Exception ex)
             {
-                Log.Debug(TAG + " ERROR", ex.Message);
-                Log.Debug(TAG + " ERROR", ex.StackTrace);
+                //Log.Debug(TAG + " ERROR", ex.Message);
+                //Log.Debug(TAG + " ERROR", ex.StackTrace);
                 var formated = "{\"success\":\"false\",\"message\":\"" + ex.Message + "\"}";
                 return JsonConvert.DeserializeObject<TResult>(formated);
                 //throw ex;
@@ -174,8 +174,8 @@ namespace Common
             }
             catch (Exception ex)
             {
-                Log.Debug(TAG + " ERROR", ex.Message);
-                Log.Debug(TAG + " ERROR", ex.StackTrace);
+                //Log.Debug(TAG + " ERROR", ex.Message);
+                //Log.Debug(TAG + " ERROR", ex.StackTrace);
                 var formated = "{\"success\":\"false\",\"message\":\"" + ex.Message + "\"}";
                 return JsonConvert.DeserializeObject<TResult>(formated);
                 //throw ex;

@@ -16,14 +16,14 @@ namespace RideShare.ViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         RideHistory rideHistory;
-        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, NotificationInfo notificationInfo,RideHistory rideHistory) :base(mapPageProcessor,mapSocketService)
+        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory) :base(mapPageProcessor,mapSocketService)
         {
             base.InitDestination();
             this.rideHistory = rideHistory;
             RefreshPins(true);
 
-            if (notificationInfo.NotificationStatus == NotificationStatus.Opened || notificationInfo.NotificationStatus == NotificationStatus.Accepted || notificationInfo.NotificationStatus == NotificationStatus.Rejected)
-            {
+            //if (notificationInfo.NotificationStatus == NotificationStatus.Opened || notificationInfo.NotificationStatus == NotificationStatus.Accepted || notificationInfo.NotificationStatus == NotificationStatus.Rejected)
+            //{
                 if(rideHistory.RequestStatus == RequestStatus.DriverAccepted)
                 {
                     var infoWindowText = String.Format("{0} accepted your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
@@ -34,7 +34,7 @@ namespace RideShare.ViewPresenter
                     var infoWindowText = String.Format("{0} rejected your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
                     mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Rejected" });
                 }
-            }
+            //}
         }
 
         protected override List<CustomPin> LoadPinData()

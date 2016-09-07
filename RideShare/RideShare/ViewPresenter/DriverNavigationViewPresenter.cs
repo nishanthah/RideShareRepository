@@ -49,6 +49,19 @@ namespace RideShare.ViewPresenter
 
         }
 
+        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, RideHistory rideHistory) : base(mapPageProcessor, mapSocketService)
+        {
+            this.rideHistory = rideHistory;
+            base.InitDestination();
+            currentStatus = rideHistory.RequestStatus;
+            RefreshRoute(true);
+
+            if (rideHistory.RequestStatus == RequestStatus.Requested)
+            {
+                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No");
+            }
+        }
+
         protected override RouteData LoadRouteData()
         {
             RouteData routeData = new RouteData();
@@ -171,7 +184,7 @@ namespace RideShare.ViewPresenter
 
         protected override void OnPopupConfirmed()
         {
-            if (notificationInfo.NotificationStatus == NotificationStatus.Opened || notificationInfo.NotificationStatus == NotificationStatus.Accepted)
+            if (rideHistory.RequestStatus == RequestStatus.Requested)
             {
                 var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverAccepted }).IsSuccess;
 

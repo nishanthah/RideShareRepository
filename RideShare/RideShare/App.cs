@@ -22,6 +22,7 @@ namespace RideShare
         Rejected,
         Opened
     }
+
     public class NotificationInfo
     {
         public string RequestId { get; set; }
@@ -35,23 +36,7 @@ namespace RideShare
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
         public App(bool isLoading)
         {
-            //remove dead code
-            //// The root page of your application
-            //MainPage = new ContentPage/
-            //{
-            //    Content = new StackLayout
-            //    {
-            //        VerticalOptions = LayoutOptions.Center,
-            //        Children = {
-            //            new Label {
-            //               // XAlign = TextAlignment.Center,
-            //                Text = "Welcome to Xamarin Forms!"
-            //            }
-            //        }
-            //    }
-            //};
-            //inPage = new RideShare.MainPage();
-            // MainPage = new RideShare.EditProfilePage();
+            
             if (isLoading)
             {
                 MainPage = new SplashScreen();
@@ -61,13 +46,6 @@ namespace RideShare
                 
                 MainPage = new NavigationPage(new LogInPage());
             }
-
-            //MainPage = new NavigationPage(new LogInPage());
-            // NavigationPage.SetHasBackButton(MainPage, false);
-            // NavigationPage.SetHasBackButton(MainPage, false);
-            //  NavigationPage.SetHasBackButton(MasterPage, false);
-
-            //User_Manager = new UserManager(new RideShareService());
         }
 
         public App(NotificationInfo notificationInfo)

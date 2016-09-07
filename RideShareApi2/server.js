@@ -194,6 +194,23 @@ function sendResponseByUserType(userType,req,res)
     });
 }
 
+
+function updateUserRecentRequest(userName,requestId)
+{
+    UserCoordinate.findOne({ userName : userName }, function (err, user) {
+        
+        if (err) res.json({ success: false, message: err });
+		
+        user.resentRequest = requestId;
+        user.save(function (err) {
+            if (err) res.json({ success: false, message: err });
+            
+            console.log('Successfully Updated User request');
+        });
+    });
+}
+
+
 apiRoutes.get('/users/:userName', function(req, res) {
 
   
@@ -317,6 +334,8 @@ apiRoutes.post('/ridehistory', function (req, res) {
 		notificationData.userName = saved.driverUserName;
 		notificationData.id = saved.id;
 		notificationData.title="New ride request received to "+saved.destinationName;
+		updateUserRecentRequest(saved.userName,saved.id);
+		updateUserRecentRequest(saved.driverUserName,saved.id);
 		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
 			console.log(notificationSentStatus.message);
 		});
@@ -447,7 +466,7 @@ apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
     });
 
    
-});   
+});
 
 // apply the routes to our application with the prefix /api
 app.use('/api', apiRoutes);
