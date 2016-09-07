@@ -22,7 +22,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -191,9 +191,6 @@
   <ItemGroup>
     <Reference Include="Java.Interop">
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\MonoAndroid\v1.0\Java.Interop.dll</HintPath>
-    </Reference>
-    <Reference Include="Mono.Android">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\MonoAndroid\v6.0\Mono.Android.dll</HintPath>
     </Reference>
     <Reference Include="ImageCircle.Forms.Plugin.Abstractions, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Forms.ImageCircle.1.4.1\lib\portable-net45+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>

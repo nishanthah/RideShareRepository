@@ -1,8 +1,4 @@
-﻿
-using Android.OS;
-using Android.Util;
-using DriverLocator.Models;
-using Java.Lang;
+﻿using DriverLocator.Models;
 using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;

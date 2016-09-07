@@ -14,8 +14,6 @@ using Common.Models;
 using Plugin.Toasts;
 using System.Collections.ObjectModel;
 using GoogleApiClient.Models;
-using Android.OS;
-using Android.Util;
 using RideShare.ViewPresenter;
 
 namespace RideShare
