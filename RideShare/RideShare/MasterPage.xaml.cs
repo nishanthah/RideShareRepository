@@ -18,6 +18,7 @@ namespace RideShare
         public MasterPage()
         {
             InitializeComponent();
+
             Content.BindingContext = new MasterPageViewModel();
 
             var vm = Content.BindingContext as MasterPageViewModel;
@@ -70,5 +71,7 @@ namespace RideShare
             });
             listView.ItemsSource = masterPageItems;
         }
+
+      
     }
 }

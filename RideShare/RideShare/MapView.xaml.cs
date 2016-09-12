@@ -35,6 +35,7 @@ namespace RideShare
         public string ImageIcon { get; set; }
         public UserType UserType { get; set; }
         public string UserName { get; set; }
+        public object Data { get; set; }
     }
 
 
@@ -46,20 +47,24 @@ namespace RideShare
 
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
         public Action<CustomPin> OnMapInfoWindowClicked { get; set; }
-        public Action OnSendNotificationPopupConfirmed { get; set; }
-        public Action OnSendNotificationPopupCanceled { get; set; }
         public Action OnNewCoordinatesRecived { get; set; }
         public Action OnNewStatusChanged { get; set; }
+        public Action OnNearTheDestination { get; set; }
         public RouteData RouteResult { get; set; }
         public List<CustomPin> MapPins { get; set; }
         public CustomPin SelectedPin { get; set; }
         public LocationSearchResult SelectedDestination { get; private set; }
+        private Action popupConfirmAction { get; set; }
+        private Action popupCancelAction { get; set; }
+
         BaseMapViewPresenter precenter;
 
         public MapView()
-        {
+        {   
             Init();
-            precenter = new PresenterLocator(this, driverLocatorService).GetPrecenter(null);
+            precenter =  new PresenterLocator(this, driverLocatorService).GetPrecenter(null);
+            //HideBusyIndecator();
+
         }
 
         public MapView(NotificationInfo notificationInfoData)
@@ -67,7 +72,7 @@ namespace RideShare
                 Init();
                 precenter = new PresenterLocator(this, driverLocatorService).GetPrecenter(notificationInfoData);
         }
-
+        
         async void OnInfoWindowClicked(CustomPin pin)
         {
             SelectedPin = pin;
@@ -76,8 +81,8 @@ namespace RideShare
 
         private void Init()
         {
-           
             InitializeComponent();
+            //ShowBusyIndecator();
             InitMap();
             InitPopup();
             MapPins = new List<CustomPin>();
@@ -95,7 +100,19 @@ namespace RideShare
             this.OnMapInfoWindowClicked = OnInfoWindowClicked;
             mapSocketService = DependencyService.Get<IMapSocketService>();
 
+        }
+        public void ShowBusyIndecator()
+        {
+            busyIndicator.IsEnabled = true;
+            busyIndicator.IsRunning = true;
+            busyIndicator.IsVisible = true;
+        }
 
+        public void HideBusyIndecator()
+        {
+            busyIndicator.IsEnabled = false;
+            busyIndicator.IsRunning = false;
+            busyIndicator.IsVisible = false;
         }
 
         private void BtnToolBarChangeStatus_Clicked(object sender, EventArgs e)
@@ -110,7 +127,7 @@ namespace RideShare
 
         private void SendRequestButon_Clicked(object sender, EventArgs e)
         {
-            OnSendNotificationPopupConfirmed();
+            popupConfirmAction();
         }
 
         private void InitPopup()
@@ -232,15 +249,20 @@ namespace RideShare
 
         }
 
-        public void ShowDoubleButtonPopup(string title,string buttonConfirmText,string buttonCancelText)
+        public void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText, Action confirmAction,Action cancelAction)
         {
-            //notificationMessage.Text = title;
-            //sendingPopupBack.IsVisible = true;
-            sendRequestButon.Text = buttonConfirmText;
-            cancelPopupButton.Text = buttonCancelText;
-            sendNotificationLable.Text = title;
-            sendingPopupForeground.IsVisible = true;
-        }
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                sendRequestButon.Text = buttonConfirmText;
+                cancelPopupButton.Text = buttonCancelText;
+                sendNotificationLable.Text = title;
+                sendingPopupForeground.IsVisible = true;
+                popupConfirmAction = confirmAction;
+                popupCancelAction = cancelAction;
+            });
+
+            
+        }        
 
         public void HideDoubleButtonPopupBox()
         {
@@ -251,7 +273,7 @@ namespace RideShare
 
         private void CancelPopupButton_Clicked(object sender, EventArgs e)
         {
-            OnSendNotificationPopupCanceled();
+            popupCancelAction();
         }
 
         void OnTapDestinationSelector(View sender, object e)

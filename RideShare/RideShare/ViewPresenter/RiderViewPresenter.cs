@@ -12,10 +12,11 @@ namespace RideShare.ViewPresenter
 {
     public class RiderViewPresenter : BaseMapViewPresenter
     {
-        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+        DriverLocator.DriverLocatorService driverLocatorService;
 
-        public RiderViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService):base(mapPageProcessor,mapSocketService)
+        public RiderViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, DriverLocator.DriverLocatorService driverLocatorService) :base(mapPageProcessor,mapSocketService,driverLocatorService)
         {
+            this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             RefreshPins(true);
         }
@@ -127,15 +128,15 @@ namespace RideShare.ViewPresenter
 
         protected override void OnMapInfoWindowClicked(CustomPin customPin)
         {
-            mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to send the pickup request to this driver?","Send Request","Cancel");
+            mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to send the pickup request to this driver?","Send Request","Cancel",this.SendRideRequest,this.DismissPopup);
         }
 
-        protected override void OnPopupCanceled()
+        private void DismissPopup()
         {
             mapPageProcessor.HideDoubleButtonPopupBox();
         }
 
-        protected override void OnPopupConfirmed()
+        private void SendRideRequest()
         {
             RideHistory rideHistory = new RideHistory();
             rideHistory.UserName = Session.CurrentUserName;

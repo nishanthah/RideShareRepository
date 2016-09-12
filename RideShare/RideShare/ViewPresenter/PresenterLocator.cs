@@ -33,18 +33,16 @@ namespace RideShare.ViewPresenter
             
             if(!String.IsNullOrEmpty(userData.UserLocation.User.RecentRequest))
             {
-               
                 var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", userData.UserLocation.User.RecentRequest).RideHistories.FirstOrDefault();
-
                 if (userData.UserLocation.User.UserType == UserType.Rider)
                 {
-                    if (historyInfo.RequestStatus == RequestStatus.RideCompleted)
+                    if (historyInfo.RequestStatus == RequestStatus.Requested || historyInfo.RequestStatus == RequestStatus.DriverAccepted )
                     {
-                        precenter = new RiderViewPresenter(mapPageProcessor, mapSocketService);
+                        precenter = new RiderNavigationViewPresenter(mapPageProcessor, mapSocketService, historyInfo, driverLocatorService);
                     }
                     else
                     {
-                        precenter = new RiderNavigationViewPresenter(mapPageProcessor, mapSocketService, historyInfo);
+                        precenter = new RiderViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                     }
                     
                 }
@@ -52,17 +50,17 @@ namespace RideShare.ViewPresenter
                 {
                     if (notificationInfo != null)
                     {
-                        precenter = new DriverNavigationViewPresenter(mapPageProcessor, mapSocketService, notificationInfo, historyInfo);
+                        precenter = new DriverNavigationViewPresenter(mapPageProcessor, mapSocketService, notificationInfo, historyInfo, driverLocatorService);
                     }
                     else
                     {
                         if (historyInfo.RequestStatus == RequestStatus.RideCompleted)
                         {
-                            precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService);
+                            precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                         }
                         else
                         {
-                            precenter = new DriverNavigationViewPresenter(mapPageProcessor, mapSocketService, historyInfo);
+                            precenter = new DriverRequestedRidesPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                         }
                             
                     }
@@ -73,12 +71,12 @@ namespace RideShare.ViewPresenter
             {
                 if (userData.UserLocation.User.UserType == UserType.Rider)
                 {
-                    precenter = new RiderViewPresenter(mapPageProcessor, mapSocketService);
+                    precenter = new RiderViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                 }
 
                 else if (userData.UserLocation.User.UserType == UserType.Driver)
                 {
-                    precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService);
+                    precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                 }
 
             }

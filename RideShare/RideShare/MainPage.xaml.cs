@@ -38,7 +38,7 @@ namespace RideShare
         void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
             var item = e.SelectedItem as MasterPageItem;
-
+            
             if (item != null && item.Title != "Logout")
             {
                 Detail = new NavigationPage((Page)Activator.CreateInstance(item.TargetType));

@@ -32,7 +32,15 @@ namespace RideShare.Droid.DependecyServices
 
         public string Get(string key)
         {
-            return prefs.GetString(key, null);
+            try
+            {
+                return prefs.GetString(key, null);
+            }
+            catch
+            {
+                return null;
+            }
+            
         }
     }
 }

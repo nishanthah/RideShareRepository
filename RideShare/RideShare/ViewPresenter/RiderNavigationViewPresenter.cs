@@ -14,10 +14,11 @@ namespace RideShare.ViewPresenter
 {
     public class RiderNavigationViewPresenter : BaseMapViewPresenter
     {
-        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+        DriverLocator.DriverLocatorService driverLocatorService;
         RideHistory rideHistory;
-        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory) :base(mapPageProcessor,mapSocketService)
+        public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) :base(mapPageProcessor,mapSocketService,driverLocatorService)
         {
+            this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             this.rideHistory = rideHistory;
             RefreshPins(true);
@@ -93,17 +94,7 @@ namespace RideShare.ViewPresenter
         {
 
         }
-
-        protected override void OnPopupCanceled()
-        {
-
-        }
-
-        protected override void OnPopupConfirmed()
-        {
-
-        }
-
+        
         protected override void OnNewCoordinatesRecived()
         {
             RefreshPins(false);

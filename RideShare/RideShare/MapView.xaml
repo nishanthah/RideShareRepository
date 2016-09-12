@@ -11,7 +11,7 @@
   <ContentPage.Content>
     
     <AbsoluteLayout>
-
+       
       <StackLayout  x:Name="mapContainer"  AbsoluteLayout.LayoutBounds="0, 0, 1, 1" AbsoluteLayout.LayoutFlags="All">
 
       </StackLayout>
@@ -53,6 +53,9 @@
       <StackLayout x:Name ="notificationPopup" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="0.5, 0.5, 1, AutoSize" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="10">
         <Label FontSize="15" x:Name="notificationMessage"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"  />
       </StackLayout>
+
+      <ActivityIndicator x:Name="busyIndicator"
+                AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" />
 	  </AbsoluteLayout>
 
    

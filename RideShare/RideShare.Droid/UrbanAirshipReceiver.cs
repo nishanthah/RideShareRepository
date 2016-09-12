@@ -17,6 +17,7 @@ using RideShare.SharedInterfaces;
 using UrbanAirshipClient;
 using Android.Preferences;
 using UrbanAirship.RichPush;
+using RideShare.Droid.DependecyServices;
 
 namespace RideShare.Droid
 {
@@ -38,17 +39,28 @@ namespace RideShare.Droid
         protected override void OnChannelRegistrationSucceeded(Context context, String channelId)
         {
             Log.Info(TAG, "Channel registration updated. Channel Id:" + channelId);
+            IAppDataService appDataService = new AppDataServiceDroid();
+            Intent intent = null;
 
-            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(context);
-            ISharedPreferencesEditor editor = prefs.Edit();
-            editor.PutString("urban_airship_client_id", channelId);
-            editor.Apply();          
-            Intent intent = new Intent(ACTION_CHANNEL_UPDATED);
+            if (appDataService.Get("urban_airship_client_id")==null)
+            {
+                appDataService.Save("urban_airship_client_id", channelId);
+                intent = new Intent(ACTION_CHANNEL_UPDATED);
+                LocalBroadcastManager.GetInstance(context).SendBroadcast(intent);
+                Intent intent1 = new Intent("com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
+                intent1.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+                context.StartActivity(intent1);
+            }
+
+            appDataService.Save("urban_airship_client_id", channelId);
+            intent = new Intent(ACTION_CHANNEL_UPDATED);
             LocalBroadcastManager.GetInstance(context).SendBroadcast(intent);
 
-            Intent intent1 = new Intent("com.virtusa.driverlocatorforms.LOADINGCOMPLETED");
-            intent1.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
-            context.StartActivity(intent1);
+            if (appDataService.Get("current_user") != null)
+            {
+                IUrbanAirshipNotificationService urbanAirshipNotificationService = new UrbanAirshipServiceDroid();
+                urbanAirshipNotificationService.InitializeNamedUser(appDataService.Get("current_user"));
+            }
         }
 
         protected override void OnChannelRegistrationFailed(Context context)
@@ -58,10 +70,16 @@ namespace RideShare.Droid
 
         protected override void OnPushReceived(Context context, PushMessage message, bool notificationPosted)
         {
-           
+            
             Log.Info(TAG, "Received push message. Alert: " + message.Alert + ". Notification posted: " + notificationPosted);
 
-            
+            var messageBundle = message.PushBundle;
+            Intent intent = new Intent(KEY_NOTIFICATION_OPENEDINTENT);
+            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
+            intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
+            context.StartActivity(intent);
+
+
         }
 
         protected override void OnNotificationPosted(Context context, AirshipReceiver.NotificationInfo notificationInfo)
@@ -72,12 +90,6 @@ namespace RideShare.Droid
         protected override bool OnNotificationOpened(Context context, AirshipReceiver.NotificationInfo notificationInfo)
         {
             Log.Info(TAG, "Notification opened. Alert: " + notificationInfo.Message.Alert + ". Notification ID: " + notificationInfo.NotificationId);
-
-            var messageBundle = notificationInfo.Message.PushBundle;
-            Intent intent = new Intent(KEY_NOTIFICATION_OPENEDINTENT);
-            intent.SetFlags(ActivityFlags.NewTask | ActivityFlags.ClearTop);
-            intent.PutExtra(MainActivity.KEY_REQUEST_ID_EXTRA, messageBundle.GetString(MainActivity.KEY_REQUEST_ID_EXTRA));
-            context.StartActivity(intent);
 
             return false;
         }

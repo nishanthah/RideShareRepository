@@ -9,11 +9,15 @@ using DriverLocator.Models;
 
 namespace DriverLocator
 {
-   
+
     public class DriverLocatorService
     {
-        //private const string SERVER = "http://172.28.40.120:8079";
-        private const string SERVER = "http://ridesharemain.herokuapp.com";
+        #if Local
+                private const string SERVER = "http://172.28.40.120:8079";
+        #else
+                private const string SERVER = "http://ridesharemain.herokuapp.com";
+        #endif
+
         //private const string SERVER = "http://172.28.40.49:8079";
         private const string GET_USERS_URL = SERVER+"/api/users";
         private const string SAVE_USERS_URL = SERVER+"/api/users";
@@ -28,6 +32,7 @@ namespace DriverLocator
         private const string UPDATE_USER_DESTINATION_URL = SERVER + "/api/users/{0}/destination";
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
+        private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -157,6 +162,16 @@ namespace DriverLocator
             requestHandler.Method = HttpMethod.GET;
             requestHandler.Url = GET_RIDERS_URL;
             var result = await requestHandler.SendRequestAsync<UserLocationResponse>();
+            return result;
+        }
+
+        public async Task<FinishRideResponse> FinishRide(string driverUserName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = String.Format(FINISH_RIDE_URL,driverUserName);
+            var result = await requestHandler.SendRequestAsync<FinishRideResponse>();
             return result;
         }
     }

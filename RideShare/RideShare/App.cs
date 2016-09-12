@@ -27,7 +27,7 @@ namespace RideShare
     {
         public string RequestId { get; set; }
         public NotificationStatus NotificationStatus { get; set; }
-}
+    }
 
     public class App : Application
     {
@@ -36,14 +36,33 @@ namespace RideShare
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
         public App(bool isLoading)
         {
-            
+            //List<Button> btns = new List<Button>();
+            //Button btn = new Button();
+            //btn.Text = "Ok";
+            //btn.Command = new Command(() => {
+            //    MainPage = new NavigationPage(new LogInPage());
+            //});
+
+            //Button btn2 = new Button();
+            //btn2.Text = "Cancel";
+            //btn2.Command = new Command(() => {
+            //    MainPage = new NavigationPage(new LogInPage());
+            //});
+
+            //btns.Add(btn);
+            //btns.Add(btn2);
+
+            //var notificationDialog = new NotificationDialog("test desc",btns);
+            //MainPage = new NavigationPage(notificationDialog);
             if (isLoading)
             {
+
+                //MainPage =  new NavigationPage(new LogInPage());
                 MainPage = new SplashScreen();
             }
             else
             {
-                
+
                 MainPage = new NavigationPage(new LogInPage());
             }
         }

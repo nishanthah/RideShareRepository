@@ -19,13 +19,14 @@ namespace RideShare.ViewPresenter
     }
     public class DriverNavigationViewPresenter : BaseMapViewPresenter
     {
-        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+        DriverLocator.DriverLocatorService driverLocatorService;
         RideHistory rideHistory;
         NotificationInfo notificationInfo;
         RequestStatus currentStatus;
 
-        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, NotificationInfo notificationInfo, RideHistory rideHistory) : base(mapPageProcessor, mapSocketService)
+        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, NotificationInfo notificationInfo, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) : base(mapPageProcessor, mapSocketService, driverLocatorService)
         {
+            this.driverLocatorService = driverLocatorService;
             this.notificationInfo = notificationInfo;
             this.rideHistory = rideHistory;
             base.InitDestination();
@@ -34,22 +35,22 @@ namespace RideShare.ViewPresenter
 
             if (notificationInfo.NotificationStatus == NotificationStatus.Opened)
             {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No");
+                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
             }
 
             else if (notificationInfo.NotificationStatus == NotificationStatus.Accepted)
             {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to accept this ride?", "Yes", "No");
+                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
             }
 
             else if (notificationInfo.NotificationStatus == NotificationStatus.Rejected)
             {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to reject this ride?", "Yes", "No");
+                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to reject this ride?", "Yes", "No",this.UpdateToDiverReject,this.NavigateToRiderView);
             }
 
         }
 
-        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, RideHistory rideHistory) : base(mapPageProcessor, mapSocketService)
+        public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) : base(mapPageProcessor, mapSocketService,driverLocatorService)
         {
             this.rideHistory = rideHistory;
             base.InitDestination();
@@ -58,7 +59,7 @@ namespace RideShare.ViewPresenter
 
             if (rideHistory.RequestStatus == RequestStatus.Requested)
             {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No");
+                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
             }
         }
 
@@ -164,46 +165,30 @@ namespace RideShare.ViewPresenter
         {
 
         }
-
-        protected override void OnPopupCanceled()
+  
+        private void NavigateToRiderView()
         {
-            if (notificationInfo.NotificationStatus == NotificationStatus.Accepted)
-            {
-                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverRejected }).IsSuccess;
-                if (isSuccess)
-                {
-                    mapPageProcessor.NavigateToRiderView();
-                }
-            }
+            mapPageProcessor.NavigateToRiderView();
+        }
+        private void UpdateToDriverAccept()
+        {
+            var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverAccepted }).IsSuccess;
 
-            else
+            if (isSuccess)
             {
-                mapPageProcessor.NavigateToRiderView();
+                mapPageProcessor.HideDoubleButtonPopupBox();
+                mapPageProcessor.LoadCurrentStatus("Set As PickedUp");
             }
         }
 
-        protected override void OnPopupConfirmed()
+        private void UpdateToDiverReject()
         {
-            if (rideHistory.RequestStatus == RequestStatus.Requested)
+            var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverRejected }).IsSuccess;
+
+            if (isSuccess)
             {
-                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverAccepted }).IsSuccess;
-
-                if (isSuccess)
-                {
-                    mapPageProcessor.HideDoubleButtonPopupBox();
-                    mapPageProcessor.LoadCurrentStatus("Set As PickedUp");
-                }
+                mapPageProcessor.NavigateToRiderView();
             }
-            else
-            {
-                var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverRejected }).IsSuccess;
-
-                if (isSuccess)
-                {
-                    mapPageProcessor.NavigateToRiderView();
-                }
-            }
-
         }
 
         protected override void OnNewCoordinatesRecived()
@@ -242,6 +227,7 @@ namespace RideShare.ViewPresenter
             }
             return encodedCoordinates.ToString();
         }
+        
         /// <summary>
         /// Encode a signed number in the encode format.
         /// </summary>
@@ -279,9 +265,11 @@ namespace RideShare.ViewPresenter
         List<Coordinate> coordinates = new List<Coordinate>();
         protected override void OnNewStatusChanged()
         {            
-            IAppDataService appDataService = DependencyService.Get<IAppDataService>();          
+            IAppDataService appDataService = DependencyService.Get<IAppDataService>();
 
-            var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
+            var userData = driverLocatorService.GetSelectedUserCoordinate(appDataService.Get("current_user"));
+
+            var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", userData.UserLocation.User.RecentRequest).RideHistories.FirstOrDefault();
 
             if (historyInfo.RequestStatus == RequestStatus.DriverAccepted)
             {
@@ -290,21 +278,21 @@ namespace RideShare.ViewPresenter
                 mapPageProcessor.LoadCurrentStatus("Set As Ride Completed");
 
                 //Update Polyline
-                Task t = Task.Run(() =>
-                {
-                    var currentUser = appDataService.Get("current_user");
-                    ILocationService locService = DependencyService.Get<ILocationService>();
-                    var location = locService.GetCurrentLocation();
-                    if (!System.String.IsNullOrEmpty(currentUser) && location != null)
-                    {
-                        Coordinate _Coordinate = new Coordinate()
-                        {
-                            Latitude = location.Latitude,
-                            Longitude = location.Longitude
-                        };
-                        coordinates.Add(_Coordinate);
-                    }
-                });          
+                //Task t = Task.Run(() =>
+                //{
+                //    var currentUser = appDataService.Get("current_user");
+                //    ILocationService locService = DependencyService.Get<ILocationService>();
+                //    var location = locService.GetCurrentLocation();
+                //    if (!System.String.IsNullOrEmpty(currentUser) && location != null)
+                //    {
+                //        Coordinate _Coordinate = new Coordinate()
+                //        {
+                //            Latitude = location.Latitude,
+                //            Longitude = location.Longitude
+                //        };
+                //        coordinates.Add(_Coordinate);
+                //    }
+                //});          
 
             }
 

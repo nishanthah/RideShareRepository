@@ -11,10 +11,11 @@ namespace RideShare.ViewPresenter
 {
     public class DriverViewPresenter : BaseMapViewPresenter
     {
-        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+        DriverLocator.DriverLocatorService driverLocatorService;
 
-        public DriverViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService):base(mapPageProcessor,mapSocketService)
+        public DriverViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, DriverLocator.DriverLocatorService driverLocatorService) :base(mapPageProcessor,mapSocketService,driverLocatorService)
         {
+            this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             RefreshPins(true);
         }
@@ -66,16 +67,6 @@ namespace RideShare.ViewPresenter
         protected override void OnMapInfoWindowClicked(CustomPin customPin)
         {
             //mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to send the pickup request to this driver?","Send Request","Cancel");
-        }
-
-        protected override void OnPopupCanceled()
-        {
-            //mapPageProcessor.HideDoubleButtonPopupBox();
-        }
-
-        protected override void OnPopupConfirmed()
-        {
-           
         }
 
         private CustomPin GetFromatted(MapPin mapPin)

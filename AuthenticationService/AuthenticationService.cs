@@ -14,8 +14,12 @@ namespace Authentication
 {
     public class AuthenticationService : IAuthenticationService
     {
-        private const string SERVER = "http://vauthapp.herokuapp.com";
-        //private const string SERVER = "http://192.168.42.166:8078";
+        #if Local
+                private const string SERVER = "http://192.168.40.120:8078
+        #else
+                private const string SERVER = "http://vauthapp.herokuapp.com";
+        #endif
+
         private const string CREATE_USER_URL = SERVER + "/authapp/useraccount";
         private const string AUTHENCATION_URL = SERVER + "/authapp/accesstoken";
         private const string USER_INFO_URL = SERVER + "/authapp/userinfo";

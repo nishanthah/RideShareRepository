@@ -18,6 +18,7 @@ namespace RideShare
         public string Image { get; set; }
         public string UserName { get; set; }
         public UserType UserType { get; set; }
+        public object Data { get; set; }
     }
 
     public class CustomMap : Map

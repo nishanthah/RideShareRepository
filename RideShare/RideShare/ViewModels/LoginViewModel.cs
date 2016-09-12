@@ -93,7 +93,12 @@ namespace RideShare.ViewModels
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
                 Session.CurrentUserName = this.UserName;
+
+#if WithNotification
+                        
+#else
                 urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
+#endif
 
                 if (userCorrdinateResult.IsSuccess)
                 {

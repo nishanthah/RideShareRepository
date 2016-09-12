@@ -26,7 +26,7 @@ namespace RideShare.Droid
         {
             base.OnCreate();
             UAirship.TakeOff(this, (UAirship airship) =>
-            {                
+            {
                 UAirship.Shared().PushManager.UserNotificationsEnabled = true;
             });
 

@@ -12,11 +12,10 @@ namespace RideShare.Common
         public string Title { get; set; }
         public string Description { get; set; }
     }
+
     public interface IMapPageProcessor
     {
         Action<CustomPin> OnMapInfoWindowClicked { get; set; }
-        Action OnSendNotificationPopupConfirmed { get; set; }
-        Action OnSendNotificationPopupCanceled { get; set; }
         Action OnNewCoordinatesRecived { get; set; }
         Action OnNewStatusChanged { get; set; }
         RouteData RouteResult { get; set; }
@@ -27,7 +26,7 @@ namespace RideShare.Common
         void AddPin(MapPin mapPin);
         void RefreshPins(bool canMoveToLocation, Func<List<CustomPin>> loadPinsFunction);
         void RefreshRoute(bool canMoveToLocation, Func<RouteData> loadRouteFunction);
-        void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText);
+        void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText,Action confirmAction,Action cancelAction);
         void HideDoubleButtonPopupBox();
         void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent);
         void HideInfoWindowPopupBox();
