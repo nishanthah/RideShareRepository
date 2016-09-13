@@ -471,7 +471,7 @@ apiRoutes.put('/ridehistory/:id/:polyLine', function (req, res) {
 
 apiRoutes.put('/ridehistory/driver/:userName/ride/end', function (req, res) {
     
-    RideHistory.update( $and:[{ driverUserName : req.params.userName },{ requestStatus : 4 }], {requestStatus : 5 },{ multi: true }, function (err, rideHistoryItems) {
+    RideHistory.update( {$and:[{ driverUserName : req.params.userName },{ requestStatus : 4 }]}, {$set:{requestStatus : 5 }},{ multi: true }, function (err, rideHistoryItems) {
         
         if (err) res.json({ success: false, message: err });
         
@@ -480,7 +480,7 @@ apiRoutes.put('/ridehistory/driver/:userName/ride/end', function (req, res) {
         }
         else {
 
-                console.log('Ended '+rideHistoryItems.length + 'rides');
+                console.log('Ended '+rideHistoryItems.nModified + ' rides');
                 res.json({ success: true });
 
         }
