@@ -1,7 +1,6 @@
 ﻿using DriverLocator.Models;
 using GoogleApiClient.Maps;
 using GoogleApiClient.Models;
-using Java.Lang;
 using RideShare.Common;
 using RideShare.SharedInterfaces;
 using System;
@@ -21,7 +20,6 @@ namespace RideShare.ViewPresenter
         private IAppDataService appDataService;
         bool isNearToDestination;
         bool isNearPopupOpened;
-        Thread destinationFindingThread;
 
         public BaseMapViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, DriverLocator.DriverLocatorService driverLocatorService)
         {
@@ -50,34 +48,42 @@ namespace RideShare.ViewPresenter
         {
             Action destinationFindingWork = new Action(() =>
             {
-                while(true)
+                
+                while (true)
                 {
                     var userData = driverLocatorService.GetSelectedUserCoordinate(appDataService.Get("current_user"));
-                    Coordinate userCoordinate = new Coordinate() { Latitude = double.Parse(userData.UserLocation.Location.Latitude), Longitude = double.Parse(userData.UserLocation.Location.Longitude) };
-                    Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(userData.UserLocation.Destination.Latitude), Longitude = double.Parse(userData.UserLocation.Destination.Longitude) };
 
-                    var direction = GetDirections(userCoordinate, destinationCoordinate).Routes.SingleOrDefault().Legs.SingleOrDefault().Distance.Value;
-
-                    if (direction < 100)
+                    if( userData.UserLocation.Destination.Latitude != null && userData.UserLocation.Destination.Longitude != null )
                     {
-                        if (isNearToDestination == false)
+                        Coordinate userCoordinate = new Coordinate() { Latitude = double.Parse(userData.UserLocation.Location.Latitude), Longitude = double.Parse(userData.UserLocation.Location.Longitude) };
+                        Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(userData.UserLocation.Destination.Latitude), Longitude = double.Parse(userData.UserLocation.Destination.Longitude) };
+
+                        var direction = GetDirections(userCoordinate, destinationCoordinate).Routes.SingleOrDefault().Legs.SingleOrDefault().Distance.Value;
+
+                        if (direction < 200)
                         {
-                            isNearToDestination = true;
-                            OnNearTheDestination();
+                            if (isNearToDestination == false)
+                            {
+                                isNearToDestination = true;
+                                OnNearTheDestination();
+                            }
+                        }
+                        else
+                        {
+                            isNearToDestination = false;
                         }
                     }
-                    else
-                    {
-                        isNearToDestination = false;
-                    }
-                    Thread.Sleep(3000);
+                    Task.Delay(3000);
+                    //Thread.Sleep(3000);
                 }
                 
 
 
             });
-            destinationFindingThread = new Thread(destinationFindingWork);
-            destinationFindingThread.Start();
+
+            Task.Factory.StartNew(destinationFindingWork);
+            //destinationFindingThread = new Thread(destinationFindingWork);
+            //destinationFindingThread.Start();
         }
 
         protected virtual void OnMapInfoWindowClicked(CustomPin customPin) { }
@@ -121,6 +127,17 @@ namespace RideShare.ViewPresenter
             return directions;
         }
 
+        protected virtual GetDirectionsResponse GetDirections(Coordinate sourceCoordinate, Coordinate destinationCoordinate, List<Coordinate> wayPoints)
+        {
+            GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
+            var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
+            var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
+
+            List<GoogleApiClient.Models.Coordinate> convertedWaypoints = wayPoints.Select((coordinate) => { return new GoogleApiClient.Models.Coordinate() { Latitude = coordinate.Latitude, Longitude = coordinate.Longitude }; }).ToList();
+            var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source,WayPoints = convertedWaypoints });
+            return directions;
+        }
+
         protected virtual void RefreshPins(bool mooveToLocation)
         {
             
@@ -150,7 +167,7 @@ namespace RideShare.ViewPresenter
 
         public void Dispose()
         {
-            destinationFindingThread.Dispose();
+            //destinationFindingThread.Dispose();
         }
     }
 }
