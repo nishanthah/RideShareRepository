@@ -193,7 +193,41 @@ function sendResponseByUserType(userType,req,res)
         res.json({ userData: userDatas, success: true });
     });
 }
+// Notification Status : 1 - Sent, 2 - Delivered, 3 - Opened
+function updateNotificationStatus(reqId,notificationStatus,resultCallback)
+{
+	RideHistory.update( {_id : reqId }, {$set:{notificationStatus : notificationStatus }},{ multi: false }, function (err, rideHistoryItems) {
+        
+        if (err) resultCallback({ success: false, message: err });
+        
+        else if (!rideHistoryItems) {
+			resultCallback({ success: false, message: "Ride Histories Not Found" });
+        }
+        else {
 
+                console.log('Updated notification status to '+notificationStatus+ " ["+reqId+"]");
+				resultCallback({ success: true });
+
+        }
+
+    });
+}
+
+apiRoutes.put('/ridehistory/notification_status/:id', function (req, res) {
+	
+	updateNotificationStatus(req.params.id,req.body.notificationStatus,function(data){
+		
+		if(data.success ==  true)
+		{
+			res.json({ success: true });
+		}
+		else
+		{
+			res.json({ success: data.success, message: data.message });
+		}
+	});
+	
+});
 
 function updateUserRecentRequest(userName,requestId)
 {
@@ -338,6 +372,7 @@ apiRoutes.post('/ridehistory', function (req, res) {
 		updateUserRecentRequest(saved.driverUserName,saved.id);
 		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
 			console.log(notificationSentStatus.message);
+			updateNotificationStatus(saved.id,1);
 		});
 		
 		console.log('Added new history item successfully');

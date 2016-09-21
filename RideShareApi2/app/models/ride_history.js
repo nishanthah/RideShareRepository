@@ -18,5 +18,6 @@ module.exports = mongoose.model('RideHistory', new Schema({
     requestRejectTime: Date,
     riderMeetTime: Date,
     riderEndTime: Date,
-    polyLine:String
+    polyLine:String,
+	notificationStatus:Number
 }));
