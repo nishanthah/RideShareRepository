@@ -1,5 +1,6 @@
 ﻿using DriverLocator.Models;
 using GoogleApiClient.Models;
+using GoogleApiClient.Helpers;
 using RideShare.Common;
 using RideShare.SharedInterfaces;
 using System;
@@ -33,36 +34,74 @@ namespace RideShare.ViewPresenter
             currentStatus = rideHistory.RequestStatus;
             RefreshRoute(true);
 
-            if (notificationInfo.NotificationStatus == NotificationStatus.Opened)
+            if (rideHistory.RequestStatus == RequestStatus.Requested)
             {
+               
                 mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
             }
 
-            else if (notificationInfo.NotificationStatus == NotificationStatus.Accepted)
-            {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
-            }
-
-            else if (notificationInfo.NotificationStatus == NotificationStatus.Rejected)
-            {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to reject this ride?", "Yes", "No",this.UpdateToDiverReject,this.NavigateToRiderView);
-            }
-
+           
         }
+
 
         public DriverNavigationViewPresenter(IMapPageProcessor mapPageProcessor, IMapSocketService mapSocketService, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) : base(mapPageProcessor, mapSocketService,driverLocatorService)
         {
+            this.driverLocatorService = driverLocatorService;
             this.rideHistory = rideHistory;
             base.InitDestination();
             currentStatus = rideHistory.RequestStatus;
-            RefreshRoute(true);
+            
 
             if (rideHistory.RequestStatus == RequestStatus.Requested)
             {
-                mapPageProcessor.ShowDoubleButtonPopup("Are you want to accept this ride?", "Yes", "No",this.UpdateToDriverAccept,this.UpdateToDiverReject);
+                Task.Factory.StartNew<string>(() =>
+                {
+                    var driver = driverLocatorService.GetSelectedUserCoordinate(rideHistory.DiverUserName).UserLocation;
+                    var rider = driverLocatorService.GetSelectedUserCoordinate(rideHistory.UserName).UserLocation;
+
+                    Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude), Longitude = double.Parse(driver.Location.Longitude) };
+                    Coordinate riderCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };
+
+                    Coordinate driverDestinationCoordinate = null;
+                    if (driver.Destination.Latitude != null)
+                    {
+                        driverDestinationCoordinate = new Coordinate() { Latitude = double.Parse(driver.Destination.Latitude), Longitude = double.Parse(driver.Destination.Longitude) };
+                    }
+                    List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
+
+                    var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
+                    var route = directions.Routes.SingleOrDefault();
+                    var leg = directions.Routes.SingleOrDefault().Legs.SingleOrDefault();
+
+                    var message = String.Format("Distance to destination:{0}\nTime to Destination:{1}\nAre you want to accept this ride?", leg.Distance.Text, leg.Duration.Text);
+                    return message;
+
+                }).ContinueWith((task) =>
+                {
+                    RefreshRoute(true);
+                    mapPageProcessor.ShowDoubleButtonPopup(task.Result, "Yes", "No", this.UpdateToDriverAccept, this.UpdateToDiverReject);
+                    base.OnInitializationCompleted();
+                });
             }
+
+            else if (rideHistory.RequestStatus == RequestStatus.DriverAccepted)
+            {
+                RefreshRoute(true);
+                mapPageProcessor.ShowDoubleButtonPopup("Are you want to set this as pickedup?", "Yes", "No", this.UpdateToDriverPickedUp, () => { mapPageProcessor.HideDoubleButtonPopupBox(); });
+                base.OnInitializationCompleted();
+            }
+
+            else if (rideHistory.RequestStatus == RequestStatus.RiderMet)
+            {
+                RefreshRoute(true);
+                mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to end this ride?", "Yes", "No", this.UpdateToDriverRideEnded, () => { mapPageProcessor.HideDoubleButtonPopupBox(); });
+                base.OnInitializationCompleted();
+            }
+            
+
         }
 
+        
         protected override RouteData LoadRouteData()
         {
             RouteData routeData = new RouteData();
@@ -73,9 +112,17 @@ namespace RideShare.ViewPresenter
             Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude), Longitude = double.Parse(driver.Location.Longitude) };
             Coordinate riderCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };
 
-            var directions = GetDirections(driverCoordinate, riderCoordinate);
+            Coordinate driverDestinationCoordinate = null;
+
+            if (driver.Destination.Latitude != null)
+            {
+                driverDestinationCoordinate = new Coordinate() { Latitude = double.Parse(driver.Destination.Latitude), Longitude = double.Parse(driver.Destination.Longitude) };
+            }
+
+            List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
+            var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
             var route = directions.Routes.SingleOrDefault();
-            var leg = directions.Routes.SingleOrDefault().Legs.SingleOrDefault();
+            var legs = directions.Routes[0].Legs;
 
             // Create driver pin
             MapPin driverPin = new MapPin();
@@ -89,8 +136,8 @@ namespace RideShare.ViewPresenter
                                     driver.User.LastName,
                                     driver.Location.Latitude,
                                     driver.Location.Longitude,
-                                    leg.Distance.Text,
-                                    leg.Duration.Text);
+                                    legs.Sum(x=>x.Distance.Value).ToKilometers(),
+                                    legs.Sum(x => x.Duration.Value).ToTimeString());
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
@@ -108,14 +155,14 @@ namespace RideShare.ViewPresenter
                                     rider.User.LastName,
                                     rider.Location.Latitude,
                                     rider.Location.Longitude,
-                                    leg.Distance.Text,
-                                    leg.Duration.Text);
+                                    legs.Sum(x => x.Distance.Value).ToKilometers(),
+                                    legs.Sum(x => x.Duration.Value).ToTimeString());
 
             riderPin.UserName = rider.User.UserName;
             riderPin.UserType = rider.User.UserType;
 
             routeData.DestinationPin = riderPin;
-            routeData.RouteCoordinates = GetRouteCoordinates(GetDirections(driverCoordinate, riderCoordinate).Routes.SingleOrDefault());
+            routeData.RouteCoordinates = GetRouteCoordinates(directions.Routes.SingleOrDefault());
             return routeData;
         }
 
@@ -148,7 +195,7 @@ namespace RideShare.ViewPresenter
             coordinates.Add(GetFromatted(driverPin));
             return coordinates;
         }
-
+        
         private List<Position> GetRouteCoordinates(Route route)
         {
             List<Position> routeCoordinates = new List<Position>();
@@ -170,6 +217,27 @@ namespace RideShare.ViewPresenter
         {
             mapPageProcessor.NavigateToRiderView();
         }
+
+        private void UpdateToDriverPickedUp()
+        {
+            var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.RiderMet }).IsSuccess;
+
+            if (isSuccess)
+            {
+                mapPageProcessor.HideDoubleButtonPopupBox();
+            }
+        }
+
+        private void UpdateToDriverRideEnded()
+        {
+            var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.RideCompleted }).IsSuccess;
+
+            if (isSuccess)
+            {
+                mapPageProcessor.HideDoubleButtonPopupBox();
+            }
+        }
+
         private void UpdateToDriverAccept()
         {
             var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = rideHistory.Id, Status = RequestStatus.DriverAccepted }).IsSuccess;

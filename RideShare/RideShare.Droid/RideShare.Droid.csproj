@@ -181,6 +181,7 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\splash.html" />
     <AndroidAsset Include="Assets\main.css" />
+    <Compile Include="BroadcastRecivers\LocationServiceReciver.cs" />
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="DependecyServices\AppDataServiceDroid.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />

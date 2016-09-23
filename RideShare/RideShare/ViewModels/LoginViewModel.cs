@@ -32,41 +32,35 @@ namespace RideShare.ViewModels
         {
             this.loginProcessor = loginProcessor;
             this.urbanAirshipNotificationService = urbanAirshipNotificationService;
-            Session.AuthenticationService = new AuthenticationService();
             this.LoginCommand = new RelayCommand(Login);
             this.SignUpCommand = new RelayCommand(SignUp);
-            InitRecentAuthntication();
+            //InitRecentAuthntication();
         }
 
 
-        void InitRecentAuthntication()
-        {
-            var accessToken = appDataService.Get("access_token");
-            if (accessToken != null)
-            {
-               var userInfo= Session.AuthenticationService.GetUserInfo(accessToken);
-               if(userInfo.IsSuccess)
-               {
-                    UserName = userInfo.UserName;
-                    Password = "********";
-                    isUserLoggedIn = true;
-                    Session.AuthenticationService.AuthenticationToken = accessToken;
-               }
-               else
-               {
-                    UserName = String.Empty;
-                    Password = String.Empty;
-                    isUserLoggedIn = false;
-                }
-            }
-        }
+        //void InitRecentAuthntication()
+        //{
+        //    var accessToken = appDataService.Get("access_token");
+        //    if (accessToken != null)
+        //    {
+        //       var userInfo= Session.AuthenticationService.GetUserInfo(accessToken);
+        //       if(userInfo.IsSuccess)
+        //       {
+        //            UserName = userInfo.UserName;
+        //            Password = "********";
+        //            isUserLoggedIn = true;
+        //       }
+        //       else
+        //       {
+        //            UserName = String.Empty;
+        //            Password = String.Empty;
+        //            isUserLoggedIn = false;
+        //        }
+        //    }
+        //}
 
         bool AreCredentialsCorrect(User user)
         {
-            if(isUserLoggedIn)
-            {
-                return true;
-            }
             if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
             {
                 appDataService.Save("access_token", Session.AuthenticationService.AuthenticationToken);
@@ -78,48 +72,63 @@ namespace RideShare.ViewModels
 
         private void Login()
         {
+            IsBusy = true;
 
-            var user = new User
+            Task.Factory.StartNew(() =>
             {
-                UserName = this.UserName,
-                Password = this.Password
-            };
-            
-            var isValid = AreCredentialsCorrect(user);
 
-            if (isValid)
-            {
-                UpdateUserInLocal();
-                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
-                Session.CurrentUserName = this.UserName;
+                var user = new User
+                {
+                    UserName = this.UserName,
+                    Password = this.Password
+                };
+
+                var isValid = AreCredentialsCorrect(user);
+
+                if (isValid)
+                {
+                    UpdateUserInLocal();
+                    DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                    var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
+
 
 #if WithNotification
                         
 #else
-                urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
+                    urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
 #endif
 
-                if (userCorrdinateResult.IsSuccess)
-                {
-                    App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                    driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
-                    App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
+                    if (userCorrdinateResult.IsSuccess)
+                    {
+                        
+                            App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                            driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
+                        appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
 
-                    appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                        loginProcessor.InvokeInMainThread(() =>
+                        {
+                            Session.CurrentUserName = this.UserName;
+                            App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
+                            
+                            loginProcessor.MoveToMainPage();
+                        });
 
-                    loginProcessor.MoveToMainPage();
+                    }
                 }
                 else
                 {
-                    loginProcessor.MoveToMainPage();
+                    loginProcessor.InvokeInMainThread(() =>
+                    {
+                        this.ErrorMessage = "Login failed";
+                        this.Password = string.Empty;
+                        IsBusy = false;
+                    });
+
                 }
-            }
-            else
-            {
-                this.ErrorMessage = "Login failed";
-                this.Password = string.Empty;
-            }
+
+
+            });
+            
         }
 
         private void SignUp()

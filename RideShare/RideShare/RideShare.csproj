@@ -53,6 +53,9 @@
     <Compile Include="NotificationDialog.xaml.cs">
       <DependentUpon>NotificationDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="NotificationView.xaml.cs">
+      <DependentUpon>NotificationView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
@@ -258,6 +261,12 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HistoryView.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="NotificationView.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

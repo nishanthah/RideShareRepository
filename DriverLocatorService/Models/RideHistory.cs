@@ -1,4 +1,5 @@
-﻿using GoogleApiClient.Helpers;
+﻿using Common.Models;
+using GoogleApiClient.Helpers;
 using GoogleApiClient.Models;
 using Newtonsoft.Json;
 using System;
@@ -47,6 +48,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("requestStatus")]
         public RequestStatus RequestStatus { get; set; }
+
+        [JsonProperty("notificationStatus")]
+        public NotificationStatus NotificationStatus { get; set; }
 
         [JsonProperty("sourseName")]
         public string SourceName { get; set; }

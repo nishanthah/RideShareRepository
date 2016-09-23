@@ -34,6 +34,7 @@ namespace RideShare.ViewPresenter
         {
             mapPageProcessor.OnMapInfoWindowClicked = OnMapInfoWindowClicked;
             mapPageProcessor.OnNewCoordinatesRecived = OnNewCoordinatesRecived;
+            mapPageProcessor.OnInitializationCompleted = OnInitializationCompleted;
             mapSocketService.MapCoordinateChanged += OnNewCoordinateChanged;
             mapPageProcessor.OnNewStatusChanged = OnNewStatusChanged;
             StartDestinationFinding();
@@ -73,7 +74,7 @@ namespace RideShare.ViewPresenter
                             isNearToDestination = false;
                         }
                     }
-                    Task.Delay(3000);
+                    Task.Delay(3000).Wait();
                     //Thread.Sleep(3000);
                 }
                 
@@ -115,6 +116,9 @@ namespace RideShare.ViewPresenter
 
         }
         protected virtual void OnNewCoordinatesRecived() { }
+        protected virtual void OnInitializationCompleted() {
+            //mapPageProcessor.HideBusyIndecator();
+        }
         protected virtual List<CustomPin> LoadPinData() { return null; }
         protected virtual RouteData LoadRouteData() { return null; }
 

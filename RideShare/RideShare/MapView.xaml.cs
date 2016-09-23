@@ -43,6 +43,7 @@ namespace RideShare
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
+        //Label l = new Label() {HorizontalOptions = LayoutOptions.Center};
         IMapSocketService mapSocketService;
 
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
@@ -50,6 +51,7 @@ namespace RideShare
         public Action OnNewCoordinatesRecived { get; set; }
         public Action OnNewStatusChanged { get; set; }
         public Action OnNearTheDestination { get; set; }
+        public Action OnInitializationCompleted { get; set; }
         public RouteData RouteResult { get; set; }
         public List<CustomPin> MapPins { get; set; }
         public CustomPin SelectedPin { get; set; }
@@ -60,17 +62,44 @@ namespace RideShare
         BaseMapViewPresenter precenter;
 
         public MapView()
-        {   
+        {
             Init();
-            precenter =  new PresenterLocator(this, driverLocatorService).GetPrecenter(null);
-            //HideBusyIndecator();
+            ShowBusyIndecator();
+           
+            Task.Factory.StartNew<BaseMapViewPresenter>(() => {
+                
+                PresenterLocator presenterLocator = new PresenterLocator(this, driverLocatorService);
+                return presenterLocator.GetPrecenter(null);
+
+            }).ContinueWith((task) =>{
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    precenter = task.Result;
+                });
+            });
 
         }
 
         public MapView(NotificationInfo notificationInfoData)
         {
-                Init();
-                precenter = new PresenterLocator(this, driverLocatorService).GetPrecenter(notificationInfoData);
+            Init();
+            ShowBusyIndecator();
+
+            Task.Factory.StartNew<BaseMapViewPresenter>(() => {
+
+                PresenterLocator presenterLocator = new PresenterLocator(this, driverLocatorService);
+                return presenterLocator.GetPrecenter(notificationInfoData);
+
+            }).ContinueWith((task) => {
+
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    precenter = task.Result;                   
+                });
+            });
+
+           
         }
         
         async void OnInfoWindowClicked(CustomPin pin)
@@ -103,16 +132,24 @@ namespace RideShare
         }
         public void ShowBusyIndecator()
         {
-            busyIndicator.IsEnabled = true;
-            busyIndicator.IsRunning = true;
-            busyIndicator.IsVisible = true;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                busyIndicator.IsEnabled = true;
+                busyIndicator.IsRunning = true;
+                busyIndicator.IsVisible = true;
+            });
+           
         }
 
         public void HideBusyIndecator()
         {
-            busyIndicator.IsEnabled = false;
-            busyIndicator.IsRunning = false;
-            busyIndicator.IsVisible = false;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                busyIndicator.IsEnabled = false;
+                busyIndicator.IsRunning = false;
+                busyIndicator.IsVisible = false;
+            });
+               
         }
 
         private void BtnToolBarChangeStatus_Clicked(object sender, EventArgs e)
@@ -151,34 +188,46 @@ namespace RideShare
             mapContainer.Children.Clear();
             mapContainer.Children.Add(map);
             map.OnInfoWindowClicked = OnInfoWindowClicked;
+
+            var tapGestureRecognizer = new TapGestureRecognizer();
+            tapGestureRecognizer.Tapped += OnMapTapped; ;
+            map.GestureRecognizers.Add(tapGestureRecognizer);
+        }
+
+        private void OnMapTapped(object sender, EventArgs e)
+        {
+            HideDoubleButtonPopupBox();
+            HideInfoWindowPopupBox();
         }
 
         public void AddPin(MapPin mapPin)
         {
-
-            var position = new Position(mapPin.Latitude, mapPin.Longitude);
-
-            var pin = new CustomPin
+            Device.BeginInvokeOnMainThread(() =>
             {
-                Pin = new Pin
-                {
-                    Type = PinType.Place,
-                    Position = position,
-                    Label = mapPin.Title,
-                },
-                Title = mapPin.Title,
-                UserType = mapPin.UserType,
-                MobileNo = "Mobile No:" + mapPin.PhoneNo,
-                Image = "profile_images/" + mapPin.ImageIcon,
-                UserName = mapPin.UserName,
-                Id = mapPin.UserName
-            };
+                var position = new Position(mapPin.Latitude, mapPin.Longitude);
 
-            //Device.BeginInvokeOnMainThread(() =>
-            //{
-            //    map.Pins.Add(pin.Pin);
-            //});
-            MapPins.Add(pin);
+                var pin = new CustomPin
+                {
+                    Pin = new Pin
+                    {
+                        Type = PinType.Place,
+                        Position = position,
+                        Label = mapPin.Title,
+                    },
+                    Title = mapPin.Title,
+                    UserType = mapPin.UserType,
+                    MobileNo = "Mobile No:" + mapPin.PhoneNo,
+                    Image = "profile_images/" + mapPin.ImageIcon,
+                    UserName = mapPin.UserName,
+                    Id = mapPin.UserName
+                };
+
+                //Device.BeginInvokeOnMainThread(() =>
+                //{
+                //    map.Pins.Add(pin.Pin);
+                //});
+                MapPins.Add(pin);
+            });
 
         }
 
@@ -198,6 +247,7 @@ namespace RideShare
                         {
                             map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
                         }
+                        HideBusyIndecator();
                     }
                     catch(Exception ex)
                     {
@@ -239,6 +289,7 @@ namespace RideShare
                         {
                             map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(double.Parse(App.CurrentLoggedUser.Location.Latitude), double.Parse(App.CurrentLoggedUser.Location.Longitude)), Xamarin.Forms.Maps.Distance.FromKilometers(2)));
                         }
+                        HideBusyIndecator();
                     }
                     catch (Exception ex)
                     {
@@ -282,6 +333,8 @@ namespace RideShare
             Navigation.PushAsync(new LocationSearch(this));
         }
 
+       
+
         void OnLocationSelecteResult(LocationSearchResult result)
         {
             SelectedDestination = result;
@@ -291,8 +344,12 @@ namespace RideShare
 
         public void SetDestination(LocationSearchResult destination)
         {
-            destinationText.Text = String.Format("{0}", destination.LocationName);
-            SelectedDestination = destination;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                destinationText.Text = String.Format("{0}", destination.LocationName);
+                SelectedDestination = destination;
+            });
+                
         }
         public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
         {
@@ -315,16 +372,15 @@ namespace RideShare
 
         public void LoadCurrentStatus(string status)
         {
-            if(status!=null)
-            { 
-                
-                //toolBar1.IsVisible = true;
-                btnToolBarChangeStatus.Text = status;
-            }
-            else
+            Device.BeginInvokeOnMainThread(() =>
             {
-                //toolBar1.IsVisible = false;
-            }
+
+                if (status != null)
+                {
+                    btnToolBarChangeStatus.Text = status;
+                }
+            });
+                
         }
 
         #endregion MapViewRelatedFunctions

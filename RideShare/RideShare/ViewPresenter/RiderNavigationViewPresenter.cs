@@ -18,24 +18,21 @@ namespace RideShare.ViewPresenter
         RideHistory rideHistory;
         public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) :base(mapPageProcessor,mapSocketService,driverLocatorService)
         {
-            this.driverLocatorService = driverLocatorService;
-            base.InitDestination();
+            this.driverLocatorService = driverLocatorService;           
             this.rideHistory = rideHistory;
+            base.InitDestination();
             RefreshPins(true);
-
-            //if (notificationInfo.NotificationStatus == NotificationStatus.Opened || notificationInfo.NotificationStatus == NotificationStatus.Accepted || notificationInfo.NotificationStatus == NotificationStatus.Rejected)
-            //{
-                if(rideHistory.RequestStatus == RequestStatus.DriverAccepted)
-                {
-                    var infoWindowText = String.Format("{0} accepted your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
-                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Accepted" });
-                }
-                else if (rideHistory.RequestStatus == RequestStatus.DriverRejected)
-                {
-                    var infoWindowText = String.Format("{0} rejected your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
-                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Rejected" });
-                }
-            //}
+            if (rideHistory.RequestStatus == RequestStatus.DriverAccepted)
+            {
+                var infoWindowText = String.Format("{0} accepted your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
+                mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Accepted" });
+            }
+            else if (rideHistory.RequestStatus == RequestStatus.DriverRejected)
+            {
+                var infoWindowText = String.Format("{0} rejected your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
+                mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Rejected" });
+            }
+            base.OnInitializationCompleted();
         }
 
         protected override List<CustomPin> LoadPinData()
@@ -56,11 +53,10 @@ namespace RideShare.ViewPresenter
             driverPin.Longitude = double.Parse(driver.Location.Longitude);
             driverPin.PhoneNo = driver.User.MobileNo;
 
-            driverPin.Title =String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})", 
+            driverPin.Title =String.Format("{0} {1} | Destination={2} | ({3} {4})", 
                                     driver.User.FirstName,
-                                    driver.User.LastName, 
-                                    driver.Location.Latitude,
-                                    driver.Location.Longitude,
+                                    driver.User.LastName,
+                                    rider.Destination.Name != null ? rider.Destination.Name : "Not Set",
                                     directions.Distance.Text,
                                     directions.Duration.Text);
 

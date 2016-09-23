@@ -28,6 +28,7 @@ namespace RideShare.Droid.Services
             return StartCommandResult.Sticky;
         }
 
+        
         public void DoWork()
         {
             ILocationService locService = new LocationServiceDroid();
@@ -46,8 +47,9 @@ namespace RideShare.Droid.Services
 
         public override void OnDestroy()
         {
-
-            base.OnDestroy();
+            Intent intent = new Intent("com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED");
+            SendBroadcast(intent);
+            //base.OnDestroy();
             // cleanup code
         }
 

@@ -45,12 +45,18 @@ namespace GoogleApiClient.Models
 
         [JsonProperty("value")]
         public double Value { get; set; }
+
+
     }
 
     public class Duration
     {
         [JsonProperty("text")]
         public string Text { get; set; }
+
+        [JsonProperty("value")]
+        public double Value { get; set; }
+
     }
 
     public class Location

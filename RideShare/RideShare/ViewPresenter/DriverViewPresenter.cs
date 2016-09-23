@@ -18,6 +18,7 @@ namespace RideShare.ViewPresenter
             this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             RefreshPins(true);
+            base.OnInitializationCompleted();
         }
 
         bool isRideRequested = false;

@@ -27,7 +27,7 @@ namespace RideShare.ViewModels
             }
         }
 
-        public string UserName
+        public string UserDetails
         {
             get
             {
@@ -37,7 +37,21 @@ namespace RideShare.ViewModels
             set
             {
                 _UserName = value;
-                OnPropertyChanged("UserName");
+                OnPropertyChanged("UserDetails");
+            }
+        }
+        public string _userType;
+        public string UserType
+        {
+            get
+            {
+                return _userType;
+            }
+
+            set
+            {
+                _userType = value;
+                OnPropertyChanged("UserType");
             }
         }
 
@@ -51,7 +65,7 @@ namespace RideShare.ViewModels
             }
             else
                 ProfileImageSource = "add_picture.png";
-            UserName = App.CurrentLoggedUser.User.UserName;
+            UserDetails = String.Format("{0} [{1}]",App.CurrentLoggedUser.User.UserName, App.CurrentLoggedUser.User.UserType.ToString());
         }
     }
 }

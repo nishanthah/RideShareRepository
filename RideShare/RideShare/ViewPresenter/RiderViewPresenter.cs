@@ -19,6 +19,7 @@ namespace RideShare.ViewPresenter
             this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             RefreshPins(true);
+            base.OnInitializationCompleted();
         }
 
         bool isRideRequested = false;
@@ -50,7 +51,11 @@ namespace RideShare.ViewPresenter
                     pin.Latitude = double.Parse(driver.Location.Latitude);
                     pin.Longitude = double.Parse(driver.Location.Longitude);
                     pin.PhoneNo = driver.User.MobileNo;
-                    pin.Title = driver.User.FirstName + " " + driver.User.LastName + " | Position : " + driver.Location.Longitude + " , " + driver.Location.Latitude;
+                    pin.Title = String.Format("{0} {1} | Destination={2}",
+                                    driver.User.FirstName,
+                                    driver.User.LastName,
+                                    driver.Destination.Name != null ? driver.Destination.Name : "Not Set");
+
                     pin.UserName = driver.User.UserName;
                     pin.UserType = driver.User.UserType;
                     mapPins.Add(GetFromatted(pin));
@@ -92,11 +97,10 @@ namespace RideShare.ViewPresenter
             driverPin.Longitude = double.Parse(driver.Location.Longitude);
             driverPin.PhoneNo = driver.User.MobileNo;
 
-            driverPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
+            driverPin.Title = String.Format("{0} {1} | Destination={2} | ({3} {4})",
                                     driver.User.FirstName,
                                     driver.User.LastName,
-                                    driver.Location.Latitude,
-                                    driver.Location.Longitude,
+                                    driver.Destination.Name != null ? driver.Destination.Name : "Not Set",
                                     directions.Distance.Text,
                                     directions.Duration.Text);
 

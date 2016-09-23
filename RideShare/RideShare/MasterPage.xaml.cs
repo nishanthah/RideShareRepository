@@ -35,6 +35,13 @@ namespace RideShare
             var masterPageItems = new List<MasterPageItem>();
             masterPageItems.Add(new MasterPageItem
             {
+                Title = "Notifications",
+                IconSource = "edit.png",
+                TargetType = typeof(NotificationView)
+            });
+
+            masterPageItems.Add(new MasterPageItem
+            {
                 Title = "Edit Profile",
                 IconSource = "edit.png",
                 TargetType = typeof(RegisterPage)
@@ -69,6 +76,7 @@ namespace RideShare
                 IconSource = "logout.png",
                 TargetType = typeof(LogoutPage)
             });
+            
             listView.ItemsSource = masterPageItems;
         }
 

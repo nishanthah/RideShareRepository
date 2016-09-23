@@ -20,14 +20,24 @@
           </Grid.ColumnDefinitions>
           <StackLayout x:Name="profilePictureStackLayout" Grid.Row="1" Grid.RowSpan="3" Margin="0,10,0,10">
           </StackLayout>
-          <Label Text="{Binding UserName}" Grid.Column="1" Grid.Row="3"  TextColor="White" />
+          <Label Text="{Binding UserDetails}" Grid.Column="1" Grid.Row="3"  TextColor="White" />
         </Grid>
       </StackLayout>
-      <StackLayout VerticalOptions="FillAndExpand">
-        <ListView x:Name="listView" VerticalOptions="FillAndExpand" SeparatorVisibility="None">
+      <StackLayout VerticalOptions="FillAndExpand" BackgroundColor="#000000B8">
+        <ListView x:Name="listView" VerticalOptions="FillAndExpand">
           <ListView.ItemTemplate>
             <DataTemplate>
-              <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}"/>
+
+              <ViewCell>
+                <StackLayout Orientation="Vertical">
+                  <StackLayout Orientation="Horizontal">
+                    <Image Source="{Binding IconSource}" VerticalOptions="Center" />
+                    <Label Text="{Binding Title}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" FontSize="20"/>
+                  </StackLayout>
+                </StackLayout>
+              </ViewCell>
+              
+             <!-- <ImageCell Text="{Binding Title}" ImageSource="{Binding IconSource}"/>-->
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>

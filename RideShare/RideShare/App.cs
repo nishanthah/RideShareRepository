@@ -1,10 +1,13 @@
-﻿using DriverLocator.Models;
+﻿using Authentication;
+using DriverLocator.Models;
 using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xamarin.Forms;
+using CommonModels = Common.Models;
 //using RideShare.Data;
 
 namespace RideShare
@@ -34,43 +37,76 @@ namespace RideShare
         //public static UserManager User_Manager { get; private set; }
         public static UserLocation CurrentLoggedUser { get; set; }
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
+        
+
         public App(bool isLoading)
-        {
-            //List<Button> btns = new List<Button>();
-            //Button btn = new Button();
-            //btn.Text = "Ok";
-            //btn.Command = new Command(() => {
-            //    MainPage = new NavigationPage(new LogInPage());
-            //});
-
-            //Button btn2 = new Button();
-            //btn2.Text = "Cancel";
-            //btn2.Command = new Command(() => {
-            //    MainPage = new NavigationPage(new LogInPage());
-            //});
-
-            //btns.Add(btn);
-            //btns.Add(btn2);
-
-            //var notificationDialog = new NotificationDialog("test desc",btns);
-            //MainPage = new NavigationPage(notificationDialog);
+        { 
             if (isLoading)
             {
-
-                //MainPage =  new NavigationPage(new LogInPage());
                 MainPage = new SplashScreen();
             }
             else
             {
+                MainPage = new SplashScreen();
+                Session.AuthenticationService = new AuthenticationService();
+                Task.Factory.StartNew<bool>(() => {
 
-                MainPage = new NavigationPage(new LogInPage());
+                    var accessToken = appDataService.Get("access_token");
+                    if (accessToken != null)
+                    {
+                        var userInfo = Session.AuthenticationService.GetUserInfo(accessToken);
+                        if (userInfo.IsSuccess)
+                        {
+#if WithNotification
+                        
+#else
+                            IUrbanAirshipNotificationService urbanAirshipNotificationService = DependencyService.Get<IUrbanAirshipNotificationService>();
+                            urbanAirshipNotificationService.InitializeNamedUser(userInfo.UserName);
+#endif
+
+                            Session.CurrentUserName = userInfo.UserName;
+                            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                            var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(userInfo.UserName);
+                            App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                            appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                            return true;
+                        }
+                    }
+
+                    return false;
+
+                }).ContinueWith((task) => {
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+
+                        if (task.Result)
+                        {
+                            MainPage = new MainPage();
+                        }
+                        else
+                        {
+                            MainPage = new NavigationPage(new LogInPage());
+                        }
+
+                    });
+                       
+                    
+                });
+                
             }
         }
 
         public App(NotificationInfo notificationInfo)
         {
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
             // The root page of your application
             appDataService.Save("currentRequestId", notificationInfo.RequestId);
+
+            Task.Factory.StartNew(async() => {
+                await driverLocatorService.UpdateNotificationStatus(notificationInfo.RequestId, CommonModels.NotificationStatus.Delivered);
+            });
+            
             MainPage = new MainPage(notificationInfo);
 
 

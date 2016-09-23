@@ -18,6 +18,7 @@ namespace RideShare.Common
         Action<CustomPin> OnMapInfoWindowClicked { get; set; }
         Action OnNewCoordinatesRecived { get; set; }
         Action OnNewStatusChanged { get; set; }
+        Action OnInitializationCompleted { get; set; }
         RouteData RouteResult { get; set; }
         List<CustomPin> MapPins { get; set; }
         CustomPin SelectedPin { get; set; }
@@ -33,6 +34,8 @@ namespace RideShare.Common
         void NavigateToRiderView();
         void SetDestination(LocationSearchResult destination);
         void LoadCurrentStatus(string status);
+        void ShowBusyIndecator();
+        void HideBusyIndecator();
 
     }
 }

@@ -31,6 +31,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Models\Location.cs" />
+    <Compile Include="Models\NotificationStatus.cs" />
     <Compile Include="Models\UserTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="HttpRequestHandler.cs" />

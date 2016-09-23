@@ -27,8 +27,9 @@ namespace RideShare.ViewPresenter
             this.driverLocatorService = driverLocatorService;
             base.InitDestination();
             RefreshPins(true);
+            base.OnInitializationCompleted();
         }
-        
+      
         protected override List<CustomPin> LoadPinData()
         {
             List<CustomPin> coordinates = new List<CustomPin>();
@@ -64,8 +65,9 @@ namespace RideShare.ViewPresenter
             foreach (var rideHistory in rideHistories)
             {
                 var rider = driverLocatorService.GetSelectedUserCoordinate(rideHistory.UserName).UserLocation;
-                Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(rideHistory.DestinationLatitude), Longitude = double.Parse(rideHistory.DestinationLongitude) };
-                var leg = GetDirections(driverCoordinate, destinationCoordinate).Routes.SingleOrDefault().Legs.SingleOrDefault();
+                Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };
+                var directionsResult = GetDirections(driverCoordinate, destinationCoordinate);
+                var leg = directionsResult.Routes.SingleOrDefault().Legs.SingleOrDefault();
 
                 MapPin riderPin = new MapPin();
 
@@ -148,12 +150,14 @@ namespace RideShare.ViewPresenter
         private void UpdateToRideCompleted()
         {
             UpdateStatus(RequestStatus.RideCompleted);
+            
         }
 
         private void DismissPopup()
         {
             mapPageProcessor.HideDoubleButtonPopupBox();
         }
+
         private void UpdateStatus(RequestStatus status)
         {
             var isSuccess = driverLocatorService.UpdateRideHistoryStatus(new UpdateRideHistoryRequest() { Id = selectedRide.Id, Status = status }).IsSuccess;

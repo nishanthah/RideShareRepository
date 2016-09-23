@@ -14,32 +14,35 @@
     </StackLayout>
   </ContentPage.Content>-->
   <ContentPage.Content>
+    <AbsoluteLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+      <Grid RowSpacing="0" ColumnSpacing="0" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
 
-    <Grid RowSpacing="0" ColumnSpacing="0">
-
-      <Grid.RowDefinitions>
-        <RowDefinition Height="40*" />
-        <RowDefinition Height="60*" />
-      </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="40*" />
+          <RowDefinition Height="60*" />
+        </Grid.RowDefinitions>
 
 
-      <StackLayout Grid.Row="0">
-        <Image Source="login_logo.png" HorizontalOptions="Center" Margin="0,50,0,0"  />
-        <StackLayout Orientation="Horizontal" HorizontalOptions="Center" >
-          <Image Source="driverLogActive_icon.png" WidthRequest="50" x:Name="driverIcon"/>
-          <Label Text="OR" FontSize="50"/>
-          <Image Source="userLog_icon.png"  WidthRequest="50" x:Name="riderIcon" />
+        <StackLayout Grid.Row="0">
+          <Image Source="login_logo.png" HorizontalOptions="Center" Margin="0,50,0,0"  />
+          <StackLayout Orientation="Horizontal" HorizontalOptions="Center" >
+            <Image Source="driverLogActive_icon.png" WidthRequest="50" x:Name="driverIcon"/>
+            <Label Text="OR" FontSize="50"/>
+            <Image Source="userLog_icon.png"  WidthRequest="50" x:Name="riderIcon" />
+          </StackLayout>
         </StackLayout>
-      </StackLayout>
 
-      <StackLayout Grid.Row="1">
-        <Entry x:Name="userNameEntry"  Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
-        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" WidthRequest="300" HorizontalOptions="Center"/>
-        <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#467891" WidthRequest="300" HorizontalOptions="Center"/>
-        <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="300" HorizontalOptions="Center"/>
-      </StackLayout>
-      
-    </Grid>
-   
+        <StackLayout Grid.Row="1">
+          <Entry x:Name="userNameEntry"  Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
+          <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" WidthRequest="300" HorizontalOptions="Center"/>
+          <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#467891" WidthRequest="300" HorizontalOptions="Center"/>
+          <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="300" HorizontalOptions="Center"/>
+        </StackLayout>
+
+      </Grid>
+
+      <ActivityIndicator x:Name="busyIndicator" Color="#8c8c8c" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
+                AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,1,0.15,0.15" />
+    </AbsoluteLayout>
   </ContentPage.Content>
 </ContentPage>

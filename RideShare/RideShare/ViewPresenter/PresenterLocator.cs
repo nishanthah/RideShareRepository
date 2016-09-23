@@ -11,6 +11,15 @@ using Xamarin.Forms;
 
 namespace RideShare.ViewPresenter
 {
+    public enum MapViewPreSenterType
+    {
+        RiderNavigationViewPresenter,
+        RiderViewPresenter,
+        DriverNavigationViewPresenter,
+        DriverRequestedRidesPresenter,
+        DriverViewPresenter
+    }
+
     public class PresenterLocator
     {
         IMapPageProcessor mapPageProcessor;
@@ -33,12 +42,14 @@ namespace RideShare.ViewPresenter
             
             if(!String.IsNullOrEmpty(userData.UserLocation.User.RecentRequest))
             {
-                var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", userData.UserLocation.User.RecentRequest).RideHistories.FirstOrDefault();
+                
                 if (userData.UserLocation.User.UserType == UserType.Rider)
                 {
+                    var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", userData.UserLocation.User.RecentRequest).RideHistories.FirstOrDefault();
                     if (historyInfo.RequestStatus == RequestStatus.Requested || historyInfo.RequestStatus == RequestStatus.DriverAccepted )
                     {
                         precenter = new RiderNavigationViewPresenter(mapPageProcessor, mapSocketService, historyInfo, driverLocatorService);
+
                     }
                     else
                     {
@@ -48,24 +59,34 @@ namespace RideShare.ViewPresenter
                 }
                 else if (userData.UserLocation.User.UserType == UserType.Driver)
                 {
+                    
                     if (notificationInfo != null)
                     {
-                        precenter = new DriverNavigationViewPresenter(mapPageProcessor, mapSocketService, notificationInfo, historyInfo, driverLocatorService);
+                        var historyInfo = driverLocatorService.GetRideHistoryByFilter("_id", notificationInfo.RequestId).RideHistories.FirstOrDefault();
+                        precenter = new DriverNavigationViewPresenter(mapPageProcessor, mapSocketService, historyInfo, driverLocatorService);
                     }
                     else
                     {
-                        if (historyInfo.RequestStatus == RequestStatus.RideCompleted)
+                        var historyInfo = driverLocatorService.GetRideHistoryByFilter("driverUserName", userData.UserLocation.User.UserName).RideHistories;
+
+                        var currectRidesCount = historyInfo.Where(x => x.RequestStatus == RequestStatus.DriverAccepted
+                                                                    ||
+                                                                    x.RequestStatus == RequestStatus.Requested 
+                                                                    ||
+                                                                    x.RequestStatus == RequestStatus.RiderMet).Count();
+
+                        if (currectRidesCount > 0)
                         {
-                            precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
+                            precenter = new DriverRequestedRidesPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
                         }
                         else
                         {
-                            precenter = new DriverRequestedRidesPresenter(mapPageProcessor, mapSocketService, driverLocatorService);
+                            precenter = new DriverViewPresenter(mapPageProcessor, mapSocketService, driverLocatorService);                            
                         }
                             
                     }
                 }
-
+               
             }
             else
             {
@@ -83,5 +104,10 @@ namespace RideShare.ViewPresenter
 
             return precenter;
         }
+
+        //public BaseMapViewPresenter GetPrecenter(MapViewPreSenterType )
+        //{
+
+        //}
     }
 }

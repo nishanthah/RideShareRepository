@@ -90,5 +90,14 @@ namespace RideShare
            // App.Current.MainPage = new SignUp();
         }
 
+        public void InvokeInMainThread(Action action)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                action();
+            });
+                
+        }
+
     }
 }

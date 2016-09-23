@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Authentication.Common;
 using Common;
 using DriverLocator.Models;
+using Common.Models;
 
 namespace DriverLocator
 {
@@ -33,6 +34,7 @@ namespace DriverLocator
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
         private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
+        private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -172,6 +174,17 @@ namespace DriverLocator
             requestHandler.Method = HttpMethod.PUT;
             requestHandler.Url = String.Format(FINISH_RIDE_URL,driverUserName);
             var result = await requestHandler.SendRequestAsync<FinishRideResponse>();
+            return result;
+        }
+
+        public async Task<UpdateNotificationStatusResponse> UpdateNotificationStatus(string notificationId,NotificationStatus notificationStatus)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = String.Format(UPDATE_NOTIFICATION_STATUS_URL, notificationId);
+            var request = new UpdateNotificationStatusRequest() { NotificationStatus = notificationStatus};
+            var result = await requestHandler.SendRequestAsync<UpdateNotificationStatusRequest, UpdateNotificationStatusResponse>(request);
             return result;
         }
     }
