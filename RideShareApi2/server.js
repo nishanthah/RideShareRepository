@@ -450,6 +450,33 @@ apiRoutes.put('/ridehistory/status/:id', function (req, res) {
 	});
 });
 
+apiRoutes.put('/ridehistory/:id/poly_line', function (req, res) {
+    
+    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (!rideHistoryItem) {
+            res.json({ success: false, message: "Ride History Not Found" });
+        }
+        else {
+            
+            rideHistoryItem.polyLine = req.body.polyLine;
+            
+            rideHistoryItem.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Successfully Updated The Poly Line');
+                res.json({ success: true });
+            });
+
+        }
+
+    });
+
+   
+});
+
 apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
     
     RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
@@ -477,32 +504,7 @@ apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
    
 });
 
-apiRoutes.put('/ridehistory/:id/:polyLine', function (req, res) {
-    
-    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
-        
-        if (err) res.json({ success: false, message: err });
-        
-        if (!rideHistoryItem) {
-            res.json({ success: false, message: "Ride History Not Found" });
-        }
-        else {
-            
-            rideHistoryItem[polyLine] = req.body.polyLine;
-            
-            rideHistoryItem.save(function (err) {
-                if (err) res.json({ success: false, message: err });
-                
-                console.log('Updated The Ride History');
-                res.json({ success: true });
-            });
 
-        }
-
-    });
-
-   
-});
 
 apiRoutes.put('/ridehistory/driver/:userName/ride/end', function (req, res) {
     

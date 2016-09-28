@@ -25,7 +25,7 @@ namespace DriverLocator
         private const string UPDATE_USER_COORDINATE_URL = SERVER + "/api/updatecoordinates";
         private const string SELECTED_USER_COORDINATE_URL = SERVER + "/api/users/{0}";
         private const string CREATE_RIDEHISTORY_URL = SERVER + "/api/ridehistory";
-        private const string UPDATE_POLYLINE_URL = SERVER + "/api/ridehistory/{0}/Polyline";
+        private const string UPDATE_POLYLINE_URL = SERVER + "/api/ridehistory/{0}/poly_line";
         private const string RIDEHISTORY_BY_FILTER_URL = SERVER + "/api/ridehistory/{0}/?filter={1}";
         private const string RIDEHISTORY_UPDATE_STATUS_URL = SERVER + "/api/ridehistory/status/{0}";
         private const string UPDATE_USER_TYPE_URL = SERVER + "/api/users/{0}/type";
