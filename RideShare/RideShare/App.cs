@@ -3,6 +3,7 @@ using DriverLocator.Models;
 using RideShare.SharedInterfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace RideShare
     {
         //public static UserManager User_Manager { get; private set; }
         public static UserLocation CurrentLoggedUser { get; set; }
+        public static ObservableCollection<Vehicle> CurrentUserVehicles { get; set; }
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
         
 

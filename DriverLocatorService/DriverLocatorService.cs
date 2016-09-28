@@ -33,6 +33,8 @@ namespace DriverLocator
         private const string UPDATE_USER_DESTINATION_URL = SERVER + "/api/users/{0}/destination";
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
+        private const string UPDATE_USER_VEHICLE_URL = SERVER + "/api/vehicles";
+        private const string GET_USER_VEHICLE_URL = SERVER + "/api/users/{0}/vehicles";
         private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
         private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
@@ -57,6 +59,16 @@ namespace DriverLocator
             return userCoordinateResponse;
         }
 
+        public UserVehiclesResponse GetUserVehiclesByUser(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(GET_USER_VEHICLE_URL, userName);
+            var userVehiclesResponse = requestHandler.SendRequest<UserVehiclesResponse>();
+            return userVehiclesResponse;
+        }
+
         public SaveUserDataResponse SaveUserData(User userCoordinate)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
@@ -74,6 +86,16 @@ namespace DriverLocator
             requestHandler.Method = HttpMethod.PUT;
             requestHandler.Url = String.Format(UPDATE_USER_LOCATION_URL, userName);
             var result = requestHandler.SendRequest<UpdateUserLocationRequest, UpdateUserLocationResponse>(request);
+            return result;
+        }        
+
+        public UpdateVehicleDetailsResponse UpdateVehicleDetails(UpdateVehicleDetailsRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.POST;
+            requestHandler.Url = UPDATE_USER_VEHICLE_URL;
+            var result = requestHandler.SendRequest<UpdateVehicleDetailsRequest, UpdateVehicleDetailsResponse>(request);
             return result;
         }
 
