@@ -67,7 +67,8 @@ namespace Authentication
             var userInfo = requestHandler.SendRequest<UserInfoResponse>();
             if(userInfo.IsSuccess)
             {
-                IsAuthenticated = true;                
+                IsAuthenticated = true;
+                this.authenticationToken = token;                
             }
             else
             {

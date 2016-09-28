@@ -70,7 +70,7 @@ namespace DriverLocator.Models
         [JsonProperty("destinationLatitude")]
         public string DestinationLatitude { get; set; }
 
-        [JsonProperty("polyline")]
+        [JsonProperty("polyLine")]
         public string PolyLine { get; set; }
 
         [JsonProperty("requestAcceptTime")]

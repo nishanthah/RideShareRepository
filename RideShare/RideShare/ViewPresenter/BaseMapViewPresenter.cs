@@ -20,6 +20,7 @@ namespace RideShare.ViewPresenter
         private IAppDataService appDataService;
         bool isNearToDestination;
         bool isNearPopupOpened;
+        public bool HasRides { get; set; }
 
         public BaseMapViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, DriverLocator.DriverLocatorService driverLocatorService)
         {
@@ -61,7 +62,7 @@ namespace RideShare.ViewPresenter
 
                         var direction = GetDirections(userCoordinate, destinationCoordinate).Routes.SingleOrDefault().Legs.SingleOrDefault().Distance.Value;
 
-                        if (direction < 200)
+                        if (direction < 300)
                         {
                             if (isNearToDestination == false)
                             {
@@ -166,7 +167,12 @@ namespace RideShare.ViewPresenter
 
         protected virtual void OnNearTheDestination() {
             isNearPopupOpened = true;
-            mapPageProcessor.ShowDoubleButtonPopup("Your are near to the destination. Do you want to end this ride?", "Yes", "No",this.OnPopupConfirmed,this.OnPopupCanceled);
+
+            if(HasRides)
+            {
+                mapPageProcessor.ShowDoubleButtonPopup("Your are near to the destination. Do you want to end this ride?", "Yes", "No", this.OnPopupConfirmed, this.OnPopupCanceled);
+            }
+            
         }
 
         public void Dispose()

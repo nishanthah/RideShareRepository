@@ -87,12 +87,14 @@ namespace RideShare.ViewModels
                     {
                         if (ridehistory.DecodedOverviewPolyLine != null)
                         {
-                            int DOP = ridehistory.DecodedOverviewPolyLine.Count;
-                             l1 = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString());
-                             l2 = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString());
-                            Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Longitude.ToString()) };
-                            Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString()) };
-                            routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate);
+                        int DOP = ridehistory.DecodedOverviewPolyLine.Count;
+                        Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Longitude.ToString()) };
+                        Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString()) };
+
+
+                        
+                        var wayPoints = ridehistory.DecodedOverviewPolyLine.Select((element) => { return new GoogleApiClient.Models.Coordinate(element.Latitude, element.Longitude); });
+                        routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate, wayPoints.ToList());
                             if (routeResult.RouteCoordinates.Count > 0)
                             {
                                 InitMap(routeResult.RouteCoordinates, routeResult.RiderMeetTime);
@@ -110,7 +112,7 @@ namespace RideShare.ViewModels
             return routeResult;
         }
 
-        private List<Position> GetLineCoordinates(Coordinate sourceCoordinate, Coordinate destinationCoordinate)
+        private List<Position> GetLineCoordinates(Coordinate sourceCoordinate, Coordinate destinationCoordinate,List<GoogleApiClient.Models.Coordinate> wayPoints)
         {
             List<Position> routeCoordinates = new List<Position>();
             GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
@@ -118,7 +120,7 @@ namespace RideShare.ViewModels
             var source = new GoogleApiClient.Models.Coordinate() { Latitude = sourceCoordinate.Latitude, Longitude = sourceCoordinate.Longitude };
             var destination = new GoogleApiClient.Models.Coordinate() { Latitude = destinationCoordinate.Latitude, Longitude = destinationCoordinate.Longitude };
 
-            var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source });
+            var directions = googleMapsDirectionsClient.GetDirections(new GoogleApiClient.Models.GetDirectionRequest() { DestinationCoordinate = destination, SourceCoordinate = source, WayPoints = wayPoints });
 
             foreach (var route in directions.Routes)
             {
