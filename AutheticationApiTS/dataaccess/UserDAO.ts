@@ -47,7 +47,8 @@ class UserMongooseDAO implements IUserDAO
                 selecteduser.email = user.email;
                 selecteduser.firstName = user.firstName;
                 selecteduser.lastName = user.lastName;
-                selecteduser.password = user.password;
+                if (user.password != null)
+                    selecteduser.password = user.password;
                 selecteduser.userName = user.userName;
                 selecteduser.profileImage = user.profileImage;
                 selecteduser.save(function (err) {
