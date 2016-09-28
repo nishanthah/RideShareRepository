@@ -26,6 +26,35 @@
       </Entry>
       <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
       <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
+
+      <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
+      <Image Source="add_picture.png" HorizontalOptions="Start" WidthRequest="30">
+        <Image.GestureRecognizers>
+          <TapGestureRecognizer
+              Command="{Binding TapCommand}" />
+        </Image.GestureRecognizers>
+      </Image>
+      
+      <Label Text="Add Vehicle" FontSize="16">
+        <Label.GestureRecognizers>
+          <TapGestureRecognizer
+              Command="{Binding TapCommand}" />
+        </Label.GestureRecognizers>
+      </Label>
+      </StackLayout>
+      
+      <ListView x:Name="vehicleListView" ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid>
+                <Label Text="{Binding VehicleDisplayName, Mode=TwoWay}" FontSize="15" />
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+      
       <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
       <Button x:Name="registerButton" Command="{Binding SignUpCommand}">
         <Button.Style>
