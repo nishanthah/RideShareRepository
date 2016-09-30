@@ -198,7 +198,7 @@ namespace RideShare.Utilities
                                 var polyLine = GetCurrentPoints().ToEncodedPolyLine();
                                 if (!String.IsNullOrEmpty(polyLine))
                                 {
-                                    request.PolyLine = GetCurrentPoints().Distinct().ToList().ToEncodedPolyLine();
+                                    request.PolyLine = GetCurrentPoints().GroupBy(x => x).Select(x=>x.First()).ToList().ToEncodedPolyLine();
                                     driverLocatorService.UpdatePolyline(recentRequest, request);
                                     appDataService.Save("user_rideing_points", null);
                                 }

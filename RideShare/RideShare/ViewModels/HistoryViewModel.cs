@@ -87,14 +87,20 @@ namespace RideShare.ViewModels
                     {
                         if (ridehistory.DecodedOverviewPolyLine != null)
                         {
-                        int DOP = ridehistory.DecodedOverviewPolyLine.Count;
-                        Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Longitude.ToString()) };
-                        Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString()) };
+                        //int DOP = ridehistory.DecodedOverviewPolyLine.Count;
+                       // Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Longitude.ToString()) };
+                        //Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString()) };
 
 
-                        
-                        var wayPoints = ridehistory.DecodedOverviewPolyLine.Select((element) => { return new GoogleApiClient.Models.Coordinate(element.Latitude, element.Longitude); });
-                        routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate, wayPoints.ToList());
+                        List<Position> positions = new List<Position>();
+                        foreach(var position in ridehistory.DecodedOverviewPolyLine)
+                        {
+                            positions.Add(new Position(position.Latitude, position.Longitude));
+                        }
+                        //var wayPoints = ridehistory.DecodedOverviewPolyLine.Select((element) => { return new GoogleApiClient.Models.Coordinate(element.Latitude, element.Longitude); });
+                        //routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate, wayPoints.ToList());
+
+                        routeResult.RouteCoordinates = positions;
                             if (routeResult.RouteCoordinates.Count > 0)
                             {
                                 InitMap(routeResult.RouteCoordinates, routeResult.RiderMeetTime);
@@ -132,7 +138,7 @@ namespace RideShare.ViewModels
 
             return routeCoordinates;
         }
-
+        
         
         private void InitMap(List<Position> RouteCoordinates, DateTime RiderMeetTime)
         {
