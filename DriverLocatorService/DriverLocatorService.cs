@@ -13,10 +13,10 @@ namespace DriverLocator
 
     public class DriverLocatorService
     {
-        #if Local
-                private const string SERVER = "http://172.28.40.120:8079";
-        #else
-                private const string SERVER = "http://ridesharemain.herokuapp.com";
+#if Local
+                private const string SERVER = "http://172.26.204.15:8079";
+#else
+        private const string SERVER = "http://ridesharemain.herokuapp.com";
         #endif
 
         //private const string SERVER = "http://172.28.40.49:8079";
