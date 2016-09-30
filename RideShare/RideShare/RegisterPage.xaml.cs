@@ -4,6 +4,7 @@ using RideShare.Common;
 using RideShare.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,7 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class RegisterPage : ContentPage, ISignUpPageProcessor
+    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult
     {
         //bool isNewItem;
 
@@ -22,6 +23,8 @@ namespace RideShare
         CircleImage profilePhoto;
         byte[] profileImage;
         String status;
+        public Action<ObservableCollection<DriverLocator.Models.Vehicle>> OnUserVehicleAdded { get; set; }
+        ObservableCollection<DriverLocator.Models.Vehicle> sortedDriverList;
 
         public RegisterPage()
         {
@@ -59,7 +62,22 @@ namespace RideShare
                 {
                     profilePhoto.Source = "add_picture.png";
                 }
-                
+
+                if (vm.Vehicles != null)
+                {
+                    foreach (DriverLocator.Models.Vehicle vehicle in vm.Vehicles)
+                    {
+                        vehicle.VehicleDisplayName = String.Format("{0} {1}", vehicle.VehicleModel, vehicle.VehicleNumberPlate);
+                        vehicle.PreviousVehicleNumberPlate = vehicle.VehicleNumberPlate;
+                    }
+
+                    if (vm.Vehicles.Count != 0)
+                        sortedDriverList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in vm.Vehicles orderby i.VehicleNumberPlate select i);
+                    else
+                        sortedDriverList = vm.Vehicles;
+
+                    vehicleListView.ItemsSource = sortedDriverList;
+                }
             }
             else
             {
@@ -72,7 +90,7 @@ namespace RideShare
 
             profileImageStackLayout.Children.Add(profilePhoto);
             profileImageStackLayout.Children.Add(addPictureButton);
-
+            OnUserVehicleAdded = OnUserVehicleAddedResult;
         }
 
         private async Task SelectPicture()
@@ -148,5 +166,34 @@ namespace RideShare
         //    await App.User_Manager.SaveTaskAsync(user, isNewItem);
         //    await Navigation.PopAsync();
         //}
+
+
+        public void MoveToNextPage()
+        {
+            NavigationPage nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, new DriverLocator.Models.Vehicle()));
+            Navigation.PushModalAsync(nextPage);            
+        }
+
+        private void OnItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            NavigationPage nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, e.SelectedItem as DriverLocator.Models.Vehicle));
+            Navigation.PushModalAsync(nextPage); 
+        }
+
+
+        public void MoveToPreviousPage()
+        {
+            Navigation.PopModalAsync();
+        }
+
+        void OnUserVehicleAddedResult(ObservableCollection<DriverLocator.Models.Vehicle> results)
+        {
+            if (results != null && results.Count != 0)
+                sortedDriverList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in results orderby i.VehicleNumberPlate select i);
+            else
+                sortedDriverList = results;
+
+            vehicleListView.ItemsSource = sortedDriverList;            
+        }        
     }
 }

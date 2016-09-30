@@ -193,6 +193,7 @@
     <Compile Include="MainApp.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\HistoryRouteUpdatorService.cs" />
     <Compile Include="Services\LocationUpdatorService.cs" />
     <Compile Include="UrbanAirshipReceiver.cs" />
   </ItemGroup>

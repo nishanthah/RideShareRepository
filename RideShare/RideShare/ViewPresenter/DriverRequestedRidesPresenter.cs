@@ -16,8 +16,6 @@ namespace RideShare.ViewPresenter
     public class DriverRequestedRidesPresenter : BaseMapViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService;
-        NotificationInfo notificationInfo;
-        RequestStatus currentStatus;
         IAppDataService appDataService;
         RideHistory selectedRide;
 
@@ -40,7 +38,10 @@ namespace RideShare.ViewPresenter
                                           || x.RequestStatus == RequestStatus.DriverAccepted
                                           || x.RequestStatus == RequestStatus.RiderMet)
                                     .ToList();
-
+            if(rideHistories.Count > 0)
+            {
+                this.HasRides = true;
+            }
             var driver = driverLocatorService.GetSelectedUserCoordinate(currentUser).UserLocation;
 
             Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude), Longitude = double.Parse(driver.Location.Longitude) };

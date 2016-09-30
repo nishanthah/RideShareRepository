@@ -10,7 +10,31 @@ namespace RideShare
 {
     public static class Session
     {
-        public static IAuthenticationService AuthenticationService { get; set; }
+        public static object lockObj = new object();
+
+        private static IAuthenticationService authenticationService;
+
+        public static IAuthenticationService AuthenticationService
+        {
+            get
+            {
+                lock(lockObj)
+                {
+                    return authenticationService;
+                }
+                
+            }
+            set
+            {
+                if(authenticationService== null)
+                {
+                    authenticationService = value;
+                }
+                
+            }
+        }
+
+        //public static IAuthenticationService AuthenticationService { get; set; }
 
         public static string CurrentUserName { get; set; }
         public static UserType CurrentUserType { get; set; }

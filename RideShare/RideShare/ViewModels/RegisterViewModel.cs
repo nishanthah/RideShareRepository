@@ -4,6 +4,7 @@ using DriverLocatorFormsPortable.Common;
 using RideShare.Common;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,13 +21,17 @@ namespace RideShare.ViewModels
         string email;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
+        ObservableCollection<DriverLocator.Models.Vehicle> vehicles; 
+
 
         ISignUpPageProcessor signUpPageProcessor;
+        public ICommand TapCommand { protected set; get; }
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
             this.signUpPageProcessor = signUpPageProcessor;
-
+            this.TapCommand = new RelayCommand(OnTapped);
+            vehicles = new ObservableCollection<DriverLocator.Models.Vehicle>();
             if (Session.AuthenticationService.IsAuthenticated)
             {
                 var currentUserDetails = App.CurrentLoggedUser.User;
@@ -38,17 +43,23 @@ namespace RideShare.ViewModels
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
                 }
-                this.SignUpCommand = new RelayCommand(Update);
+                vehicles = App.CurrentUserVehicles;
+                this.SignUpCommand = new RelayCommand(Update);                
             }
             else
             {
                 Session.AuthenticationService = new AuthenticationService();
                 this.SignUpCommand = new RelayCommand(SignUp);
+
+                if (App.CurrentUserVehicles != null)
+                    App.CurrentUserVehicles.Clear();
             }
 
         }
 
         public ICommand SignUpCommand { protected set; get; }
+
+        
 
         public bool isAuthenticated
         {
@@ -139,6 +150,20 @@ namespace RideShare.ViewModels
             }
         }
 
+        public ObservableCollection<DriverLocator.Models.Vehicle> Vehicles
+        {
+            get
+            {
+                return vehicles;
+            }
+
+            set
+            {
+                vehicles = value;
+                OnPropertyChanged("Vehicles");
+            }
+        }
+
         private void SignUp()
         {
             var user = new User()
@@ -150,7 +175,7 @@ namespace RideShare.ViewModels
                 Password = this.Password,
                 profileImageEncoded = GetProfilePictureEncoded()
             };
-
+            
 
             var signUpSucceeded = AreDetailsValid(user);
 
@@ -158,7 +183,29 @@ namespace RideShare.ViewModels
             {
 
                 var result = Session.AuthenticationService.CreateUser(user);
-                this.signUpPageProcessor.MoveToLoginPage();
+                if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
+                {
+                    UpdateUserInLocal();
+                    
+                    DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                    var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
+
+                    if (userCorrdinateResult.IsSuccess)
+                    {
+                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;                                               
+                    }
+
+                    if (App.CurrentUserVehicles != null)
+                    {
+                        UpdateVehiclesInLocal();
+                        if (App.CurrentLoggedUser != null)
+                            App.CurrentLoggedUser.Vehicles = App.CurrentUserVehicles;
+                    }
+
+                    this.signUpPageProcessor.MoveToLoginPage();
+                }
+                else
+                    this.signUpPageProcessor.MoveToLoginPage();
             }
             else
             {
@@ -178,19 +225,33 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded()
             };
 
-            var Isvalid = AreDetailsValid(user);
+            var Isvalid = AreDetailsValid(user, true);
 
             if (Isvalid)
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
+                UpdateUserInLocal();
+                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
+
+                if (userCorrdinateResult.IsSuccess)
+                {
+                    App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                }
+
+                if (App.CurrentUserVehicles != null)
+                {
+                    UpdateVehiclesInLocal();
+                    if (App.CurrentLoggedUser != null)
+                        App.CurrentLoggedUser.Vehicles = App.CurrentUserVehicles;
+                }
+
                 this.signUpPageProcessor.MoveToMainPage();
             }
             else
             {
                 ErrorMessage = "Update failed";
             }
-
-
         }
 
         public string GetProfilePictureEncoded()
@@ -203,13 +264,56 @@ namespace RideShare.ViewModels
         }
 
 
-        bool AreDetailsValid(User user)
+        bool AreDetailsValid(User user, bool isUpdate = false)
         {
-            return (!string.IsNullOrWhiteSpace(user.UserName) &&
+            if(!isUpdate)
+                return (!string.IsNullOrWhiteSpace(user.UserName) &&
                 !string.IsNullOrWhiteSpace(user.Password) &&
                 !string.IsNullOrWhiteSpace(user.UserName) &&
                 !string.IsNullOrWhiteSpace(user.EMail));
+            else
+                return (!string.IsNullOrWhiteSpace(user.UserName) &&
+               !string.IsNullOrWhiteSpace(user.UserName) &&
+               !string.IsNullOrWhiteSpace(user.EMail));
         }
 
+        public void UpdateUserInLocal()
+        {
+            var result = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken);
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+            DriverLocator.Models.User dlUser = new DriverLocator.Models.User();
+            dlUser.UserName = result.UserName;
+            dlUser.FirstName = result.FirstName;
+            dlUser.LastName = result.LastName;
+            dlUser.EMail = result.EMail;
+            dlUser.profileImageEncoded = result.profileImageEncoded;
+            var response = driverLocatorService.SaveUserData(dlUser);
+        }
+
+        public void UpdateVehiclesInLocal()
+        {
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+
+            if (App.CurrentUserVehicles != null)
+            {
+                foreach (DriverLocator.Models.Vehicle v in App.CurrentUserVehicles)
+                {
+                    DriverLocator.Models.UpdateVehicleDetailsRequest dlVehicleRequest = new DriverLocator.Models.UpdateVehicleDetailsRequest();
+                    dlVehicleRequest.UserName = App.CurrentLoggedUser.User.UserName;
+                    dlVehicleRequest.VehicleModel = v.VehicleModel;
+                    dlVehicleRequest.VehicleColor = v.VehicleColor;
+                    dlVehicleRequest.VehicleMaxPassengerCount = v.VehicleMaxPassengerCount;
+                    dlVehicleRequest.VehicleNumberPlate = v.VehicleNumberPlate;
+                    dlVehicleRequest.PreviousVehicleNumberPlate = v.PreviousVehicleNumberPlate;
+                    var response = driverLocatorService.UpdateVehicleDetails(dlVehicleRequest);
+                }
+            }            
+        }
+
+
+        private void OnTapped ()
+        {
+            this.signUpPageProcessor.MoveToNextPage();
+        }
     }
 }

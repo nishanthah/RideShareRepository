@@ -16,7 +16,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;Local</DefineConstants>
+    <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
@@ -47,6 +47,9 @@
     <Compile Include="Models\UpdateUserLocationResponse.cs" />
     <Compile Include="Models\UpdateUserTypeRequest.cs" />
     <Compile Include="Models\UpdateUserTypeResponse.cs" />
+    <Compile Include="Models\UpdateVehicleDetailsRequest.cs" />
+    <Compile Include="Models\UpdateVehicleDetailsResponse.cs" />
+    <Compile Include="Models\UserVehiclesResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ResponseBase.cs" />
     <Compile Include="Models\UpdateUserCoordinateResponse.cs" />

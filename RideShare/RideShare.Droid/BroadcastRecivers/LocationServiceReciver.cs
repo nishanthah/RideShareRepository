@@ -16,7 +16,7 @@ using RideShare.Droid.Services;
 namespace RideShare.Droid.BroadcastRecivers
 {
     [BroadcastReceiver(Enabled = true)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED", "com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED" })]
     public class LocationServiceReciver : BroadcastReceiver
     {
         public override void OnReceive(Context context, Intent intent)
@@ -24,6 +24,10 @@ namespace RideShare.Droid.BroadcastRecivers
             if(intent.Action == "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED")
             {
                 context.StartService(new Intent(context, typeof(LocationUpdatorService)));                
+            }
+            else if (intent.Action == "com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED")
+            {
+                context.StartService(new Intent(context, typeof(HistoryRouteUpdatorService)));
             }
         }
     }

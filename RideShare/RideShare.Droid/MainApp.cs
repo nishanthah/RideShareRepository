@@ -32,9 +32,12 @@ namespace RideShare.Droid
 
             Thread t = new Thread(new ThreadStart(() => {
                 StartService(new Intent(this, typeof(LocationUpdatorService)));
+                StartService(new Intent(this, typeof(HistoryRouteUpdatorService)));
             }));
             t.IsBackground = true;
             t.Start();
+
+           
         }
         
       

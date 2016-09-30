@@ -16,6 +16,7 @@ var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
 var config = require('./config'); // get our config file
 var UserCoordinate   = require('./app/models/user'); // get our mongoose model
 var RideHistory = require('./app/models/ride_history.js'); // RideHistory mongoose model
+var UserVehicle = require('./app/models/vehicle.js'); // Vehicle mongoose model
 
 // =======================
 // configuration =========
@@ -151,7 +152,51 @@ apiRoutes.put('/users/:userName/location', function (req, res) {
         });
 	
     });
-});  
+});
+
+
+
+apiRoutes.post('/vehicles', function (req, res) {
+    
+    UserVehicle.findOne({ $and: [{ userName : req.body.userName }, { vehicleNumberPlate : req.body.previousVehicleNumberPlate }] }, function (err, userVehicle) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (userVehicle != null) {
+            
+            userVehicle.userName = req.body.userName;
+            userVehicle.vehicleModel = req.body.vehicleModel;
+            userVehicle.vehicleColor = req.body.vehicleColor;
+            userVehicle.vehicleMaxPassengerCount = req.body.vehicleMaxPassengerCount;
+            userVehicle.vehicleNumberPlate = req.body.vehicleNumberPlate;
+            
+            userVehicle.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Updated User Vehicle successfully');
+                io.emit('coordinate_changed', "Changed");
+                res.json({ success: true, message: 'Updated User Vehicle successfully' });
+            });        
+        }
+        else {
+            var newUserVehicle = new UserVehicle({
+                userName: req.body.userName,
+                vehicleModel: req.body.vehicleModel,
+                vehicleColor: req.body.vehicleColor,
+                vehicleMaxPassengerCount: req.body.vehicleMaxPassengerCount,
+                vehicleNumberPlate: req.body.vehicleNumberPlate
+            });
+            
+            newUserVehicle.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Inserted User Vehicle successfully');
+                io.emit('coordinate_changed', "Changed");
+                res.json({ success: true, message: 'Inserted User Vehicle successfully' });
+            });            
+        }
+    });   
+});
 
 apiRoutes.put('/users/:userName/destination', function (req, res) {
     UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
@@ -292,6 +337,35 @@ apiRoutes.get('/users', function(req, res) {
 		});
 		res.json({ userCoordinates: userDatas, success: true });
 	});
+
+});
+
+apiRoutes.get('/users/:userName/vehicles', function (req, res) {
+    
+    UserVehicle.find({ userName : req.params.userName}, function (err, userVehicles) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        var userVehicleData = new Array();
+
+        if (userVehicles.length != 0) {
+            userVehicles.forEach(function (userVehicle) {
+                var userVehiData = {};
+                userVehiData.userName = userVehicle.userName;
+                userVehiData.vehicleModel = userVehicle.vehicleModel;
+                userVehiData.vehicleColor = userVehicle.vehicleColor;
+                userVehiData.vehicleMaxPassengerCount = userVehicle.vehicleMaxPassengerCount;
+                userVehiData.vehicleNumberPlate = userVehicle.vehicleNumberPlate;
+                
+                userVehicleData.push(userVehiData);
+            });
+            
+            res.json({ userVehicles: userVehicleData, success: true, message: 'User Vehicle details retrived successfully' });
+        }
+        else {
+            res.json({ success: false, message: 'No User Vehicle details found' });
+        }
+    });
 
 });
 
@@ -450,6 +524,33 @@ apiRoutes.put('/ridehistory/status/:id', function (req, res) {
 	});
 });
 
+apiRoutes.put('/ridehistory/:id/poly_line', function (req, res) {
+    
+    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (!rideHistoryItem) {
+            res.json({ success: false, message: "Ride History Not Found" });
+        }
+        else {
+            
+            rideHistoryItem.polyLine = req.body.polyLine;
+            
+            rideHistoryItem.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Successfully Updated The Poly Line');
+                res.json({ success: true });
+            });
+
+        }
+
+    });
+
+   
+});
+
 apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
     
     RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
@@ -477,32 +578,7 @@ apiRoutes.put('/ridehistory/:id/:timeCol', function (req, res) {
    
 });
 
-apiRoutes.put('/ridehistory/:id/:polyLine', function (req, res) {
-    
-    RideHistory.findOne({ _id : req.params.id }, function (err, rideHistoryItem) {
-        
-        if (err) res.json({ success: false, message: err });
-        
-        if (!rideHistoryItem) {
-            res.json({ success: false, message: "Ride History Not Found" });
-        }
-        else {
-            
-            rideHistoryItem[polyLine] = req.body.polyLine;
-            
-            rideHistoryItem.save(function (err) {
-                if (err) res.json({ success: false, message: err });
-                
-                console.log('Updated The Ride History');
-                res.json({ success: true });
-            });
 
-        }
-
-    });
-
-   
-});
 
 apiRoutes.put('/ridehistory/driver/:userName/ride/end', function (req, res) {
     

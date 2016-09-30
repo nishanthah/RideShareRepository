@@ -111,6 +111,17 @@ namespace RideShare.ViewModels
                             App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
                             
                             loginProcessor.MoveToMainPage();
+
+                            var userVehiclesResult = driverLocatorService.GetUserVehiclesByUser(this.userName);
+
+                            if (userVehiclesResult.IsSuccess)
+                            {
+                                if (App.CurrentUserVehicles != null)
+                                    App.CurrentUserVehicles.Clear();
+                                App.CurrentLoggedUser.Vehicles = App.CurrentUserVehicles = userVehiclesResult.UserVehicles;
+                            }
+
+                            loginProcessor.MoveToMainPage();
                         });
 
                     }
