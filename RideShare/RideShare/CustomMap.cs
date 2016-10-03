@@ -19,6 +19,7 @@ namespace RideShare
         public string UserName { get; set; }
         public UserType UserType { get; set; }
         public object Data { get; set; }
+        public string Url { get; set; }
     }
 
     public class CustomMap : Map
