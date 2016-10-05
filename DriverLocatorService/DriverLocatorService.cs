@@ -37,6 +37,7 @@ namespace DriverLocator
         private const string GET_USER_VEHICLE_URL = SERVER + "/api/users/{0}/vehicles";
         private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
         private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
+		private const string GET_USER_VEHICLE_DEF_DATA_URL = SERVER + "/api/vehicledefinitiondata";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -208,6 +209,16 @@ namespace DriverLocator
             var request = new UpdateNotificationStatusRequest() { NotificationStatus = notificationStatus};
             var result = await requestHandler.SendRequestAsync<UpdateNotificationStatusRequest, UpdateNotificationStatusResponse>(request);
             return result;
+        }
+		
+		public UserVehicleDefinitionDataResponse GetUserVehicleDefinitionData()
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = GET_USER_VEHICLE_DEF_DATA_URL;
+            var userVehicleDefinitionDataResponse = requestHandler.SendRequest<UserVehicleDefinitionDataResponse>();
+            return userVehicleDefinitionDataResponse;
         }
     }
 }
