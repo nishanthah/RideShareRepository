@@ -12,6 +12,9 @@ namespace DriverLocator.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
+        [JsonProperty("vehicleMake")]
+        public string VehicleMake { get; set; }
+
         [JsonProperty("vehicleModel")]
         public string VehicleModel { get; set; }
 

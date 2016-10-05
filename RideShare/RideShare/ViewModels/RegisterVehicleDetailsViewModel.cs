@@ -14,11 +14,13 @@ namespace RideShare.ViewModels
 {
     public class RegisterVehicleDetailsViewModel : ViewModelBase
     {
+        string vehicleMake;
         string vehicleModel;
         string vehicleColor;
         int vehicleMaxPassengerCount;
         string vehicleNumberPlate;
         string previousVehicleNumberPlate;
+        ObservableCollection<DriverLocator.Models.VehicleDefinitionData> vehicleDefinitionData;
 
         ISignUpPageProcessor signUpVehiclePageProcessor;
         public ICommand SignUpCommand { protected set; get; }
@@ -30,6 +32,11 @@ namespace RideShare.ViewModels
 
             if (selectedVehicle != null)
             {
+                if (selectedVehicle.VehicleMake == null)
+                    this.vehicleMake = String.Empty;
+                else
+                    this.vehicleMake = selectedVehicle.VehicleMake;
+                
                 if (selectedVehicle.VehicleModel == null)
                     this.vehicleModel = String.Empty;
                 else
@@ -46,6 +53,8 @@ namespace RideShare.ViewModels
                     previousVehicleNumberPlate = this.vehicleNumberPlate = String.Empty;
                 else
                     previousVehicleNumberPlate = this.vehicleNumberPlate = selectedVehicle.VehicleNumberPlate;
+
+                vehicleDefinitionData = GetVehicleDefinitionData();                
             }
 
             this.SignUpCommand = new RelayCommand(UpdateVehicleDetails);
@@ -56,6 +65,19 @@ namespace RideShare.ViewModels
             get { return Session.AuthenticationService.IsAuthenticated; }
         }
 
+        public string VehicleMake
+        {
+            get
+            {
+                return vehicleMake;
+            }
+
+            set
+            {
+                vehicleMake = value;
+                OnPropertyChanged("VehicleMake");
+            }
+        }
 
         public string VehicleModel
         {
@@ -124,6 +146,20 @@ namespace RideShare.ViewModels
                 vehicleNumberPlate = value;
                 OnPropertyChanged("VehicleNumberPlate");
             }
+        }        
+
+        public ObservableCollection<DriverLocator.Models.VehicleDefinitionData> VehicleDefinitionData
+        {
+            get
+            {
+                return vehicleDefinitionData;
+            }
+
+            set
+            {
+                vehicleDefinitionData = value;
+                OnPropertyChanged("VehicleDefinitionData");
+            }
         }
 
         private void UpdateVehicleDetails()
@@ -142,7 +178,7 @@ namespace RideShare.ViewModels
 
             DriverLocator.Models.Vehicle newUserVehicle = new DriverLocator.Models.Vehicle() 
             { 
-                VehicleModel = this.vehicleModel, VehicleColor = this.vehicleColor, VehicleMaxPassengerCount = this.vehicleMaxPassengerCount,
+                VehicleMake = this.vehicleMake, VehicleModel = this.vehicleModel, VehicleColor = this.vehicleColor, VehicleMaxPassengerCount = this.vehicleMaxPassengerCount,
                 VehicleNumberPlate = this.vehicleNumberPlate,
                 PreviousVehicleNumberPlate = this.previousVehicleNumberPlate,
                 VehicleDisplayName = String.Format("{0} {1}", this.vehicleModel, this.vehicleNumberPlate) 
@@ -167,5 +203,14 @@ namespace RideShare.ViewModels
                     App.CurrentUserVehicles.Add(newUserVehicle);
             }     
         }        
+
+        private ObservableCollection<DriverLocator.Models.VehicleDefinitionData> GetVehicleDefinitionData()
+        {
+            ObservableCollection<DriverLocator.Models.VehicleDefinitionData> returnList = new ObservableCollection<DriverLocator.Models.VehicleDefinitionData>();
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+            var userVehicleDefinitionDataResult = driverLocatorService.GetUserVehicleDefinitionData();
+            returnList = userVehicleDefinitionDataResult.UserVehicleDefinitionData;
+            return returnList;
+        }
     }
 }

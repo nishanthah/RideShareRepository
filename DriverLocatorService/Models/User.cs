@@ -77,6 +77,9 @@ namespace DriverLocator.Models
         [JsonProperty("userName")]
         public string UserName { get; set; }
 
+        [JsonProperty("vehicleMake")]
+        public string VehicleMake { get; set; }
+
         [JsonProperty("vehicleModel")]
         public string VehicleModel { get; set; }
 
@@ -94,5 +97,15 @@ namespace DriverLocator.Models
         [JsonProperty("previousVehicleNumberPlate")]
         public string PreviousVehicleNumberPlate { get; set; }
  
+    }
+
+    public class VehicleDefinitionData
+    {
+        [JsonProperty("make")]
+        public string Make { get; set; }
+
+        [JsonProperty("model")]
+        public string Model { get; set; }
+
     }
 }

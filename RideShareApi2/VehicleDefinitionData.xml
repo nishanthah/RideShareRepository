@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<vehicles>
+  <vehicle make="Audi">
+    <model>A4</model>    
+  </vehicle>
+  <vehicle make="BMW">
+    <model>S</model>    
+  </vehicle>
+  <vehicle make="Chery">
+    <model>New QQ</model>    
+  </vehicle>
+  <vehicle make="Chevrolet">
+    <model>Beat</model>    
+	<model>Cruze</model>
+  </vehicle>
+  <vehicle make="Chrylser">
+    <model>300</model>    
+  </vehicle>
+  <vehicle make="Daihatsu">
+    <model>Hijet</model>  
+    <model>Terios</model>	
+  </vehicle>
+  <vehicle make="Datsun">
+    <model>Redi-GO</model>    
+  </vehicle>
+  <vehicle make="Fiat">
+    <model>Punto</model>    
+  </vehicle>
+  <vehicle make="Geely">
+    <model>GC5</model>
+    <model>Panda</model>
+    <model>SL</model>    
+  </vehicle>
+  <vehicle make="Honda">
+    <model>Airwave</model>
+    <model>City</model>
+    <model>Civic</model>
+    <model>Fit</model>
+    <model>Freed</model>
+    <model>Grace</model>
+    <model>HR-V</model>
+    <model>Insight</model>
+    <model>Spike</model>
+    <model>That's</model>
+    <model>Vezel</model> 
+  </vehicle>
+  <vehicle make="Hyundai">
+    <model>Accent</model>    
+	<model>Eon</model>
+	<model>Santa Fe</model>
+	<model>Trajet</model>
+	<model>Tucson</model>
+  </vehicle>
+  <vehicle make="Kia">
+    <model>Sorento</model> 
+    <model>Spectra</model>
+    <model>Sportage</model>	
+  </vehicle>
+  <vehicle make="Maruti Suzuki">
+    <model>A-Star</model>    
+	<model>Alto</model>
+	<model>Estiol</model>
+	<model>Maruti 800</model>
+	<model>Swift</model>
+	<model>Zen</model>
+	<model>Maruti K10</model>
+  </vehicle>
+  <vehicle make="Mazda">
+    <model>Axela</model>   
+    <model>CX-3</model>
+    <model>Carol</model>
+    <model>Demio</model>
+    <model>Familia</model>
+    <model>Flair</model>	
+  </vehicle>
+  <vehicle make="Mercedes-Benz">
+    <model>C-Class</model> 
+    <model>M-Class</model>
+    <model>S-Class</model>	
+  </vehicle>
+  <vehicle make="Mitsubishi">
+    <model>Lancer</model>
+    <model>Minicab</model>
+    <model>Montero</model>
+    <model>Outlander</model>
+    <model>Pajero</model>
+  </vehicle>
+  <vehicle make="Nissan">
+    <model>Bluebird</model>
+    <model>Clipper</model>
+    <model>Juke</model>
+    <model>KIX</model>
+    <model>LEAF</model>
+    <model>March</model>
+    <model>NV</model>
+    <model>Primera</model>
+    <model>Sunny</model>
+    <model>Tida</model>
+    <model>V16</model> 
+    <model>Wingroad</model>
+    <model>X-Trail</model>    
+  </vehicle>
+  <vehicle make="Perodua">
+    <model>Axia</model>    
+	<model>Kelisa</model>
+	<model>Viva</model>    
+  </vehicle>
+  <vehicle make="Peugeot">
+    <model>206</model>
+    <model>406</model>
+    <model>407</model>       
+  </vehicle>
+  <vehicle make="Proton">
+    <model>Wira</model>      	
+  </vehicle>
+  <vehicle make="Renault">
+    <model>Kwid</model>    
+  </vehicle>
+  <vehicle make="Ssangyong">
+    <model>Rexton</model>    
+  </vehicle>
+  <vehicle make="Subaru">
+    <model>XV Crosstrek</model>        
+  </vehicle>
+  <vehicle make="Suzuki">
+    <model>Alto</model>
+    <model>Celerio</model>
+    <model>Esteem</model>
+    <model>Every</model>
+    <model>Hustler</model>
+    <model>Liana</model>
+    <model>Solio</model>
+    <model>Spacia</model>
+    <model>Swift</model>
+    <model>Wagon-R</model>     
+  </vehicle>
+  <vehicle make="Tata">
+    <model>Bolt</model>    
+	<model>Indica</model>
+	<model>Indigo</model>
+	<model>Nano</model>	
+  </vehicle>
+  <vehicle make="Toyota">
+    <model>86</model> 
+    <model>Allion</model>
+    <model>Aqua</model>
+    <model>Avanza</model>
+    <model>Belta</model>
+    <model>Camry</model>
+    <model>Carina</model>
+    <model>Corolla</model>
+    <model>Corolla Axio</model>
+    <model>Corolla Fielder</model>
+    <model>Hilux</model>
+    <model>Mark X</model>
+    <model>Nova</model>
+    <model>Passo</model>
+    <model>Prado</model>
+    <model>Premio</model>
+    <model>Prius</model>
+    <model>Starlet</model>
+    <model>Vios</model>
+    <model>Vitz</model>
+    <model>Voxy</model>
+    <model>Yaris</model>
+    <model>iQ</model>    	
+  </vehicle>
+  <vehicle make="Volkswagen">
+    <make>Volkswagen</make>
+    <model>Vento</model>
+  </vehicle>
+</vehicles>

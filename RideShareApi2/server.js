@@ -17,11 +17,13 @@ var config = require('./config'); // get our config file
 var UserCoordinate   = require('./app/models/user'); // get our mongoose model
 var RideHistory = require('./app/models/ride_history.js'); // RideHistory mongoose model
 var UserVehicle = require('./app/models/vehicle.js'); // Vehicle mongoose model
+var VehicleDefinitionData = require('./app/models/vehicle_def.js');
 
 // =======================
 // configuration =========
 // =======================
 var port = process.env.PORT || 8079; // used to create, sign, and verify tokens
+mongoose.Promise = global.Promise;
 mongoose.connect(config.database); // connect to database
 app.set('superSecret', config.secret); // secret variable
 
@@ -33,12 +35,94 @@ app.use(bodyParser.json({ limit: '50mb' }));
 app.use(morgan('dev'));
 
 var io = require('socket.io').listen(app.listen(port));
-
+ReadData();
 console.log('API started at http://localhost:' + port);
 // API ROUTES -------------------
 
 // get an instance of the router for api routes
 var apiRoutes = express.Router(); 
+
+//To populate the vehicle details definition data. Uses the VehicleDefinitionData.xml file to read data. The collection is vehicledefinitiondata.
+function ReadData()
+{
+    VehicleDefinitionData.find(function (err, vehicledefinitiondata) {
+        if (err) res.json({ success: false, message: err });
+        
+        if (vehicledefinitiondata.length == 0) {
+            var xmldom = require('xmldom').DOMParser,
+                fs = require('fs');
+            
+            fs.readFile('VehicleDefinitionData.xml', 'utf-8', function (err, data) {
+                if (err) {
+                    throw err;
+                }
+                var vehicle,
+                    thisvehicleobject,
+                    thismodel,
+                    doc,
+                    vehicles;
+                doc = new xmldom().parseFromString(data, 'application/xml');
+                vehicles = doc.getElementsByTagName('vehicles')[0].childNodes;
+                
+                for (vehicle in vehicles) {
+                    thisvehicleobject = vehicles[vehicle];
+                    if (thisvehicleobject.firstChild) {
+                        if (thisvehicleobject.attributes[0].nodeName = 'make') {
+                            console.log(thisvehicleobject.attributes[0].nodeValue);
+                            //all the 'model' objects
+                            for (a1 in thisvehicleobject.childNodes) {
+                                thismodel = thisvehicleobject.childNodes[a1];
+                                if (thismodel.firstChild && thismodel.tagName == 'model') {
+                                    console.log(thismodel.firstChild.nodeValue);
+
+                                    var newVehicleDefinitionData = new VehicleDefinitionData({
+                                        make: thisvehicleobject.attributes[0].nodeValue,
+                                        model: thismodel.firstChild.nodeValue                                       
+                                    });
+
+                                    newVehicleDefinitionData.save(function (err) {
+                                        if (err) res.json({ success: false, message: err });
+                                        
+                                        console.log('Vehicle definition data added successfully');                                  
+                                        
+                                    });
+                                }
+                            }
+                        }
+            
+                    }
+                }
+            });
+        }
+    });
+    
+};
+
+apiRoutes.get('/vehicledefinitiondata', function (req, res) {
+    
+    VehicleDefinitionData.find(function (err, userVehicleDefData) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        var userVehicleDefinitionData = new Array();
+        
+        if (userVehicleDefData.length != 0) {
+            userVehicleDefData.forEach(function (oneUserVehicleDefData) {
+                var userVehiDefData = {};
+                userVehiDefData.make = oneUserVehicleDefData.make;
+                userVehiDefData.model = oneUserVehicleDefData.model;
+                
+                userVehicleDefinitionData.push(userVehiDefData);
+            });
+            
+            res.json({ userVehicleDefData: userVehicleDefinitionData, success: true, message: 'User Vehicle definition data retrived successfully' });
+        }
+        else {
+            res.json({ success: false, message: 'No User Vehicle definition data found' });
+        }
+    });
+
+});
 
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
@@ -165,6 +249,7 @@ apiRoutes.post('/vehicles', function (req, res) {
         if (userVehicle != null) {
             
             userVehicle.userName = req.body.userName;
+            userVehicle.vehicleMake = req.body.vehicleMake;
             userVehicle.vehicleModel = req.body.vehicleModel;
             userVehicle.vehicleColor = req.body.vehicleColor;
             userVehicle.vehicleMaxPassengerCount = req.body.vehicleMaxPassengerCount;
@@ -181,6 +266,7 @@ apiRoutes.post('/vehicles', function (req, res) {
         else {
             var newUserVehicle = new UserVehicle({
                 userName: req.body.userName,
+                vehicleMake: req.body.vehicleMake,
                 vehicleModel: req.body.vehicleModel,
                 vehicleColor: req.body.vehicleColor,
                 vehicleMaxPassengerCount: req.body.vehicleMaxPassengerCount,
@@ -250,9 +336,12 @@ function sendResponseByUserType(userType,req,res)
         
         if (err) res.json({ success: false, message: err });
         
-        var userDatas = userMapper.mapUsersList(userCoordinates);
+        userMapper.mapUsersList(userCoordinates, function (userList) {
+            var userDatas = userList;
+            res.json({ userData: userDatas, success: true });
+        });
         
-        res.json({ userData: userDatas, success: true });
+        
     });
 }
 // Notification Status : 1 - Sent, 2 - Delivered, 3 - Opened
@@ -291,8 +380,6 @@ apiRoutes.put('/ridehistory/notification_status/:id', function (req, res) {
 	
 });
 
-
-
 function updateUserRecentRequest(userName,requestId)
 {
     UserCoordinate.findOne({ userName : userName }, function (err, user) {
@@ -321,8 +408,10 @@ apiRoutes.get('/users/:userName', function(req, res) {
 				res.json({ success: false, message:"User Not Found" });				
 			}
 			else {
-                var userData = userMapper.mapSingleUser(userCoordinate);
-				res.json({ userData: userData, success: true });
+            userMapper.mapSingleUser(userCoordinate, function (userData) {
+                var userData = userData;
+                res.json({ userData: userData, success: true });
+            });				
 			}
 			
 			
@@ -371,6 +460,7 @@ apiRoutes.get('/users/:userName/vehicles', function (req, res) {
             userVehicles.forEach(function (userVehicle) {
                 var userVehiData = {};
                 userVehiData.userName = userVehicle.userName;
+                userVehiData.vehicleMake = userVehicle.vehicleMake;
                 userVehiData.vehicleModel = userVehicle.vehicleModel;
                 userVehiData.vehicleColor = userVehicle.vehicleColor;
                 userVehiData.vehicleMaxPassengerCount = userVehicle.vehicleMaxPassengerCount;

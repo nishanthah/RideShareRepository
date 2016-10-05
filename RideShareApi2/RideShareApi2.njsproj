@@ -21,6 +21,7 @@
   <ItemGroup>
     <Compile Include="app\models\ride_history.js" />
     <Compile Include="app\models\vehicle.js" />
+	<Compile Include="app\models\vehicle_def.js" />
     <Compile Include="helpers\user_mapper.js" />
     <Compile Include="urban_airship_client.js" />
     <Content Include="package.json" />
