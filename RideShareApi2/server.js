@@ -198,6 +198,23 @@ apiRoutes.post('/vehicles', function (req, res) {
     });   
 });
 
+apiRoutes.put('/users/:userName/login_status', function (req, res) {
+	UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
+			
+			if (err) res.json({ success: false, message: err });
+			
+			userCoordinate.isLoggedIn = req.body.loginStatus;
+			
+			userCoordinate.save(function (err) {
+				if (err) res.json({ success: false, message: err });
+				
+				console.log('Updated user loggin status to '+req.body.loginStatus);
+				res.json({ success: true });
+			});
+		
+		});
+});
+
 apiRoutes.put('/users/:userName/destination', function (req, res) {
     UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
         
@@ -273,6 +290,8 @@ apiRoutes.put('/ridehistory/notification_status/:id', function (req, res) {
 	});
 	
 });
+
+
 
 function updateUserRecentRequest(userName,requestId)
 {

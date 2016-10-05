@@ -103,6 +103,7 @@ namespace RideShare.ViewModels
                         
                             App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
                             driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
+                        driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
                         appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
 
                         loginProcessor.InvokeInMainThread(() =>

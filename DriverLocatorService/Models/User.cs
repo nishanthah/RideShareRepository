@@ -43,6 +43,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("resentRequest")]
         public string RecentRequest { get; set; }
+
+        [JsonProperty("isLoggedIn")]
+        public bool IsLoggedIn { get; set; }
     }
 
     public class UserLocation

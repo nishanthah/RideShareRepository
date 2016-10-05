@@ -37,6 +37,7 @@ namespace DriverLocator
         private const string GET_USER_VEHICLE_URL = SERVER + "/api/users/{0}/vehicles";
         private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
         private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
+        private const string UPDATE_USER_LOGIN_STATUS_URL = SERVER + "/api/users/{0}/login_status";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -79,7 +80,18 @@ namespace DriverLocator
             return result;
         }
 
-        public UpdateUserLocationResponse UpdateUserLocation(string userName,UpdateUserLocationRequest request)
+        public UpdateUserLoginStatusResponse UpdateUserLoginStatus(string userName,bool isLoggedIn)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = String.Format(UPDATE_USER_LOGIN_STATUS_URL, userName);
+            var userLoginStatusRequest = new UpdateUserLoginStatusRequest() { LoginStatus = isLoggedIn };
+            var result = requestHandler.SendRequest<UpdateUserLoginStatusRequest, UpdateUserLoginStatusResponse>(userLoginStatusRequest);
+            return result;
+        }
+
+        public UpdateUserLocationResponse UpdateUserLocation(string userName, UpdateUserLocationRequest request)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
@@ -87,7 +99,7 @@ namespace DriverLocator
             requestHandler.Url = String.Format(UPDATE_USER_LOCATION_URL, userName);
             var result = requestHandler.SendRequest<UpdateUserLocationRequest, UpdateUserLocationResponse>(request);
             return result;
-        }        
+        }
 
         public UpdateVehicleDetailsResponse UpdateVehicleDetails(UpdateVehicleDetailsRequest request)
         {

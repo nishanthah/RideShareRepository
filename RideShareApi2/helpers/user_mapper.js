@@ -22,6 +22,7 @@
         user.userType = singleUser.userType;
 		user.profileImage = singleUser.profileImage;
 		user.resentRequest = singleUser.resentRequest;
+		user.isLoggedIn = singleUser.isLoggedIn;
         var location = {};
         location.longitude = singleUser.longitude;      
         location.latitude = singleUser.latitude;

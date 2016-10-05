@@ -62,7 +62,12 @@ namespace RideShare.ViewPresenter
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
-            mapPins.Add(GetFromatted(driverPin));
+
+            if(driver.User.IsLoggedIn)
+            {
+                mapPins.Add(GetFromatted(driverPin));
+            }
+            
 
             // Create rider pin
             var riderPin = new MapPin();

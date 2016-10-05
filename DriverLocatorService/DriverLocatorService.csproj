@@ -45,6 +45,8 @@
     <Compile Include="Models\UpdateUserDestinationResponse.cs" />
     <Compile Include="Models\UpdateUserLocationRequest.cs" />
     <Compile Include="Models\UpdateUserLocationResponse.cs" />
+    <Compile Include="Models\UpdateUserLogginStatusResponse.cs" />
+    <Compile Include="Models\UpdateUserLoginStatusRequest.cs" />
     <Compile Include="Models\UpdateUserTypeRequest.cs" />
     <Compile Include="Models\UpdateUserTypeResponse.cs" />
     <Compile Include="Models\UpdateVehicleDetailsRequest.cs" />

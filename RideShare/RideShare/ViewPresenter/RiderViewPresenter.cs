@@ -40,9 +40,9 @@ namespace RideShare.ViewPresenter
         private List<CustomPin> LoadAllData()
         {
             List<CustomPin> mapPins= new List<CustomPin>();
-            var drivers = driverLocatorService.GetDrivers().Result;
+            var availableDrivers = driverLocatorService.GetDrivers().Result.UserLocations.Where(x=>x.User.IsLoggedIn == true);
 
-            foreach (var driver in drivers.UserLocations)
+            foreach (var driver in availableDrivers)
             {
                 if(driver.Location.Latitude != null && driver.Location.Longitude != null)
                 {
@@ -106,7 +106,12 @@ namespace RideShare.ViewPresenter
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
-            mapPins.Add(GetFromatted(driverPin));
+
+            if(driver.User.IsLoggedIn)
+            {
+                mapPins.Add(GetFromatted(driverPin));
+            }
+            
 
             // Create rider pin
             var riderPin = new MapPin();

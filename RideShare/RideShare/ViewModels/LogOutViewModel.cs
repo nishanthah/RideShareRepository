@@ -17,6 +17,8 @@ namespace RideShare.ViewModels
 
         private void signOut()
         {
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+            driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, false);
             IAppDataService appDataService = DependencyService.Get<IAppDataService>();
             appDataService.Save("access_token", null);
             Session.AuthenticationService = null;
