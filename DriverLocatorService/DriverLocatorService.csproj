@@ -49,6 +49,7 @@
     <Compile Include="Models\UpdateUserTypeResponse.cs" />
     <Compile Include="Models\UpdateVehicleDetailsRequest.cs" />
     <Compile Include="Models\UpdateVehicleDetailsResponse.cs" />
+    <Compile Include="Models\UserVehicleDefinitionDataResponse.cs" />
     <Compile Include="Models\UserVehiclesResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\ResponseBase.cs" />

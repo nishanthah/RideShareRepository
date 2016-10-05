@@ -43,7 +43,7 @@ namespace RideShare.ViewModels
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
                 }
-                vehicles = App.CurrentUserVehicles;
+                vehicles = App.CurrentLoggedUser.Vehicles;
                 this.SignUpCommand = new RelayCommand(Update);                
             }
             else
@@ -186,6 +186,10 @@ namespace RideShare.ViewModels
                 if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
                 {
                     UpdateUserInLocal();
+
+                    if (App.CurrentUserVehicles != null)
+                        UpdateVehiclesInLocal();
+                        
                     
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                     var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
@@ -193,14 +197,7 @@ namespace RideShare.ViewModels
                     if (userCorrdinateResult.IsSuccess)
                     {
                         App.CurrentLoggedUser = userCorrdinateResult.UserLocation;                                               
-                    }
-
-                    if (App.CurrentUserVehicles != null)
-                    {
-                        UpdateVehiclesInLocal();
-                        if (App.CurrentLoggedUser != null)
-                            App.CurrentLoggedUser.Vehicles = App.CurrentUserVehicles;
-                    }
+                    }                    
 
                     this.signUpPageProcessor.MoveToLoginPage();
                 }
@@ -231,20 +228,18 @@ namespace RideShare.ViewModels
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
                 UpdateUserInLocal();
+
+                if (App.CurrentUserVehicles != null)
+                    UpdateVehiclesInLocal();
+                    
+
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
                 if (userCorrdinateResult.IsSuccess)
                 {
                     App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                }
-
-                if (App.CurrentUserVehicles != null)
-                {
-                    UpdateVehiclesInLocal();
-                    if (App.CurrentLoggedUser != null)
-                        App.CurrentLoggedUser.Vehicles = App.CurrentUserVehicles;
-                }
+                }                
 
                 this.signUpPageProcessor.MoveToMainPage();
             }
@@ -300,6 +295,7 @@ namespace RideShare.ViewModels
                 {
                     DriverLocator.Models.UpdateVehicleDetailsRequest dlVehicleRequest = new DriverLocator.Models.UpdateVehicleDetailsRequest();
                     dlVehicleRequest.UserName = App.CurrentLoggedUser.User.UserName;
+                    dlVehicleRequest.VehicleMake = v.VehicleMake;
                     dlVehicleRequest.VehicleModel = v.VehicleModel;
                     dlVehicleRequest.VehicleColor = v.VehicleColor;
                     dlVehicleRequest.VehicleMaxPassengerCount = v.VehicleMaxPassengerCount;

@@ -1,9 +1,9 @@
 {
   "name": "node-token-jwt",
-    "main": "server.js",
-    "scripts": {
-        "start": "node server.js"
-    },
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "body-parser": "^1.15.2",
     "express": "^4.14.0",
@@ -12,6 +12,7 @@
     "morgan": "^1.7.0",
     "node-rest-client": "^1.8.0",
     "signalrjs": "^0.2.2",
-    "socket.io": "^1.4.8"
+    "socket.io": "^1.4.8",
+    "xmldom": "^0.1.22"
   }
 }
