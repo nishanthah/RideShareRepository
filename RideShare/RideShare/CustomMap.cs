@@ -24,11 +24,14 @@ namespace RideShare
 
     public class CustomMap : Map
     {
-        public static readonly BindableProperty RouteCoordinatesProperty = BindableProperty.Create("RouteCoordinates", typeof(List<Position>), typeof(CustomMap), new List<Position>(), BindingMode.TwoWay);
-        public static readonly BindableProperty CustomPinsProperty = BindableProperty.Create("CustomPins", typeof(List<CustomPin>), typeof(CustomMap), new List<CustomPin>(), BindingMode.TwoWay);
+        public bool IsStatic { get; set; }
+        public bool IsDrawn { get; set; }
+        public static readonly BindableProperty RouteCoordinatesProperty = BindableProperty.Create("RouteCoordinates", typeof(List<Position>), typeof(CustomMap), new List<Position>(), BindingMode.OneWay);
+        public static readonly BindableProperty CustomPinsProperty = BindableProperty.Create("CustomPins", typeof(List<CustomPin>), typeof(CustomMap), new List<CustomPin>(), BindingMode.OneWay);
 
         public static readonly BindableProperty BaseLatitudeProperty = BindableProperty.Create("BaseLatitude", typeof(double), typeof(CustomMap), 0.0D, propertyChanged: OnLatitudeOrLongitudeChanged);
         public static readonly BindableProperty BaseLongitudeProperty = BindableProperty.Create("BaseLongitude", typeof(double), typeof(CustomMap), 0.0D, propertyChanged: OnLatitudeOrLongitudeChanged);
+
         //public static readonly BindableProperty IsShowingUserProperty = BindableProperty.Create("IsShowingUser", typeof(bool), typeof(CustomMap), false, BindingMode.TwoWay);
 
         public double BaseLatitude
@@ -85,7 +88,7 @@ namespace RideShare
         static void MoveMapToRegion(CustomMap map)
         {
             if (map.BaseLatitude > 0 && map.BaseLongitude > 0)
-                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(map.BaseLatitude, map.BaseLongitude), Distance.FromKilometers(10)));
+                map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(map.BaseLatitude, map.BaseLongitude), Distance.FromKilometers(50)));
         }
 
 

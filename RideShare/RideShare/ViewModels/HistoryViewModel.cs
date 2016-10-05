@@ -44,7 +44,7 @@ namespace RideShare.ViewModels
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         ObservableCollection<CustomMapViewModel> maplist = new ObservableCollection<CustomMapViewModel>();
-        DateTime meettime = DateTime.Now; 
+        DateTime meettime = DateTime.Now;
 
 
         public ObservableCollection<CustomMapViewModel> MapList
@@ -64,51 +64,51 @@ namespace RideShare.ViewModels
         public HistoryViewModel()
         {
             IsBusy = true;
-            Task<RouteResult>.Factory.StartNew(GetRouteResult).ContinueWith((task) => {
+            Task<List<RouteResult>>.Factory.StartNew(GetRouteResult).ContinueWith((task) =>
+            {
                 Device.BeginInvokeOnMainThread(() =>
                 {
+                    var routes = task.Result;
+
+                    foreach(var route in routes)
+                    {
+                        if (route.RouteCoordinates.Count > 0)
+                        {
+                            InitMap(route.RouteCoordinates, route.RiderMeetTime);
+
+                        }
+                    }
+                    
                     IsBusy = false;
                 });
-            });            
-        }             
+            });
+        }
 
-        
+
         double l1 = 0;
         double l2 = 0;
-        private RouteResult GetRouteResult()
+        private List<RouteResult> GetRouteResult()
         {
-            RouteResult routeResult = new RouteResult();
+            List<RouteResult> routeResult = new List<RouteResult>();
             try
             {
                 var Histories = driverLocatorService.GetRideHistoryByFilter("userName", App.CurrentLoggedUser.User.UserName);
-                //if (Histories.RideHistories[10].SourceLongitude == "80.0160415")
-                //{
-                    foreach (var ridehistory in Histories.RideHistories)
+                foreach (var ridehistory in Histories.RideHistories)
+                {
+                    if (ridehistory.DecodedOverviewPolyLine != null)
                     {
-                        if (ridehistory.DecodedOverviewPolyLine != null)
-                        {
-                        //int DOP = ridehistory.DecodedOverviewPolyLine.Count;
-                       // Coordinate destinationCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[0].Longitude.ToString()) };
-                        //Coordinate sourceCoordinate = new Coordinate() { Latitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Latitude.ToString()), Longitude = double.Parse(ridehistory.DecodedOverviewPolyLine[DOP - 1].Longitude.ToString()) };
-
 
                         List<Position> positions = new List<Position>();
-                        foreach(var position in ridehistory.DecodedOverviewPolyLine)
+                        foreach (var position in ridehistory.DecodedOverviewPolyLine)
                         {
                             positions.Add(new Position(position.Latitude, position.Longitude));
                         }
-                        //var wayPoints = ridehistory.DecodedOverviewPolyLine.Select((element) => { return new GoogleApiClient.Models.Coordinate(element.Latitude, element.Longitude); });
-                        //routeResult.RouteCoordinates = GetLineCoordinates(sourceCoordinate, destinationCoordinate, wayPoints.ToList());
-
-                        routeResult.RouteCoordinates = positions;
-                            if (routeResult.RouteCoordinates.Count > 0)
-                            {
-                                InitMap(routeResult.RouteCoordinates, routeResult.RiderMeetTime);
-                              
-                            }
-                        }
+                        RouteResult route = new RouteResult();
+                        route.RouteCoordinates = positions;
+                        routeResult.Add(route);
+                       
                     }
-                //}
+                }
             }
             catch (Exception ex)
             {
@@ -118,7 +118,7 @@ namespace RideShare.ViewModels
             return routeResult;
         }
 
-        private List<Position> GetLineCoordinates(Coordinate sourceCoordinate, Coordinate destinationCoordinate,List<GoogleApiClient.Models.Coordinate> wayPoints)
+        private List<Position> GetLineCoordinates(Coordinate sourceCoordinate, Coordinate destinationCoordinate, List<GoogleApiClient.Models.Coordinate> wayPoints)
         {
             List<Position> routeCoordinates = new List<Position>();
             GoogleMapsDirectionsClient googleMapsDirectionsClient = new GoogleMapsDirectionsClient();
@@ -138,25 +138,28 @@ namespace RideShare.ViewModels
 
             return routeCoordinates;
         }
-        
-        
+
+
         private void InitMap(List<Position> RouteCoordinates, DateTime RiderMeetTime)
         {
             string _time = String.Format("{0:dd-MM-yyyy}", RiderMeetTime) + "/" + RiderMeetTime.ToString("h:mm tt");
+            var middleCoordinate = RouteCoordinates[RouteCoordinates.Count / 2];
             CustomMapViewModel map = new CustomMapViewModel
             {
-              
+
                 IsShowingUser = true,
                 HeightRequest = 300,
                 WidthRequest = 600,
-                BaseLatitude =l1,
-                BaseLongitude=l2,
+                BaseLatitude = middleCoordinate.Latitude,
+                BaseLongitude = middleCoordinate.Longitude,
                 DriverName = "Driver Name : " + App.CurrentLoggedUser.User.UserName,
                 RiderMeetTime = _time,
-            };           
-             
+                
+            };
+
             map.RouteCoordinates = RouteCoordinates;
             MapList.Add(map);
+            
         }
     }
 }

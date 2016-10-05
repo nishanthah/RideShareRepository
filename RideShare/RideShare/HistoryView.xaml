@@ -5,12 +5,8 @@
              x:Class="RideShare.HistoryView">
   <ContentPage.Content>
     <AbsoluteLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
-      <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand">
-        <RelativeLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-          <StackLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1" VerticalOptions="FillAndExpand"
-                          HorizontalOptions="FillAndExpand"
-                          Orientation="Vertical"
-                          Spacing="15">
+      <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+       
             <ListView  x:Name="listView1" ItemsSource="{Binding MapList}" HasUnevenRows="true">
               <ListView.ItemTemplate>
                 <DataTemplate>
@@ -28,7 +24,7 @@
                           <RowDefinition Height="1*" />
                         </Grid.RowDefinitions>
                         <maps:CustomMap  WidthRequest="{Binding Path=WidthRequest}" HeightRequest="{Binding Path=HeightRequest}" RouteCoordinates="{Binding Path=RouteCoordinates}"
-                        x:Name="MyMap" HasScrollEnabled ="false" HasZoomEnabled="false" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2" />
+                        x:Name="MyMap" IsStatic="true" HasScrollEnabled ="true" HasZoomEnabled="true" IsShowingUser="false" BaseLatitude="{Binding Path=BaseLatitude}" BaseLongitude="{Binding Path=BaseLongitude}"  Grid.RowSpan="2" Grid.ColumnSpan="2"  />
                         <Image Source="driverLogActive_icon.png" HorizontalOptions="Start" Margin="0,0,0,0" Grid.Column="0" Grid.Row="2" Grid.RowSpan="2"/>
                         <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="2"  Margin="0,0,0,0" x:Name="DriverName" Text="{Binding DriverName}"/>
                         <Label TextColor="Black" FontSize = "20"  Grid.Column="1" Grid.Row="3"  Margin="0,0,0,0" x:Name="RiderMeetTime" Text="{Binding RiderMeetTime}"/>
@@ -38,13 +34,9 @@
                 </DataTemplate>
               </ListView.ItemTemplate>
             </ListView>
-
-          </StackLayout>
-        
-        </RelativeLayout>
       </ScrollView>
 
-      <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"/>
+      <!--<ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"/>-->
     </AbsoluteLayout>
   </ContentPage.Content>
 </ContentPage>

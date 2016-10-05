@@ -23,6 +23,22 @@ namespace RideShare.ViewModels
                 OnPropertyChanged("IsShowingUser");
             }
         }
+
+        private bool isStatic;
+
+        public bool IsStatic
+        {
+            get { return isStatic; }
+            set
+            {
+                if (isStatic == value)
+                    return;
+
+                isStatic = value;
+                OnPropertyChanged("IsStatic");
+            }
+        }
+
         //private CustomMap customMap;
 
         //public CustomMap CustomMap

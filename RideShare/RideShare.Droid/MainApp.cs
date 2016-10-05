@@ -34,7 +34,7 @@ namespace RideShare.Droid
                 StartService(new Intent(this, typeof(LocationUpdatorService)));
                 StartService(new Intent(this, typeof(HistoryRouteUpdatorService)));
             }));
-            t.IsBackground = true;
+            t.IsBackground = false;
             t.Start();
 
            
