@@ -5,13 +5,13 @@
   <ContentPage.Content>
     <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
       <StackLayout Orientation="Vertical">
-        <Entry x:Name="vehicleModelEntry" Text="{Binding Path=VehicleModel}" Placeholder="Car Model"/>
+        <Picker x:Name="vehicleMakePicker" Title="Choose Vehicle Make"></Picker>
+        <Picker x:Name="vehicleModelPicker" Title="Choose Vehicle Model"></Picker>
         <Entry x:Name="vehicleColorEntry" Text="{Binding Path=VehicleColor}" Placeholder="Car Color"/>
         <Entry x:Name="vehicleMaxPassengerCountEntry" Text="{Binding Path=VehicleMaxPassengerCount}" Placeholder="Maximum Passengers"/>
         <Entry x:Name="vehicleNumberPlateEntry" Text="{Binding Path=VehicleNumberPlate}" Placeholder="Number Plate"/>
       </StackLayout>
 
-      <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
       <Button x:Name="registerButton" Command="{Binding SignUpCommand}" Text="Done" />
         
       
