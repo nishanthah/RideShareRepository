@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express');
 var AuthenticationAPI = require('./AuthenticationApiController');
 var RouteConfig = (function () {
@@ -16,6 +17,6 @@ var RouteConfig = (function () {
         this.app.use('/authapp', this.apiRoutes);
     };
     return RouteConfig;
-})();
+}());
 module.exports = RouteConfig;
 //# sourceMappingURL=routeconfig.js.map
