@@ -68,6 +68,13 @@
           </Style>
         </Button.Style>
       </Button>
+
+      <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold">
+        <Label.GestureRecognizers>
+          <TapGestureRecognizer
+              Command="{Binding TapCommandLogin}" />
+        </Label.GestureRecognizers>
+      </Label>
       
       </StackLayout  >
   </ContentPage.Content>

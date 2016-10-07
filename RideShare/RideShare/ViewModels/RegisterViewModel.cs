@@ -27,11 +27,13 @@ namespace RideShare.ViewModels
 
         ISignUpPageProcessor signUpPageProcessor;
         public ICommand TapCommand { protected set; get; }
+        public ICommand TapCommandLogin { protected set; get; }
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
+            this.TapCommandLogin = new RelayCommand(OnTappedLogin);
             vehicles = new ObservableCollection<DriverLocator.Models.Vehicle>();
             if (Session.AuthenticationService != null && Session.AuthenticationService.IsAuthenticated)
             {
@@ -329,6 +331,11 @@ namespace RideShare.ViewModels
         private void OnTapped ()
         {
             this.signUpPageProcessor.MoveToNextPage();
+        }
+
+        private void OnTappedLogin()
+        {
+            this.signUpPageProcessor.MoveToLoginPage();
         }
     }
 }
