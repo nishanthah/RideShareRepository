@@ -26,7 +26,7 @@
       </Entry>
       <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
       <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
-
+      <Picker x:Name="genderPicker" Title="Gender"></Picker>
       <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
       <Image Source="add_picture.png" HorizontalOptions="Start" WidthRequest="30">
         <Image.GestureRecognizers>

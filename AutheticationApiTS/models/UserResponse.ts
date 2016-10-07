@@ -8,6 +8,7 @@ class UserResponse extends BaseResponse{
     password: string;
     userName: string;
     profileImage: string;
+    gender: string;
 }
 
 export = UserResponse;

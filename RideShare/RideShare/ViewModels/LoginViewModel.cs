@@ -191,6 +191,7 @@ namespace RideShare.ViewModels
             dlUser.LastName = result.LastName;
             dlUser.EMail = result.EMail;
             dlUser.profileImageEncoded = result.profileImageEncoded;
+            dlUser.Gender = result.Gender;
             var response = driverLocatorService.SaveUserData(dlUser);
         }
     }

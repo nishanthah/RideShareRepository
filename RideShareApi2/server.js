@@ -168,7 +168,8 @@ apiRoutes.post('/users', function(req, res) {
 		userCoordinate.firstName= req.body.firstName;
 		userCoordinate.lastName= req.body.lastName;
 		userCoordinate.email = req.body.email;
-		userCoordinate.profileImage = req.body.profileImage;
+            userCoordinate.profileImage = req.body.profileImage;
+            userCoordinate.gender = req.body.gender;
 
 		userCoordinate.save(function(err) {
 			if (err) res.json({ success: false, message:err });
@@ -182,6 +183,7 @@ apiRoutes.post('/users', function(req, res) {
 	else
 	{
 		var newUserCoordinate= new UserCoordinate({ 
+            gender: req.body.gender,
 			userName:req.body.userName,
 			email:req.body.email,
 			firstName:req.body.firstName,
@@ -429,7 +431,8 @@ apiRoutes.get('/users', function(req, res) {
 		var userDatas=new Array();
 		userCoordinates.forEach(function(userCoordinate){
 			
-				var userData={};
+            var userData = {};
+                userData.gender=userCoordinate.gender;
 				userData.userName=userCoordinate.userName;
 				userData.email=userCoordinate.email;
 				userData.firstName=userCoordinate.firstName;

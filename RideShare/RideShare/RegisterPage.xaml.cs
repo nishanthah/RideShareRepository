@@ -32,6 +32,7 @@ namespace RideShare
             Content.BindingContext = new SignUpViewModel(this);
             //isNewItem = isNew;
             var vm = Content.BindingContext as SignUpViewModel;
+            genderPicker.SelectedIndexChanged += genderPicker_SelectedIndexChanged;
             profilePhoto = new CircleImage()
             {
                 //BorderColor = Color.Yellow,
@@ -49,6 +50,10 @@ namespace RideShare
                 Text = "Select Picture",
                 Command = new Command(async () => { await SelectPicture(); })
             };
+
+            genderPicker.Items.Add("Gender");
+            genderPicker.Items.Add("Male");
+            genderPicker.Items.Add("Female");
 
             if (vm.isAuthenticated)
             {
@@ -78,6 +83,13 @@ namespace RideShare
 
                     vehicleListView.ItemsSource = sortedDriverList;
                 }
+
+                if (vm.Gender == "Female")
+                    genderPicker.SelectedIndex = 2;
+                else if (vm.Gender == "Male")
+                    genderPicker.SelectedIndex = 1;
+                else
+                    genderPicker.SelectedIndex = 0;
             }
             else
             {
@@ -85,12 +97,18 @@ namespace RideShare
                     vm.ProfilePhoto = profileImage;
 
                 if (profilePhoto.Source == null)
-                    profilePhoto.Source = "add_picture.png";
+                    profilePhoto.Source = "add_picture.png";                
             }
 
             profileImageStackLayout.Children.Add(profilePhoto);
             profileImageStackLayout.Children.Add(addPictureButton);
             OnUserVehicleAdded = OnUserVehicleAddedResult;
+        }
+
+        void genderPicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.Gender = genderPicker.Items[genderPicker.SelectedIndex];            
         }
 
         private async Task SelectPicture()

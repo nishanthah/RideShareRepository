@@ -12,6 +12,7 @@ var AuthhenticationAPIController = (function () {
     // /useraccount
     AuthhenticationAPIController.prototype.useraccount = function (req, res) {
         var user = new User();
+        user.gender = req.body.gender;
         user.email = req.body.email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;
@@ -72,6 +73,7 @@ var AuthhenticationAPIController = (function () {
             }
             else if (req.body.canAccessUserInfo) {
                 var userResponse = new UserResponse();
+                userResponse.gender = user.gender;
                 userResponse.email = user.email;
                 userResponse.firstName = user.firstName;
                 userResponse.lastName = user.lastName;
@@ -88,6 +90,7 @@ var AuthhenticationAPIController = (function () {
     // /account
     AuthhenticationAPIController.prototype.account = function (req, res) {
         var user = new User();
+        user.gender = req.body.gender;
         user.email = req.body.email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;

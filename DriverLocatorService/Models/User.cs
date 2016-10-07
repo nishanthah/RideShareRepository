@@ -46,6 +46,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("isLoggedIn")]
         public bool IsLoggedIn { get; set; }
+
+        [JsonProperty("gender")]
+        public string Gender { get; set; }
     }
 
     public class UserLocation

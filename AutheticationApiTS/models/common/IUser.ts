@@ -5,5 +5,6 @@
     password: string;
     userName: string;
     profileImage: string;
+    gender: string;
 }
 export = IUser;

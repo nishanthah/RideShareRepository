@@ -21,6 +21,7 @@ class UserMongooseDAO implements IUserDAO
         userModel.email = user.email;
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
+        userModel.gender = user.gender;
 
         var status: boolean;
         var self = this;
@@ -45,6 +46,7 @@ class UserMongooseDAO implements IUserDAO
             }
             else {
                 selecteduser.email = user.email;
+                selecteduser.gender = user.gender;
                 selecteduser.firstName = user.firstName;
                 selecteduser.lastName = user.lastName;
                 if (user.password != null)
@@ -74,6 +76,7 @@ class UserMongooseDAO implements IUserDAO
              }
              else{
                  userData.email = user.email;
+                 userData.gender = user.gender;
                  userData.firstName = user.firstName;
                  userData.lastName = user.lastName;
                  userData.password = user.password;
