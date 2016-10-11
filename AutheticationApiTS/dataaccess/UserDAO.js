@@ -1,4 +1,3 @@
-"use strict";
 var User = require("../models/mongoose/UserMongooseModel");
 var UserMongooseDAO = (function () {
     function UserMongooseDAO() {
@@ -12,6 +11,7 @@ var UserMongooseDAO = (function () {
         userModel.email = user.email;
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
+        userModel.gender = user.gender;
         var status;
         var self = this;
         // save the sample user
@@ -32,6 +32,7 @@ var UserMongooseDAO = (function () {
             }
             else {
                 selecteduser.email = user.email;
+                selecteduser.gender = user.gender;
                 selecteduser.firstName = user.firstName;
                 selecteduser.lastName = user.lastName;
                 if (user.password != null)
@@ -57,6 +58,7 @@ var UserMongooseDAO = (function () {
             }
             else {
                 userData.email = user.email;
+                userData.gender = user.gender;
                 userData.firstName = user.firstName;
                 userData.lastName = user.lastName;
                 userData.password = user.password;
@@ -67,6 +69,6 @@ var UserMongooseDAO = (function () {
         });
     };
     return UserMongooseDAO;
-}());
+})();
 module.exports = UserMongooseDAO;
 //# sourceMappingURL=UserDAO.js.map

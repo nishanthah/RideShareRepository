@@ -31,7 +31,7 @@ namespace RideShare
             vehicleMakePicker.SelectedIndexChanged += vehicleMakePicker_SelectedIndexChanged;
             vehicleModelPicker.SelectedIndexChanged += vehicleModelPicker_SelectedIndexChanged;
 
-            vehicleMakePicker.Items.Add("Choose Vehicle Make");
+            vehicleMakePicker.Items.Add("Vehicle Make");
             if (vm.VehicleDefinitionData != null && vm.VehicleDefinitionData.Count != 0)
             {
                 var thisMakes = vm.VehicleDefinitionData.Select(x => x.Make).Distinct();
@@ -57,7 +57,7 @@ namespace RideShare
         void vehicleMakePicker_SelectedIndexChanged(object sender, EventArgs e)
         {
             vehicleModelPicker.Items.Clear();
-            vehicleModelPicker.Items.Add("Choose Vehicle Model");
+            vehicleModelPicker.Items.Add("Vehicle Model");
             var vm = Content.BindingContext as RegisterVehicleDetailsViewModel;
             if (vm.VehicleDefinitionData != null && vm.VehicleDefinitionData.Count != 0)
             {

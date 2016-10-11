@@ -20,6 +20,7 @@ module.exports = function () {
     function mapSingleUser(singleUser, mapSingleUserCallBack) {
         
         var user = {};
+        user.gender = singleUser.gender;
         user.userName = singleUser.userName;
         user.email = singleUser.email;
         user.firstName = singleUser.firstName;

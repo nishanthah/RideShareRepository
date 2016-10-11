@@ -21,7 +21,7 @@ namespace RideShare.ViewModels
             driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, false);
             IAppDataService appDataService = DependencyService.Get<IAppDataService>();
             appDataService.Save("access_token", null);
-            Session.AuthenticationService = null;
+            Session.ClearAuthenticationInstance();
             Session.CurrentUserName = null;
 
             var loginPage = new LogInPage();

@@ -24,5 +24,8 @@ namespace Authentication.Models
         [JsonProperty("profileImage")]
         public string profileImageEncoded { get; set; }
 
+        [JsonProperty("gender")]
+        public string Gender { get; set; }
+
     }
 }

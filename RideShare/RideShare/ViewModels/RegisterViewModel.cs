@@ -19,6 +19,7 @@ namespace RideShare.ViewModels
         string userName;
         string password;
         string email;
+        string gender;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
         ObservableCollection<DriverLocator.Models.Vehicle> vehicles; 
@@ -26,19 +27,22 @@ namespace RideShare.ViewModels
 
         ISignUpPageProcessor signUpPageProcessor;
         public ICommand TapCommand { protected set; get; }
+        public ICommand TapCommandLogin { protected set; get; }
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
+            this.TapCommandLogin = new RelayCommand(OnTappedLogin);
             vehicles = new ObservableCollection<DriverLocator.Models.Vehicle>();
-            if (Session.AuthenticationService.IsAuthenticated)
+            if (Session.AuthenticationService != null && Session.AuthenticationService.IsAuthenticated)
             {
                 var currentUserDetails = App.CurrentLoggedUser.User;
                 this.FirstName = currentUserDetails.FirstName;
                 this.LastName = currentUserDetails.LastName;
                 this.UserName = currentUserDetails.UserName;
                 this.Email = currentUserDetails.EMail;
+                this.gender = currentUserDetails.Gender;
                 if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
@@ -150,6 +154,20 @@ namespace RideShare.ViewModels
             }
         }
 
+        public string Gender
+        {
+            get
+            {
+                return gender;
+            }
+
+            set
+            {
+                gender = value;
+                OnPropertyChanged("Gender");
+            }
+        }
+
         public ObservableCollection<DriverLocator.Models.Vehicle> Vehicles
         {
             get
@@ -173,7 +191,8 @@ namespace RideShare.ViewModels
                 UserName = this.UserName,
                 EMail = this.Email,
                 Password = this.Password,
-                profileImageEncoded = GetProfilePictureEncoded()
+                profileImageEncoded = GetProfilePictureEncoded(),
+                Gender = this.gender
             };
             
 
@@ -219,7 +238,8 @@ namespace RideShare.ViewModels
                 UserName = this.UserName,
                 EMail = this.Email,
                 Password = this.Password,
-                profileImageEncoded = GetProfilePictureEncoded()
+                profileImageEncoded = GetProfilePictureEncoded(),
+                Gender = this.gender
             };
 
             var Isvalid = AreDetailsValid(user, true);
@@ -282,6 +302,7 @@ namespace RideShare.ViewModels
             dlUser.LastName = result.LastName;
             dlUser.EMail = result.EMail;
             dlUser.profileImageEncoded = result.profileImageEncoded;
+            dlUser.Gender = result.Gender;
             var response = driverLocatorService.SaveUserData(dlUser);
         }
 
@@ -310,6 +331,11 @@ namespace RideShare.ViewModels
         private void OnTapped ()
         {
             this.signUpPageProcessor.MoveToNextPage();
+        }
+
+        private void OnTappedLogin()
+        {
+            this.signUpPageProcessor.MoveToLoginPage();
         }
     }
 }
