@@ -34,11 +34,6 @@ namespace RideShare
             }
         }
 
-        public static void ClearAuthenticationInstance()
-        {
-            authenticationService = null;
-        }
-
         //public static IAuthenticationService AuthenticationService { get; set; }
 
         public static string CurrentUserName { get; set; }

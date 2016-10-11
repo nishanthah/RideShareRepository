@@ -27,7 +27,6 @@ namespace Authentication
         public string authenticationToken=String.Empty;
 
         public bool IsAuthenticated { get; set; }
-
         public string AuthenticationToken
         {
             get { return authenticationToken; }
