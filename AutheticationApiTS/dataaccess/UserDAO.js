@@ -1,4 +1,3 @@
-"use strict";
 var User = require("../models/mongoose/UserMongooseModel");
 var UserMongooseDAO = (function () {
     function UserMongooseDAO() {
@@ -70,6 +69,6 @@ var UserMongooseDAO = (function () {
         });
     };
     return UserMongooseDAO;
-}());
+})();
 module.exports = UserMongooseDAO;
 //# sourceMappingURL=UserDAO.js.map
