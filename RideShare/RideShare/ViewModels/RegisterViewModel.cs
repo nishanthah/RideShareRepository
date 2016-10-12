@@ -51,8 +51,7 @@ namespace RideShare.ViewModels
                 this.SignUpCommand = new RelayCommand(Update);                
             }
             else
-            {
-                Session.AuthenticationService = new AuthenticationService();
+            {               
                 this.SignUpCommand = new RelayCommand(SignUp);
 
                 if (App.CurrentUserVehicles != null)

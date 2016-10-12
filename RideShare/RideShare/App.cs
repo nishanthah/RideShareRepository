@@ -50,7 +50,6 @@ namespace RideShare
             else
             {
                 MainPage = new SplashScreen();
-                Session.AuthenticationService = new AuthenticationService();
                 Task.Factory.StartNew<bool>(() => {
 
                     var accessToken = appDataService.Get("access_token");

@@ -18,25 +18,33 @@ namespace RideShare
         {
             get
             {
-                lock(lockObj)
+                if (authenticationService == null)
                 {
-                    return authenticationService;
+                    lock (lockObj)
+                    {
+                        if (authenticationService == null)
+                            authenticationService = new Authentication.AuthenticationService();
+                    }
                 }
-                
-            }
-            set
-            {
-                if(authenticationService== null)
-                {
-                    authenticationService = value;
-                }
-                
-            }
+
+                return authenticationService;
+
+            }           
         }
 
         public static void ClearAuthenticationInstance()
         {
-            authenticationService = null;
+            if(authenticationService != null)
+            {
+                lock(lockObj)
+                {
+                    if(authenticationService != null)
+                    {
+                        authenticationService = null;
+                    }
+                }
+            }
+            
         }
 
         //public static IAuthenticationService AuthenticationService { get; set; }
