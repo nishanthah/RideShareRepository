@@ -338,12 +338,14 @@ function sendResponseByUserType(userType,req,res)
         
         if (err) res.json({ success: false, message: err });
         
-        userMapper.mapUsersList(userCoordinates, function (userList) {
+		else
+		{
+			 userMapper.mapUsersList(userCoordinates, function (userList) {
             var userDatas = userList;
             res.json({ userData: userDatas, success: true });
-        });
-        
-        
+			});
+		}
+
     });
 }
 // Notification Status : 1 - Sent, 2 - Delivered, 3 - Opened
@@ -405,15 +407,15 @@ apiRoutes.get('/users/:userName', function(req, res) {
   
 			if (err) res.json({ success: false, message:err });
 			
-			if(!userCoordinate)
+			else if(!userCoordinate)
 			{
 				res.json({ success: false, message:"User Not Found" });				
 			}
 			else {
-            userMapper.mapSingleUser(userCoordinate, function (userData) {
-                var userData = userData;
-                res.json({ userData: userData, success: true });
-            });				
+				userMapper.mapSingleUser(userCoordinate, function (userData) {
+					var userData = userData;
+					res.json({ userData: userData, success: true });
+				});				
 			}
 			
 			
