@@ -2,19 +2,26 @@
 var mongoose = require('mongoose');
 module.exports = function () {
     
-    function mapUsersList(usersData, mapUsersList) {
+    function mapUsersList(usersData, mapUsersListCallback) {
 
         var usersList = new Array();
+		var itemsProcessed = 0;
         usersData.forEach(function (singleUser) {
             
             var userData = mapSingleUser(singleUser, function (singleUser) {
                 var userData = singleUser;
                 usersList.push(userData);
-                mapUsersList(usersList);
+                itemsProcessed++;
+				
+				if(itemsProcessed == usersData.length)
+				{
+					mapUsersListCallback(usersList);
+				}
+				
             });
             
         });
-        
+	
     }
     
     function mapSingleUser(singleUser, mapSingleUserCallBack) {
