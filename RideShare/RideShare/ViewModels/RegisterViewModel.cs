@@ -22,19 +22,23 @@ namespace RideShare.ViewModels
         string gender;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
-        ObservableCollection<DriverLocator.Models.Vehicle> vehicles; 
+        ObservableCollection<DriverLocator.Models.Vehicle> vehicles;
+        ObservableCollection<DriverLocator.Models.FavouritePlace> favPlaces; 
 
 
         ISignUpPageProcessor signUpPageProcessor;
         public ICommand TapCommand { protected set; get; }
         public ICommand TapCommandLogin { protected set; get; }
+        public ICommand TapFavsCommand { protected set; get; }
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
             this.TapCommandLogin = new RelayCommand(OnTappedLogin);
+            this.TapFavsCommand = new RelayCommand(OnTappedFavs);
             vehicles = new ObservableCollection<DriverLocator.Models.Vehicle>();
+            favPlaces = new ObservableCollection<DriverLocator.Models.FavouritePlace>();
             if (Session.AuthenticationService != null && Session.AuthenticationService.IsAuthenticated)
             {
                 var currentUserDetails = App.CurrentLoggedUser.User;
@@ -47,7 +51,8 @@ namespace RideShare.ViewModels
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
                 }
-                vehicles = App.CurrentLoggedUser.Vehicles;
+                vehicles = App.CurrentUserVehicles = App.CurrentLoggedUser.Vehicles;
+                favPlaces = App.CurrentUserFavouritePlaces = App.CurrentLoggedUser.FavouritePlaces;
                 this.SignUpCommand = new RelayCommand(Update);                
             }
             else
@@ -56,6 +61,9 @@ namespace RideShare.ViewModels
 
                 if (App.CurrentUserVehicles != null)
                     App.CurrentUserVehicles.Clear();
+
+                if (App.CurrentUserFavouritePlaces != null)
+                    App.CurrentUserFavouritePlaces.Clear();
             }
 
         }
@@ -181,6 +189,20 @@ namespace RideShare.ViewModels
             }
         }
 
+        public ObservableCollection<DriverLocator.Models.FavouritePlace> FavPlaces
+        {
+            get
+            {
+                return favPlaces;
+            }
+
+            set
+            {
+                favPlaces = value;
+                OnPropertyChanged("FavPlaces");
+            }
+        }
+
         private void SignUp()
         {
             var user = new User()
@@ -203,10 +225,7 @@ namespace RideShare.ViewModels
                 var result = Session.AuthenticationService.CreateUser(user);
                 if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
                 {
-                    UpdateUserInLocal();
-
-                    if (App.CurrentUserVehicles != null)
-                        UpdateVehiclesInLocal();
+                    UpdateUserInLocal();                   
                         
                     
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
@@ -215,7 +234,13 @@ namespace RideShare.ViewModels
                     if (userCorrdinateResult.IsSuccess)
                     {
                         App.CurrentLoggedUser = userCorrdinateResult.UserLocation;                                               
-                    }                    
+                    }
+
+                    if (App.CurrentUserVehicles != null)
+                        UpdateVehiclesInLocal();
+
+                    if (App.CurrentUserFavouritePlaces != null)
+                        UpdateFavPlacesInLocal();
 
                     this.signUpPageProcessor.MoveToLoginPage();
                 }
@@ -246,11 +271,7 @@ namespace RideShare.ViewModels
             if (Isvalid)
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
-                UpdateUserInLocal();
-
-                if (App.CurrentUserVehicles != null)
-                    UpdateVehiclesInLocal();
-                    
+                UpdateUserInLocal();               
 
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
@@ -258,7 +279,13 @@ namespace RideShare.ViewModels
                 if (userCorrdinateResult.IsSuccess)
                 {
                     App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                }                
+                }
+
+                if (App.CurrentUserVehicles != null)
+                    UpdateVehiclesInLocal();
+
+                if (App.CurrentUserFavouritePlaces != null)
+                    UpdateFavPlacesInLocal();
 
                 this.signUpPageProcessor.MoveToMainPage();
             }
@@ -326,15 +353,42 @@ namespace RideShare.ViewModels
             }            
         }
 
+        public void UpdateFavPlacesInLocal()
+        {
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+
+            if (App.CurrentUserFavouritePlaces != null)
+            {
+                foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+                {
+                    DriverLocator.Models.UpdateFavouritePlacesRequest dlFavPlacesRequest = new DriverLocator.Models.UpdateFavouritePlacesRequest();
+                    dlFavPlacesRequest.UserName = App.CurrentLoggedUser.User.UserName;
+                    dlFavPlacesRequest.Latitude = fp.Latitude;
+                    dlFavPlacesRequest.Longitude = fp.Longitude;
+                    dlFavPlacesRequest.PlaceName = fp.PlaceName;
+                    dlFavPlacesRequest.PreviousUserGivenPlaceName = fp.PreviousUserGivenPlaceName;
+                    dlFavPlacesRequest.UserGivenplaceName = fp.UserGivenplaceName;
+                    dlFavPlacesRequest.PlaceID = fp.PlaceID;
+                    dlFavPlacesRequest.PlaceReference = fp.PlaceReference;
+                    var response = driverLocatorService.UpdateUserFavouritePlaces(dlFavPlacesRequest);
+                }
+            }
+        }
+
 
         private void OnTapped ()
         {
-            this.signUpPageProcessor.MoveToNextPage();
+            this.signUpPageProcessor.MoveToPage("RegisterVehicleDetailsPage");
         }
 
         private void OnTappedLogin()
         {
             this.signUpPageProcessor.MoveToLoginPage();
+        }
+
+        private void OnTappedFavs()
+        {
+            this.signUpPageProcessor.MoveToPage("RegisterFavouritePlacesPage"); 
         }
     }
 }

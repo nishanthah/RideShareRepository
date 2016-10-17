@@ -109,7 +109,7 @@ namespace RideShare
             App.Current.MainPage = new MainPage();
         }
 
-        public void MoveToNextPage()
+        public void MoveToPage(string page)
         {
             App.Current.MainPage = new NavigationPage(new LogInPage());
         }

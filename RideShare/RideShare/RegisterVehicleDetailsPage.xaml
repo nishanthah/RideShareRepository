@@ -13,9 +13,6 @@
       </StackLayout>
 
       <Button x:Name="registerButton" Command="{Binding SignUpCommand}" Text="Done" />
-        
-      
-
     </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

@@ -14,7 +14,7 @@ namespace DriverLocator
     public class DriverLocatorService
     {
 #if Local
-                private const string SERVER = "http://172.26.204.15:8079";
+                private const string SERVER = "http://172.26.204.146:8079";
 #else
         private const string SERVER = "http://ridesharemain.herokuapp.com";
         #endif
@@ -39,6 +39,9 @@ namespace DriverLocator
         private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
         private const string UPDATE_USER_LOGIN_STATUS_URL = SERVER + "/api/users/{0}/login_status";
 		private const string GET_USER_VEHICLE_DEF_DATA_URL = SERVER + "/api/vehicledefinitiondata";
+        private const string GET_USER_BY_EMAIL = SERVER + "/api/users/{0}/?filter={1}";
+        private const string GET_USER_FAV_PLACES_URL = SERVER + "/api/users/{0}/favouriteplaces";
+        private const string UPDATE_USER_FAV_PLACES_URL = SERVER + "/api/favouriteplaces";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -231,6 +234,36 @@ namespace DriverLocator
             requestHandler.Url = GET_USER_VEHICLE_DEF_DATA_URL;
             var userVehicleDefinitionDataResponse = requestHandler.SendRequest<UserVehicleDefinitionDataResponse>();
             return userVehicleDefinitionDataResponse;
+        }
+
+        public ResponseBase GetUsersByEmail(string email)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(GET_USER_BY_EMAIL, "email", email);
+            var usersResponse = requestHandler.SendRequest<ResponseBase>();
+            return usersResponse;
+        }
+
+        public UserFavouritePlacesResponse GetUserFavouritePlacesByUser(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(GET_USER_FAV_PLACES_URL, userName);
+            var userFavPlsResponse = requestHandler.SendRequest<UserFavouritePlacesResponse>();
+            return userFavPlsResponse;
+        }
+
+        public UpdateFavouritePlacesResponse UpdateUserFavouritePlaces(UpdateFavouritePlacesRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.POST;
+            requestHandler.Url = UPDATE_USER_FAV_PLACES_URL;
+            var result = requestHandler.SendRequest<UpdateFavouritePlacesRequest, UpdateFavouritePlacesResponse>(request);
+            return result;
         }
     }
 }

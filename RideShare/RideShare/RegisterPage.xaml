@@ -8,11 +8,11 @@
       <StackLayout x:Name="profileImageStackLayout" Orientation="Vertical">
       </StackLayout>
       <StackLayout Orientation="Horizontal">
-        <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name"/>
-        <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name"/>
+        <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name" FontSize="16"/>
+        <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name" FontSize="16"/>
       </StackLayout>
       <!--<Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>-->
-      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name">
+      <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" FontSize="16">
         <Entry.Style>
           <Style TargetType="Entry">
             <Setter Property="IsEnabled" Value="true" />
@@ -24,25 +24,26 @@
           </Style>
         </Entry.Style>
       </Entry>
-      <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password"/>
-      <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email"/>
+      <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" FontSize="16"/>
+      <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email" FontSize="16"/>
       <Picker x:Name="genderPicker" Title="Gender"></Picker>
+
       <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
-      <Image Source="add_picture.png" HorizontalOptions="Start" WidthRequest="30">
-        <Image.GestureRecognizers>
-          <TapGestureRecognizer
-              Command="{Binding TapCommand}" />
-        </Image.GestureRecognizers>
-      </Image>
-      
-      <Label Text="Add Vehicle" FontSize="16">
-        <Label.GestureRecognizers>
-          <TapGestureRecognizer
-              Command="{Binding TapCommand}" />
-        </Label.GestureRecognizers>
-      </Label>
+        <Image Source="add_picture.png" HorizontalOptions="Start" WidthRequest="30">
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding TapCommand}" />
+          </Image.GestureRecognizers>
+        </Image>
+
+        <Label Text="Add Vehicle" FontSize="16">
+          <Label.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding TapCommand}" />
+          </Label.GestureRecognizers>
+        </Label>
       </StackLayout>
-      
+
       <ListView x:Name="vehicleListView" ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
         <ListView.ItemTemplate>
           <DataTemplate>
@@ -54,7 +55,37 @@
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
-      
+
+      <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand"></BoxView>
+
+      <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
+        <Image Source="add_picture.png" HorizontalOptions="Start" WidthRequest="30">
+          <Image.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding TapFavsCommand}" />
+          </Image.GestureRecognizers>
+        </Image>
+
+        <Label Text="Add Favourite Places" FontSize="16">
+          <Label.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding TapFavsCommand}" />
+          </Label.GestureRecognizers>
+        </Label>
+      </StackLayout>
+
+      <ListView x:Name="favPlacesListView" ItemSelected="OnfavItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+        <ListView.ItemTemplate>
+          <DataTemplate>
+            <ViewCell>
+              <Grid>
+                <Label Text="{Binding UserGivenplaceName, Mode=TwoWay}" FontSize="15" />
+              </Grid>
+            </ViewCell>
+          </DataTemplate>
+        </ListView.ItemTemplate>
+      </ListView>
+
       <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
       <Button x:Name="registerButton" Command="{Binding SignUpCommand}">
         <Button.Style>
@@ -75,7 +106,7 @@
               Command="{Binding TapCommandLogin}" />
         </Label.GestureRecognizers>
       </Label>
-      
-      </StackLayout  >
+
+    </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

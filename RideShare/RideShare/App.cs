@@ -38,6 +38,7 @@ namespace RideShare
         //public static UserManager User_Manager { get; private set; }
         public static UserLocation CurrentLoggedUser { get; set; }
         public static ObservableCollection<Vehicle> CurrentUserVehicles { get; set; }
+        public static ObservableCollection<FavouritePlace> CurrentUserFavouritePlaces { get; set; }
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
         
 
