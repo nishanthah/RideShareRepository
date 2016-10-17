@@ -54,5 +54,14 @@ namespace RideShare
         public static string AppKey { get { return "7RaPmFE0QP-L_pDKsTyLCA"; } }
         //public static string AppMasterSecret { get { return "bXBa8jeLTIObXeOEuNzFBQ"; } }
         public static string AppMasterSecret { get { return "JEf6KdsJRY-G7a6QOg19Jg"; } }
+
+        private static List<LocationSearchResult> favouriteLocations;
+
+        public static List<LocationSearchResult> FavouriteLocations
+        {
+            set { favouriteLocations = value; }
+            get { return favouriteLocations; }
+        }
+
     }
 }
