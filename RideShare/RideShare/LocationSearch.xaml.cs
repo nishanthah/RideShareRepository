@@ -22,6 +22,7 @@ namespace RideShare
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public string LocationRefernce { get; set; }
+        public string LocationDetail { get; set; }
     }
 
 
@@ -55,11 +56,21 @@ namespace RideShare
         {
             GooglePlacesClient googlePlacesClient = new GooglePlacesClient();
 
-            var favLocations = Session.FavouriteLocations.Where(x => x.LocationName.ToLower().Contains(query.ToLower()));
+            if(App.CurrentLoggedUser.FavouritePlaces != null && App.CurrentLoggedUser.FavouritePlaces.Count() > 0)
+            {
+                var allFavouritePlaces = App.CurrentLoggedUser.FavouritePlaces.Select(x => new LocationSearchResult() { Latitude = double.Parse(x.Latitude), LocationDetail = x.PlaceName, LocationId = x.PlaceID, LocationName = x.UserGivenplaceName, LocationRefernce = x.PlaceReference, Longitude = double.Parse(x.Longitude) });
+                var favLocations = allFavouritePlaces.Where(x => x.LocationName.ToLower().Contains(query.ToLower()));
+                var data = googlePlacesClient.GetPlaces(query);
+                listView.ItemsSource = favLocations.Union(MapSearchData(data.Predictions)).ToList();
+            }
+            else
+            {
+                var data = googlePlacesClient.GetPlaces(query);
+                listView.ItemsSource = MapSearchData(data.Predictions).ToList();
+            }
             
-            var data = googlePlacesClient.GetPlaces(query);
-
-            listView.ItemsSource = favLocations.Union(MapSearchData(data.Predictions)).ToList();
+            
+            
         }
 
         private void OnValueChanged(object sender, TextChangedEventArgs e)

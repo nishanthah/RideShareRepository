@@ -4,10 +4,10 @@
              xmlns:maps="clr-namespace:RideShare;assembly=RideShare"
              x:Class="RideShare.HistoryView">
   <ContentPage.Content>
-    <AbsoluteLayout AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
+    <AbsoluteLayout>
       <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
        
-            <ListView  x:Name="listView1" ItemsSource="{Binding MapList}" HasUnevenRows="true">
+            <ListView  x:Name="listView1" VerticalOptions="FillAndExpand" ItemsSource="{Binding MapList}" HasUnevenRows="true" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0,0,1,1">
               <ListView.ItemTemplate>
                 <DataTemplate>
                   <ViewCell >
@@ -36,7 +36,7 @@
             </ListView>
       </ScrollView>
 
-      <!--<ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"/>-->
+      <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5"/>
     </AbsoluteLayout>
   </ContentPage.Content>
 </ContentPage>
