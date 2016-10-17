@@ -1,4 +1,5 @@
 ﻿var UserVehicle = require('../app/models/vehicle.js');
+var UserFavouritePlace = require('../app/models/favourite_place.js');
 var mongoose = require('mongoose');
 module.exports = function () {
     
@@ -51,8 +52,11 @@ module.exports = function () {
         userData.location = location;
         userData.destination = destination;
         getUserVehicleDetails(singleUser.userName, function (vehicleList) {
-            userData.vehicles = vehicleList;
-            mapSingleUserCallBack(userData);
+            userData.vehicles = vehicleList;			
+			getUserFavouritePlaces(singleUser.userName, function (favPlacesList) {
+				userData.favPlaces = favPlacesList;
+				mapSingleUserCallBack(userData);
+			});            
         });
         
     }
@@ -79,6 +83,35 @@ module.exports = function () {
             }
             
             callBack(userVehicleData);
+            
+        });
+        
+    }
+	
+	function getUserFavouritePlaces(userName, callBack){
+        
+        
+        UserFavouritePlace.find({ userName : userName }, function (err, userFavouritePlaces) {           
+            
+            var userFavPlaceData = new Array();
+            
+            if (userFavouritePlaces.length != 0) {
+            userFavouritePlaces.forEach(function (userFavouritePlace) {
+                var oneObj = {};
+                oneObj.userName = userFavouritePlace.userName;
+                oneObj.userGivenplaceName = userFavouritePlace.userGivenplaceName;
+                oneObj.placeName = userFavouritePlace.placeName;
+                oneObj.longitude = userFavouritePlace.longitude;
+                oneObj.latitude = userFavouritePlace.latitude;
+				oneObj.placeID = userFavouritePlace.placeID;
+                oneObj.placeReference = userFavouritePlace.placeReference;
+                                
+                userFavPlaceData.push(oneObj);
+            });            
+            
+        }
+            
+            callBack(userFavPlaceData);
             
         });
         
