@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RideShare.RegisterFavouritePlacesPage">
+  <ContentPage.Content>
+    <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
+      <StackLayout Orientation="Vertical">
+        <Entry x:Name="favPlaceNameEntry" Text="{Binding Path=UserGivenplaceName}" Placeholder="Place Name"/>
+        <Entry x:Name="favPlaceSearchEntry" Placeholder="Place Location" Text="{Binding Path=PlaceName}" TextChanged="OnValueChanged" />
+        <ListView x:Name="favPlacesListView" ItemSelected="OnItemSelected">
+          <ListView.ItemTemplate>
+            <DataTemplate>
+              <TextCell Text="{Binding LocationName}" />
+            </DataTemplate>
+          </ListView.ItemTemplate>
+        </ListView>
+      </StackLayout>
+
+      <Button x:Name="registerButton" Command="{Binding RegisterFavPlace}" Text="Done" />
+    </StackLayout  >
+  </ContentPage.Content>
+</ContentPage>

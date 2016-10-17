@@ -19,9 +19,10 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="app\models\favourite_place.js" />
     <Compile Include="app\models\ride_history.js" />
     <Compile Include="app\models\vehicle.js" />
-	<Compile Include="app\models\vehicle_def.js" />
+    <Compile Include="app\models\vehicle_def.js" />
     <Compile Include="helpers\user_mapper.js" />
     <Compile Include="urban_airship_client.js" />
     <Content Include="package.json" />

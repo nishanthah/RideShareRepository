@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult
+    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult, IUserFavouritePlaceAdditionResult
     {
         //bool isNewItem;
 
@@ -24,7 +24,9 @@ namespace RideShare
         byte[] profileImage;
         String status;
         public Action<ObservableCollection<DriverLocator.Models.Vehicle>> OnUserVehicleAdded { get; set; }
-        ObservableCollection<DriverLocator.Models.Vehicle> sortedDriverList;
+        public Action<ObservableCollection<DriverLocator.Models.FavouritePlace>> OnUserFavouritePlaceAdded { get; set; }
+        ObservableCollection<DriverLocator.Models.Vehicle> sortedVehicleList;
+        ObservableCollection<DriverLocator.Models.FavouritePlace> sortedFavPlaceList;
 
         public RegisterPage()
         {
@@ -77,11 +79,26 @@ namespace RideShare
                     }
 
                     if (vm.Vehicles.Count != 0)
-                        sortedDriverList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in vm.Vehicles orderby i.VehicleNumberPlate select i);
+                        sortedVehicleList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in vm.Vehicles orderby i.VehicleNumberPlate select i);
                     else
-                        sortedDriverList = vm.Vehicles;
+                        sortedVehicleList = vm.Vehicles;
 
-                    vehicleListView.ItemsSource = sortedDriverList;
+                    vehicleListView.ItemsSource = sortedVehicleList;
+                }
+
+                if (vm.FavPlaces != null)
+                {
+                    foreach (DriverLocator.Models.FavouritePlace favPlace in vm.FavPlaces)
+                    {
+                        favPlace.PreviousUserGivenPlaceName = favPlace.UserGivenplaceName;
+                    }
+
+                    if (vm.FavPlaces.Count != 0)
+                        sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in vm.FavPlaces orderby i.UserGivenplaceName select i);
+                    else
+                        sortedFavPlaceList = vm.FavPlaces;
+
+                    favPlacesListView.ItemsSource = sortedFavPlaceList;
                 }
 
                 if (vm.Gender == "Female")
@@ -103,6 +120,7 @@ namespace RideShare
             profileImageStackLayout.Children.Add(profilePhoto);
             profileImageStackLayout.Children.Add(addPictureButton);
             OnUserVehicleAdded = OnUserVehicleAddedResult;
+            OnUserFavouritePlaceAdded = OnUserFavouritePlaceAddedResult;
         }
 
         void genderPicker_SelectedIndexChanged(object sender, EventArgs e)
@@ -186,9 +204,14 @@ namespace RideShare
         //}
 
 
-        public void MoveToNextPage()
+        public void MoveToPage(string page)
         {
-            NavigationPage nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, new DriverLocator.Models.Vehicle()));
+            NavigationPage nextPage = new NavigationPage();
+            if(page == "RegisterVehicleDetailsPage")
+                nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, new DriverLocator.Models.Vehicle()));
+            else
+                nextPage = new NavigationPage(new RegisterFavouritePlacesPage(this, new DriverLocator.Models.FavouritePlace()));
+
             Navigation.PushModalAsync(nextPage);            
         }
 
@@ -196,6 +219,12 @@ namespace RideShare
         {
             NavigationPage nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, e.SelectedItem as DriverLocator.Models.Vehicle));
             Navigation.PushModalAsync(nextPage); 
+        }
+
+        private void OnfavItemSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            NavigationPage nextPage = new NavigationPage(new RegisterFavouritePlacesPage(this, e.SelectedItem as DriverLocator.Models.FavouritePlace));
+            Navigation.PushModalAsync(nextPage);
         }
 
 
@@ -207,11 +236,21 @@ namespace RideShare
         void OnUserVehicleAddedResult(ObservableCollection<DriverLocator.Models.Vehicle> results)
         {
             if (results != null && results.Count != 0)
-                sortedDriverList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in results orderby i.VehicleNumberPlate select i);
+                sortedVehicleList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in results orderby i.VehicleNumberPlate select i);
             else
-                sortedDriverList = results;
+                sortedVehicleList = results;
 
-            vehicleListView.ItemsSource = sortedDriverList;            
-        }        
+            vehicleListView.ItemsSource = sortedVehicleList;            
+        }
+
+        void OnUserFavouritePlaceAddedResult(ObservableCollection<DriverLocator.Models.FavouritePlace> results)
+        {
+            if (results != null && results.Count != 0)
+                sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in results orderby i.PlaceName select i);
+            else
+                sortedFavPlaceList = results;
+
+            favPlacesListView.ItemsSource = sortedFavPlaceList;
+        }       
     }
 }

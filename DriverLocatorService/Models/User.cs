@@ -66,6 +66,9 @@ namespace DriverLocator.Models
         [JsonProperty("vehicles")]
         public ObservableCollection<Vehicle> Vehicles { get; set; }
 
+        [JsonProperty("favPlaces")]
+        public ObservableCollection<FavouritePlace> FavouritePlaces { get; set; }
+
     }
 
     public class Destination : Location
@@ -109,6 +112,33 @@ namespace DriverLocator.Models
 
         [JsonProperty("model")]
         public string Model { get; set; }
+    }
+
+    public class FavouritePlace
+    {
+        [JsonProperty("userName")]
+        public string UserName { get; set; }
+
+        [JsonProperty("userGivenplaceName")]
+        public string UserGivenplaceName { get; set; }
+
+        [JsonProperty("placeName")]
+        public string PlaceName { get; set; }
+
+        [JsonProperty("longitude")]
+        public string Longitude { get; set; }
+
+        [JsonProperty("latitude")]
+        public string Latitude { get; set; }
+
+        [JsonProperty("previousUserGivenPlaceName")]
+        public string PreviousUserGivenPlaceName { get; set; }
+
+        [JsonProperty("placeID")]
+        public string PlaceID { get; set; }
+
+        [JsonProperty("placeReference")]
+        public string PlaceReference { get; set; }
 
     }
 }

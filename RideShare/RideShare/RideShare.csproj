@@ -56,6 +56,9 @@
     <Compile Include="NotificationView.xaml.cs">
       <DependentUpon>NotificationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RegisterFavouritePlacesPage.xaml.cs">
+      <DependentUpon>RegisterFavouritePlacesPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
@@ -105,6 +108,7 @@
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
     <Compile Include="ViewModels\MasterPageViewModel.cs" />
+    <Compile Include="ViewModels\RegisterFavouritePlacesViewModel.cs" />
     <Compile Include="ViewModels\RegisterVehicleDetailsViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\SendRequestViewModel.cs" />
@@ -277,6 +281,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="RegisterVehicleDetailsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RegisterFavouritePlacesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

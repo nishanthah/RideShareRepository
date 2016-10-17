@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace RideShare.Common
 {
@@ -10,7 +11,7 @@ namespace RideShare.Common
     {
         void MoveToLoginPage();
         void MoveToMainPage();
-        void MoveToNextPage();
+        void MoveToPage(string page);
         void MoveToPreviousPage();
     }
 }

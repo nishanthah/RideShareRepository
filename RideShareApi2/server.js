@@ -18,6 +18,7 @@ var UserCoordinate   = require('./app/models/user'); // get our mongoose model
 var RideHistory = require('./app/models/ride_history.js'); // RideHistory mongoose model
 var UserVehicle = require('./app/models/vehicle.js'); // Vehicle mongoose model
 var VehicleDefinitionData = require('./app/models/vehicle_def.js');
+var UserFavouritePlace = require('./app/models/favourite_place.js'); // Favourite Place mongoose model
 
 // =======================
 // configuration =========
@@ -134,7 +135,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-	httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
+    httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)
@@ -284,6 +285,50 @@ apiRoutes.post('/vehicles', function (req, res) {
             });            
         }
     });   
+});
+
+apiRoutes.post('/favouriteplaces', function (req, res) {
+    
+    UserFavouritePlace.findOne({ $and: [{ userName : req.body.userName }, { userGivenplaceName : req.body.previousUserGivenPlaceName }] }, function (err, userFavPlace) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (userFavPlace != null) {
+            
+            userFavPlace.userName = req.body.userName;
+            userFavPlace.userGivenplaceName = req.body.userGivenplaceName;
+            userFavPlace.placeName = req.body.placeName;
+            userFavPlace.longitude = req.body.longitude;
+            userFavPlace.latitude = req.body.latitude;
+			userFavPlace.placeID = req.body.placeID;
+			userFavPlace.placeReference = req.body.placeReference;
+                        
+            userFavPlace.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Updated User Favourite Places successfully');
+                res.json({ success: true, message: 'Updated User Favourite Places successfully' });
+            });
+        }
+        else {
+            var newUserFavPlace = new UserFavouritePlace({
+                userName: req.body.userName,
+                userGivenplaceName: req.body.userGivenplaceName,
+                placeName: req.body.placeName,
+                longitude: req.body.longitude,
+                latitude: req.body.latitude,
+				placeID: req.body.placeID,
+			    placeReference: req.body.placeReference
+            });
+            
+            newUserFavPlace.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('Inserted User Favourite Places successfully');
+                res.json({ success: true, message: 'Inserted User Favourite Places successfully' });
+            });
+        }
+    });
 });
 
 apiRoutes.put('/users/:userName/login_status', function (req, res) {
@@ -476,6 +521,37 @@ apiRoutes.get('/users/:userName/vehicles', function (req, res) {
         }
         else {
             res.json({ success: false, message: 'No User Vehicle details found' });
+        }
+    });
+
+});
+
+apiRoutes.get('/users/:userName/favouriteplaces', function (req, res) {
+    
+    UserFavouritePlace.find({ userName : req.params.userName }, function (err, userFavouritePlaces) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        var userFavPlaceData = new Array();
+        
+        if (userFavouritePlaces.length != 0) {
+            userFavouritePlaces.forEach(function (userFavouritePlace) {
+                var oneObj = {};
+                oneObj.userName = userFavouritePlace.userName;
+                oneObj.userGivenplaceName = userFavouritePlace.userGivenplaceName;
+                oneObj.placeName = userFavouritePlace.placeName;
+                oneObj.longitude = userFavouritePlace.longitude;
+                oneObj.latitude = userFavouritePlace.latitude;
+				oneObj.placeID = userFavouritePlace.placeID;
+                oneObj.placeReference = userFavouritePlace.placeReference;
+                                
+                userFavPlaceData.push(oneObj);
+            });
+            
+            res.json({ userFavPlaces: userFavPlaceData, success: true, message: 'User Favourite Places retrived successfully' });
+        }
+        else {
+            res.json({ success: false, message: 'No User Favourite Places found' });
         }
     });
 
