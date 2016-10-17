@@ -197,8 +197,7 @@ namespace RideShare.ViewModels
 
             if (!exists)
             {
-                if (!Session.AuthenticationService.IsAuthenticated)
-                    newUserVehicle.PreviousVehicleNumberPlate = this.vehicleNumberPlate;
+                newUserVehicle.PreviousVehicleNumberPlate = this.vehicleNumberPlate;
                 if (!App.CurrentUserVehicles.Contains(newUserVehicle))
                     App.CurrentUserVehicles.Add(newUserVehicle);
             }     

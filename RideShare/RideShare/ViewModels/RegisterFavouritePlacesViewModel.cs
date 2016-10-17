@@ -186,8 +186,7 @@ namespace RideShare.ViewModels
 
             if (!exists)
             {
-                if (!Session.AuthenticationService.IsAuthenticated)
-                    newFavPlace.PreviousUserGivenPlaceName = this.userGivenplaceName;
+                newFavPlace.PreviousUserGivenPlaceName = this.userGivenplaceName;
                 if (!App.CurrentUserFavouritePlaces.Contains(newFavPlace))
                     App.CurrentUserFavouritePlaces.Add(newFavPlace);
             }

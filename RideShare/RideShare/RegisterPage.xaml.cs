@@ -246,7 +246,7 @@ namespace RideShare
         void OnUserFavouritePlaceAddedResult(ObservableCollection<DriverLocator.Models.FavouritePlace> results)
         {
             if (results != null && results.Count != 0)
-                sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in results orderby i.PlaceName select i);
+                sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in results orderby i.UserGivenplaceName select i);
             else
                 sortedFavPlaceList = results;
 
