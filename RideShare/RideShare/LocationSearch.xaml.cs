@@ -35,6 +35,7 @@ namespace RideShare
             InitializeComponent();
             this.locationSelectionResult = locationSelectionResult;
             selectButton.Clicked += SelectButtonClicked;
+            listView.ItemsSource = Session.FavouriteLocations;
         }
 
         private void SelectButtonClicked(object sender, EventArgs e)
@@ -53,8 +54,12 @@ namespace RideShare
         private void BindListData(string query)
         {
             GooglePlacesClient googlePlacesClient = new GooglePlacesClient();
+
+            var favLocations = Session.FavouriteLocations.Where(x => x.LocationName.ToLower().Contains(query.ToLower()));
+            
             var data = googlePlacesClient.GetPlaces(query);
-            listView.ItemsSource = MapSearchData(data.Predictions);
+
+            listView.ItemsSource = favLocations.Union(MapSearchData(data.Predictions)).ToList();
         }
 
         private void OnValueChanged(object sender, TextChangedEventArgs e)
@@ -66,6 +71,7 @@ namespace RideShare
         private IList<LocationSearchResult> MapSearchData(IList<Prediction> predictions)
         {
             List<LocationSearchResult> locs = new List<RideShare.LocationSearchResult>();
+            
             foreach (var prediction in predictions)
             {
                 locs.Add(new LocationSearchResult() { Latitude = 1, Longitude = 11,LocationRefernce = prediction.Refernce, LocationId = prediction.Placeid, LocationName = prediction.Description });

@@ -69,6 +69,7 @@ namespace RideShare
                             DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                             var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(userInfo.UserName);
                             App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                            LoadFavouriteLocations();
                             appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
                             return true;
                         }
@@ -113,6 +114,14 @@ namespace RideShare
 
         }
 
+
+        private void LoadFavouriteLocations()
+        {
+            List<LocationSearchResult> favLocations = new List<LocationSearchResult>();
+            favLocations.Add(new LocationSearchResult() { Latitude = 1, LocationId = "1", LocationName = "Home", LocationRefernce = "1", Longitude = 2 });
+            favLocations.Add(new LocationSearchResult() { Latitude = 2, LocationId = "2", LocationName = "Office", LocationRefernce = "2", Longitude = 3 });
+            Session.FavouriteLocations = favLocations;
+        }
         protected override void OnStart()
         {
             // Handle when your app starts
