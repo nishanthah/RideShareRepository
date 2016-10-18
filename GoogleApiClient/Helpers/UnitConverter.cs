@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GoogleApiClient.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,18 @@ namespace GoogleApiClient.Helpers
             TimeSpan time = TimeSpan.FromSeconds(value);
             string str = time.ToString(@"hh\:mm\:ss");
             return str;
+        }
+
+        public static string SumOfDuration(this IList<Leg> legs)
+        {
+            TimeSpan time = TimeSpan.FromSeconds(legs.Sum(x => x.Duration.Value));
+            string str = time.ToString(@"hh\:mm\:ss");
+            return str;
+        }
+
+        public static string SumOfDistanceInKm(this IList<Leg> legs)
+        {
+            return (legs.Sum(x=>x.Distance.Value) / 1000) + "km";
         }
     }
 }

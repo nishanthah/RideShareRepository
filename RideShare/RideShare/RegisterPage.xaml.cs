@@ -83,7 +83,7 @@ namespace RideShare
                     else
                         sortedVehicleList = vm.Vehicles;
 
-                    vehicleListView.ItemsSource = sortedVehicleList;
+                    RefreshUserVehicles();
                 }
 
                 if (vm.FavPlaces != null)
@@ -98,7 +98,7 @@ namespace RideShare
                     else
                         sortedFavPlaceList = vm.FavPlaces;
 
-                    favPlacesListView.ItemsSource = sortedFavPlaceList;
+                    RefreshFavouritePlaces();
                 }
 
                 if (vm.Gender == "Female")
@@ -239,8 +239,9 @@ namespace RideShare
                 sortedVehicleList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in results orderby i.VehicleNumberPlate select i);
             else
                 sortedVehicleList = results;
+            RefreshUserVehicles();
 
-            vehicleListView.ItemsSource = sortedVehicleList;            
+
         }
 
         void OnUserFavouritePlaceAddedResult(ObservableCollection<DriverLocator.Models.FavouritePlace> results)
@@ -249,8 +250,19 @@ namespace RideShare
                 sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in results orderby i.UserGivenplaceName select i);
             else
                 sortedFavPlaceList = results;
-
+            RefreshFavouritePlaces();
+            
+        } 
+        
+        private void RefreshUserVehicles()
+        {
+            vehicleListView.ItemsSource = sortedVehicleList;
+            vehicleListView.HeightRequest = sortedVehicleList.Count * vehicleListView.RowHeight;
+        }
+        private void RefreshFavouritePlaces()
+        {
             favPlacesListView.ItemsSource = sortedFavPlaceList;
-        }       
+            favPlacesListView.HeightRequest = sortedFavPlaceList.Count * favPlacesListView.RowHeight;
+        }      
     }
 }

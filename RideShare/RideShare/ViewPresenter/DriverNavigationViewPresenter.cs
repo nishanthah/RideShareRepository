@@ -72,17 +72,16 @@ namespace RideShare.ViewPresenter
                     List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
 
                     var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
-                    var route = directions.Routes.SingleOrDefault();
-                    var leg = directions.Routes.SingleOrDefault().Legs.SingleOrDefault();
+                    var route = directions.Routes.First();
 
-                    var message = String.Format("Distance to destination:{0}\nTime to Destination:{1}\nAre you want to accept this ride?", leg.Distance.Text, leg.Duration.Text);
+                    var message = String.Format("Distance to destination:{0} | Time to Destination:{1} | Are you want to accept this ride?", route.Legs.SumOfDistanceInKm(), route.Legs.SumOfDuration());
                     return message;
 
                 }).ContinueWith((task) =>
                 {
                     RefreshRoute(true);
                     mapPageProcessor.ShowDoubleButtonPopup(task.Result, "Yes", "No", this.UpdateToDriverAccept, this.UpdateToDiverReject);
-                    base.OnInitializationCompleted();
+                    
                 });
             }
 
@@ -90,14 +89,14 @@ namespace RideShare.ViewPresenter
             {
                 RefreshRoute(true);
                 mapPageProcessor.ShowDoubleButtonPopup("Are you want to set this as pickedup?", "Yes", "No", this.UpdateToDriverPickedUp, () => { mapPageProcessor.HideDoubleButtonPopupBox(); });
-                base.OnInitializationCompleted();
+                
             }
 
             else if (rideHistory.RequestStatus == RequestStatus.RiderMet)
             {
                 RefreshRoute(true);
                 mapPageProcessor.ShowDoubleButtonPopup("Are you sure you want to end this ride?", "Yes", "No", this.UpdateToDriverRideEnded, () => { mapPageProcessor.HideDoubleButtonPopupBox(); });
-                base.OnInitializationCompleted();
+                
             }
             
 

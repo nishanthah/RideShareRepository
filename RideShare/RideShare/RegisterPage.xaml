@@ -1,10 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:RideShare.Behaviors;assembly=RideShare"
              x:Class="RideShare.RegisterPage"
              Title="Register">
   <ContentPage.Content>
-    <ScrollView Orientation = "Vertical" VerticalOptions="StartAndExpand" >
+    <ScrollView Orientation="Vertical" >
       <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
         <StackLayout x:Name="profileImageStackLayout" Orientation="Vertical">
         </StackLayout>
@@ -25,8 +26,20 @@
             </Style>
           </Entry.Style>
         </Entry>
-        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" FontSize="16"/>
-        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email" FontSize="16"/>
+        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" FontSize="16">
+          
+            <Entry.Behaviors>
+            <local:PasswordValidatorBehavior x:Name="passwordValidator"/>
+          </Entry.Behaviors>
+            
+        </Entry>
+        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email" FontSize="16">
+
+          <Entry.Behaviors>
+            <local:EmailValidatorBehavior x:Name="emailValidator"/>
+          </Entry.Behaviors>
+          
+        </Entry>
         <Picker x:Name="genderPicker" Title="Gender"></Picker>
 
         <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
@@ -45,7 +58,8 @@
           </Label>
         </StackLayout>
 
-        <ListView x:Name="vehicleListView" ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+        <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+        <ListView x:Name="vehicleListView"  ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
           <ListView.ItemTemplate>
             <DataTemplate>
               <ViewCell>
@@ -56,7 +70,8 @@
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>
-
+        </StackLayout>
+        
         <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand"></BoxView>
 
         <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
@@ -75,20 +90,22 @@
           </Label>
         </StackLayout>
 
-        <ListView x:Name="favPlacesListView" ItemSelected="OnfavItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
-          <ListView.ItemTemplate>
-            <DataTemplate>
-              <ViewCell>
-                <Grid>
-                  <Label Text="{Binding UserGivenplaceName, Mode=TwoWay}" FontSize="15" />
-                </Grid>
-              </ViewCell>
-            </DataTemplate>
-          </ListView.ItemTemplate>
-        </ListView>
-
+            <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+            <ListView x:Name="favPlacesListView" ItemSelected="OnfavItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+              <ListView.ItemTemplate>
+                <DataTemplate>
+                  <ViewCell>
+                    <Grid>
+                      <Label Text="{Binding UserGivenplaceName, Mode=TwoWay}" FontSize="15" />
+                    </Grid>
+                  </ViewCell>
+                </DataTemplate>
+              </ListView.ItemTemplate>
+            </ListView>
+              </StackLayout>
+        
         <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
-        <Button x:Name="registerButton" Command="{Binding SignUpCommand}">
+        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" >
           <Button.Style>
             <Style TargetType="Button">
               <Setter Property="Text" Value="Register"></Setter>
@@ -99,12 +116,28 @@
               </Style.Triggers>
             </Style>
           </Button.Style>
+        
+        <Button.Triggers>
+        <DataTrigger TargetType="Button"
+                     Binding="{Binding Source={x:Reference emailValidator},
+	                        Path=IsValid}"
+                     Value="True">
+            <Setter Property="IsEnabled" Value="True" />
+        </DataTrigger>
+        
+        <DataTrigger TargetType="Button"
+                     Binding="{Binding Source={x:Reference passwordValidator},
+	                        Path=IsValid}"
+                     Value="True">
+            <Setter Property="IsEnabled" Value="True" />
+        </DataTrigger>
+    </Button.Triggers>
         </Button>
 
         <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold">
           <Label.GestureRecognizers>
             <TapGestureRecognizer
-                Command="{Binding TapCommandLogin}" />
+                Command="{Binding TapCommandLogin}" /> 
           </Label.GestureRecognizers>
         </Label>
 

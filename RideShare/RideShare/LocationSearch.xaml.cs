@@ -36,7 +36,14 @@ namespace RideShare
             InitializeComponent();
             this.locationSelectionResult = locationSelectionResult;
             selectButton.Clicked += SelectButtonClicked;
-            listView.ItemsSource = Session.FavouriteLocations;
+
+            if(App.CurrentLoggedUser.FavouritePlaces != null || App.CurrentLoggedUser.FavouritePlaces.Count > 0)
+            {
+                var allFavouritePlaces = App.CurrentLoggedUser.FavouritePlaces.Select(x => new LocationSearchResult() { Latitude = double.Parse(x.Latitude), LocationDetail = x.PlaceName, LocationId = x.PlaceID, LocationName = x.UserGivenplaceName, LocationRefernce = x.PlaceReference, Longitude = double.Parse(x.Longitude) });
+                listView.ItemsSource = allFavouritePlaces;
+            }
+            
+            
         }
 
         private void SelectButtonClicked(object sender, EventArgs e)
