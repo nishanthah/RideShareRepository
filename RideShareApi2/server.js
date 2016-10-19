@@ -413,6 +413,23 @@ function updateNotificationStatus(reqId,notificationStatus,resultCallback)
     });
 }
 
+function updateNotificationStatus(reqId,notificationStatus)
+{
+	RideHistory.update( {_id : reqId }, {$set:{notificationStatus : notificationStatus }},{ multi: false }, function (err, rideHistoryItems) {
+        
+        if (err) console.log('Error updating notification status');
+        
+        else if (!rideHistoryItems) {
+			console.log('Ride History not found');
+        }
+        else {
+
+                console.log('Updated notification status to '+notificationStatus+ " ["+reqId+"]");				
+        }
+
+    });
+}
+
 apiRoutes.put('/ridehistory/notification_status/:id', function (req, res) {
 	
 	updateNotificationStatus(req.params.id,req.body.notificationStatus,function(data){
