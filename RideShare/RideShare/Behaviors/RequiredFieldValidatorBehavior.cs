@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace RideShare.Behaviors
 {
-    public class PasswordValidatorBehavior : Behavior<Entry>
+    public class RequiredFieldValidatorBehavior : Behavior<Entry>
     {
-        const string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
+        //const string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
 
         static readonly BindablePropertyKey IsValidPropertyKey = BindableProperty.CreateReadOnly("IsValid", typeof(bool), typeof(PasswordValidatorBehavior), false);
 
@@ -24,27 +23,12 @@ namespace RideShare.Behaviors
 
         protected override void OnAttachedTo(Entry entry)
         {
-            IsValid = true;
-            entry.Unfocused += Entry_Unfocused;
-            //entry.TextChanged += HandleTextChanged;
-        }
-
-        private void Entry_Unfocused(object sender, FocusEventArgs e)
-        {
-            Entry ent = (Entry)sender;
-            if (String.IsNullOrEmpty(ent.Text))
-                IsValid = true;
-            else
-                IsValid = (Regex.IsMatch(ent.Text, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
-            ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
+            entry.TextChanged += HandleTextChanged;
         }
 
         void HandleTextChanged(object sender, TextChangedEventArgs e)
         {
-            if (String.IsNullOrEmpty(e.NewTextValue))
-                IsValid = true;
-            else
-                IsValid = (Regex.IsMatch(e.NewTextValue, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
+            IsValid = !String.IsNullOrEmpty(e.NewTextValue);
             ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
         }
 

@@ -23,7 +23,10 @@ namespace RideShare.ViewModels
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
         ObservableCollection<DriverLocator.Models.Vehicle> vehicles;
-        ObservableCollection<DriverLocator.Models.FavouritePlace> favPlaces; 
+        ObservableCollection<DriverLocator.Models.FavouritePlace> favPlaces;
+        string passwordErrorMessage = "The password must be 8-15 characters long and must include atleast one capital letter and a special character";
+        string requiredFieldErrorMessage = "Required";
+        string emailAddressErrorMessage = "Invalid email";
 
 
         ISignUpPageProcessor signUpPageProcessor;
@@ -53,10 +56,10 @@ namespace RideShare.ViewModels
                 }
                 vehicles = App.CurrentUserVehicles = App.CurrentLoggedUser.Vehicles;
                 favPlaces = App.CurrentUserFavouritePlaces = App.CurrentLoggedUser.FavouritePlaces;
-                this.SignUpCommand = new RelayCommand(Update);                
+                this.SignUpCommand = new RelayCommand(Update);
             }
             else
-            {               
+            {
                 this.SignUpCommand = new RelayCommand(SignUp);
 
                 if (App.CurrentUserVehicles != null)
@@ -70,11 +73,31 @@ namespace RideShare.ViewModels
 
         public ICommand SignUpCommand { protected set; get; }
 
-        
+
 
         public bool isAuthenticated
         {
             get { return Session.AuthenticationService.IsAuthenticated; }
+        }
+
+        public bool IsButtonEnabled
+        {
+            get { return false; }
+        }
+
+        public string PasswordErrorMessage
+        {
+            get { return passwordErrorMessage; }
+        }
+
+        public string RequiredFieldErrorMessage
+        {
+            get { return requiredFieldErrorMessage; }
+        }
+
+        public string EmailAddressErrorMessage
+        {
+            get { return emailAddressErrorMessage; }
         }
 
         public byte[] ProfilePhoto
@@ -215,7 +238,7 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender
             };
-            
+
 
             var signUpSucceeded = AreDetailsValid(user);
 
@@ -225,15 +248,15 @@ namespace RideShare.ViewModels
                 var result = Session.AuthenticationService.CreateUser(user);
                 if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
                 {
-                    UpdateUserInLocal();                   
-                        
-                    
+                    UpdateUserInLocal();
+
+
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                     var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
                     if (userCorrdinateResult.IsSuccess)
                     {
-                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;                                               
+                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
                     }
 
                     if (App.CurrentUserVehicles != null)
@@ -271,7 +294,7 @@ namespace RideShare.ViewModels
             if (Isvalid)
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
-                UpdateUserInLocal();               
+                UpdateUserInLocal();
 
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
@@ -307,7 +330,7 @@ namespace RideShare.ViewModels
 
         bool AreDetailsValid(User user, bool isUpdate = false)
         {
-            if(!isUpdate)
+            if (!isUpdate)
                 return (!string.IsNullOrWhiteSpace(user.UserName) &&
                 !string.IsNullOrWhiteSpace(user.Password) &&
                 !string.IsNullOrWhiteSpace(user.UserName) &&
@@ -350,7 +373,7 @@ namespace RideShare.ViewModels
                     dlVehicleRequest.PreviousVehicleNumberPlate = v.PreviousVehicleNumberPlate;
                     var response = driverLocatorService.UpdateVehicleDetails(dlVehicleRequest);
                 }
-            }            
+            }
         }
 
         public void UpdateFavPlacesInLocal()
@@ -376,7 +399,7 @@ namespace RideShare.ViewModels
         }
 
 
-        private void OnTapped ()
+        private void OnTapped()
         {
             this.signUpPageProcessor.MoveToPage("RegisterVehicleDetailsPage");
         }
@@ -388,7 +411,7 @@ namespace RideShare.ViewModels
 
         private void OnTappedFavs()
         {
-            this.signUpPageProcessor.MoveToPage("RegisterFavouritePlacesPage"); 
+            this.signUpPageProcessor.MoveToPage("RegisterFavouritePlacesPage");
         }
     }
 }

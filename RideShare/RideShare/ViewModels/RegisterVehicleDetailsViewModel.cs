@@ -17,7 +17,7 @@ namespace RideShare.ViewModels
         string vehicleMake;
         string vehicleModel;
         string vehicleColor;
-        int vehicleMaxPassengerCount;
+        string vehicleMaxPassengerCount;
         string vehicleNumberPlate;
         string previousVehicleNumberPlate;
         ObservableCollection<DriverLocator.Models.VehicleDefinitionData> vehicleDefinitionData;
@@ -47,7 +47,10 @@ namespace RideShare.ViewModels
                 else
                     this.vehicleColor = selectedVehicle.VehicleColor;
 
-                this.vehicleMaxPassengerCount = selectedVehicle.VehicleMaxPassengerCount;
+                if (selectedVehicle.VehicleMaxPassengerCount == 0)
+                    this.vehicleMaxPassengerCount = String.Empty;
+                else
+                    this.vehicleMaxPassengerCount = selectedVehicle.VehicleMaxPassengerCount.ToString();
 
                 if (selectedVehicle.VehicleNumberPlate == null)
                     previousVehicleNumberPlate = this.vehicleNumberPlate = String.Empty;
@@ -111,25 +114,12 @@ namespace RideShare.ViewModels
         {
             get
             {
-                if (vehicleMaxPassengerCount == 0)
-                    return String.Empty;
-                else
-                    return vehicleMaxPassengerCount.ToString();
+                return vehicleMaxPassengerCount;
             }
 
             set
-            {
-                int outputValue;
-
-                if (!String.IsNullOrEmpty(value))
-                {
-                    if(Int32.TryParse(value, out outputValue))
-                        vehicleMaxPassengerCount = Convert.ToInt32(value);
-                    else
-                        vehicleMaxPassengerCount = 0;
-                }
-                else
-                    vehicleMaxPassengerCount = 0;
+            {                
+                vehicleMaxPassengerCount = value;                    
                 OnPropertyChanged("VehicleMaxPassengerCount");
             }
         }
@@ -178,7 +168,7 @@ namespace RideShare.ViewModels
 
             DriverLocator.Models.Vehicle newUserVehicle = new DriverLocator.Models.Vehicle() 
             { 
-                VehicleMake = this.vehicleMake, VehicleModel = this.vehicleModel, VehicleColor = this.vehicleColor, VehicleMaxPassengerCount = this.vehicleMaxPassengerCount,
+                VehicleMake = this.vehicleMake, VehicleModel = this.vehicleModel, VehicleColor = this.vehicleColor, VehicleMaxPassengerCount = String.IsNullOrEmpty(this.vehicleMaxPassengerCount) ? 0 : Convert.ToInt32(this.vehicleMaxPassengerCount),
                 VehicleNumberPlate = this.vehicleNumberPlate,
                 PreviousVehicleNumberPlate = this.previousVehicleNumberPlate,
                 VehicleDisplayName = String.Format("{0} {1}", this.vehicleModel, this.vehicleNumberPlate) 

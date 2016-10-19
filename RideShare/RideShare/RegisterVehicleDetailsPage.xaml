@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:RideShare.Behaviors;assembly=RideShare"
              x:Class="RideShare.RegisterVehicleDetailsPage" >
   <ContentPage.Content>
     <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
@@ -8,7 +9,10 @@
         <Picker x:Name="vehicleMakePicker" Title="Choose Vehicle Make"></Picker>
         <Picker x:Name="vehicleModelPicker" Title="Choose Vehicle Model"></Picker>
         <Entry x:Name="vehicleColorEntry" Text="{Binding Path=VehicleColor}" Placeholder="Car Color"/>
-        <Entry x:Name="vehicleMaxPassengerCountEntry" Text="{Binding Path=VehicleMaxPassengerCount}" Placeholder="Maximum Passengers"/>
+        <Entry x:Name="vehicleMaxPassengerCountEntry" Text="{Binding Path=VehicleMaxPassengerCount}" Placeholder="Maximum Passengers" Keyboard="Numeric" >
+          
+        </Entry>
+
         <Entry x:Name="vehicleNumberPlateEntry" Text="{Binding Path=VehicleNumberPlate}" Placeholder="Number Plate"/>
       </StackLayout>
 

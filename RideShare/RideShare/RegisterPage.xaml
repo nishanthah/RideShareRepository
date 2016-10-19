@@ -2,19 +2,43 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:RideShare.Behaviors;assembly=RideShare"
+             xmlns:converters="clr-namespace:RideShare.Converters;assembly=RideShare"
              x:Class="RideShare.RegisterPage"
              Title="Register">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converters:InverseBooleanConverter x:Key="inverseBooleanConverter"/>
+    </ResourceDictionary>
+
+  </ContentPage.Resources>
   <ContentPage.Content>
+
     <ScrollView Orientation="Vertical" >
       <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
+
         <StackLayout x:Name="profileImageStackLayout" Orientation="Vertical">
         </StackLayout>
+
         <StackLayout Orientation="Horizontal">
-          <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name" FontSize="16"/>
-          <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name" FontSize="16"/>
+          <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name [Required]" FontSize="16">
+            <Entry.Behaviors>
+              <local:RequiredFieldValidatorBehavior x:Name="fNRequiredFieldValidator"/>
+            </Entry.Behaviors>
+          </Entry>
+          <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" 
+                 HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference fNRequiredFieldValidator},
+	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>-->
+
+          <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name [Required]" FontSize="16">
+            <Entry.Behaviors>
+              <local:RequiredFieldValidatorBehavior x:Name="lNRequiredFieldValidator"/>
+            </Entry.Behaviors>
+          </Entry>
+          <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
         </StackLayout>
+
         <!--<Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>-->
-        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" FontSize="16">
+        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name [Required]" FontSize="16">
           <Entry.Style>
             <Style TargetType="Entry">
               <Setter Property="IsEnabled" Value="true" />
@@ -25,21 +49,38 @@
               </Style.Triggers>
             </Style>
           </Entry.Style>
-        </Entry>
-        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" FontSize="16">
-          
-            <Entry.Behaviors>
-            <local:PasswordValidatorBehavior x:Name="passwordValidator"/>
+          <Entry.Behaviors>
+            <local:RequiredFieldValidatorBehavior x:Name="uNRequiredFieldValidator"/>
           </Entry.Behaviors>
-            
         </Entry>
-        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email" FontSize="16">
+        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+
+        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password [Required]" FontSize="16">
+          <Entry.Behaviors>
+            <local:PasswordValidatorBehavior x:Name="passwordValidator"/>
+
+            <local:RequiredFieldValidatorBehavior x:Name="pwdRequiredFieldValidator"/>
+
+          </Entry.Behaviors>
+        </Entry>
+        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+        <Label Text="{Binding PasswordErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference passwordValidator},
+	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
+
+        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email - e.g. example@email.com [Required]" FontSize="16" Keyboard="Email">
 
           <Entry.Behaviors>
             <local:EmailValidatorBehavior x:Name="emailValidator"/>
+
+            <local:RequiredFieldValidatorBehavior x:Name="emailRequiredFieldValidator"/>
+
           </Entry.Behaviors>
-          
+
         </Entry>
+        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+        <Label Text="{Binding EmailAddressErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference emailValidator},
+	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
+
         <Picker x:Name="genderPicker" Title="Gender"></Picker>
 
         <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
@@ -59,19 +100,19 @@
         </StackLayout>
 
         <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
-        <ListView x:Name="vehicleListView"  ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
-          <ListView.ItemTemplate>
-            <DataTemplate>
-              <ViewCell>
-                <Grid>
-                  <Label Text="{Binding VehicleDisplayName, Mode=TwoWay}" FontSize="15" />
-                </Grid>
-              </ViewCell>
-            </DataTemplate>
-          </ListView.ItemTemplate>
-        </ListView>
+          <ListView x:Name="vehicleListView"  ItemSelected="OnItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <Grid>
+                    <Label Text="{Binding VehicleDisplayName, Mode=TwoWay}" FontSize="15" />
+                  </Grid>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
         </StackLayout>
-        
+
         <BoxView HeightRequest="1" HorizontalOptions="FillAndExpand"></BoxView>
 
         <StackLayout Orientation="Horizontal" Margin="0, 10, 0, 5">
@@ -90,22 +131,22 @@
           </Label>
         </StackLayout>
 
-            <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
-            <ListView x:Name="favPlacesListView" ItemSelected="OnfavItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
-              <ListView.ItemTemplate>
-                <DataTemplate>
-                  <ViewCell>
-                    <Grid>
-                      <Label Text="{Binding UserGivenplaceName, Mode=TwoWay}" FontSize="15" />
-                    </Grid>
-                  </ViewCell>
-                </DataTemplate>
-              </ListView.ItemTemplate>
-            </ListView>
-              </StackLayout>
-        
+        <StackLayout Orientation="Vertical" VerticalOptions="FillAndExpand">
+          <ListView x:Name="favPlacesListView" ItemSelected="OnfavItemSelected" SeparatorVisibility="Default" SeparatorColor="Gray" RowHeight="25">
+            <ListView.ItemTemplate>
+              <DataTemplate>
+                <ViewCell>
+                  <Grid>
+                    <Label Text="{Binding UserGivenplaceName, Mode=TwoWay}" FontSize="15" />
+                  </Grid>
+                </ViewCell>
+              </DataTemplate>
+            </ListView.ItemTemplate>
+          </ListView>
+        </StackLayout>
+
         <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
-        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" >
+        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" IsEnabled="{Binding IsButtonEnabled}" >
           <Button.Style>
             <Style TargetType="Button">
               <Setter Property="Text" Value="Register"></Setter>
@@ -116,28 +157,43 @@
               </Style.Triggers>
             </Style>
           </Button.Style>
-        
-        <Button.Triggers>
-        <DataTrigger TargetType="Button"
-                     Binding="{Binding Source={x:Reference emailValidator},
+          <Button.Triggers>
+            <MultiTrigger TargetType="Button">
+              <MultiTrigger.Conditions>
+                <BindingCondition Binding="{Binding Source={x:Reference emailValidator},
 	                        Path=IsValid}"
-                     Value="True">
-            <Setter Property="IsEnabled" Value="True" />
-        </DataTrigger>
-        
-        <DataTrigger TargetType="Button"
-                     Binding="{Binding Source={x:Reference passwordValidator},
+                     Value="True" />
+                <BindingCondition Binding="{Binding Source={x:Reference passwordValidator},
 	                        Path=IsValid}"
-                     Value="True">
-            <Setter Property="IsEnabled" Value="True" />
-        </DataTrigger>
-    </Button.Triggers>
+                             Value="True" />
+                <BindingCondition Binding="{Binding Source={x:Reference fNRequiredFieldValidator},
+	                        Path=IsValid}"
+                               Value="True" />
+              <BindingCondition Binding="{Binding Source={x:Reference lNRequiredFieldValidator},
+	                        Path=IsValid}"
+                               Value="True" />
+              <BindingCondition Binding="{Binding Source={x:Reference uNRequiredFieldValidator},
+	                        Path=IsValid}"
+                               Value="True" />
+          <BindingCondition Binding="{Binding Source={x:Reference pwdRequiredFieldValidator},
+	                        Path=IsValid}"
+                               Value="True" />
+        <BindingCondition Binding="{Binding Source={x:Reference emailRequiredFieldValidator},
+	                        Path=IsValid}"
+                               Value="True" />
+              </MultiTrigger.Conditions>
+
+              <Setter Property="IsEnabled" Value="True" />
+              <!-- multiple Setter elements are allowed -->
+            </MultiTrigger>
+
+          </Button.Triggers>
         </Button>
 
         <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold">
           <Label.GestureRecognizers>
             <TapGestureRecognizer
-                Command="{Binding TapCommandLogin}" /> 
+                Command="{Binding TapCommandLogin}" />
           </Label.GestureRecognizers>
         </Label>
 

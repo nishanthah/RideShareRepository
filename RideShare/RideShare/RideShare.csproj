@@ -36,12 +36,15 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Behaviors\EmailValidatorBehavior.cs" />
+    <Compile Include="Behaviors\NumberValidatorBehavior.cs" />
     <Compile Include="Behaviors\PasswordValidatorBehavior.cs" />
+    <Compile Include="Behaviors\RequiredFieldValidatorBehavior.cs" />
     <Compile Include="Common\ILoginPageProcessor.cs" />
     <Compile Include="Common\IMapPageProcessor.cs" />
     <Compile Include="Common\ISignUpPageProcessor.cs" />
     <Compile Include="Common\RelayCommand.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="CustomMap.cs" />
     <Compile Include="HistoryView.xaml.cs">
       <DependentUpon>HistoryView.xaml</DependentUpon>

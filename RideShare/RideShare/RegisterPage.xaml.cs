@@ -81,9 +81,7 @@ namespace RideShare
                     if (vm.Vehicles.Count != 0)
                         sortedVehicleList = new ObservableCollection<DriverLocator.Models.Vehicle>(from i in vm.Vehicles orderby i.VehicleNumberPlate select i);
                     else
-                        sortedVehicleList = vm.Vehicles;
-
-                    RefreshUserVehicles();
+                        sortedVehicleList = vm.Vehicles;                    
                 }
 
                 if (vm.FavPlaces != null)
@@ -96,9 +94,7 @@ namespace RideShare
                     if (vm.FavPlaces.Count != 0)
                         sortedFavPlaceList = new ObservableCollection<DriverLocator.Models.FavouritePlace>(from i in vm.FavPlaces orderby i.UserGivenplaceName select i);
                     else
-                        sortedFavPlaceList = vm.FavPlaces;
-
-                    RefreshFavouritePlaces();
+                        sortedFavPlaceList = vm.FavPlaces;                    
                 }
 
                 if (vm.Gender == "Female")
@@ -121,6 +117,8 @@ namespace RideShare
             profileImageStackLayout.Children.Add(addPictureButton);
             OnUserVehicleAdded = OnUserVehicleAddedResult;
             OnUserFavouritePlaceAdded = OnUserFavouritePlaceAddedResult;
+            RefreshFavouritePlaces();
+            RefreshUserVehicles();
         }
 
         void genderPicker_SelectedIndexChanged(object sender, EventArgs e)
@@ -256,13 +254,23 @@ namespace RideShare
         
         private void RefreshUserVehicles()
         {
-            vehicleListView.ItemsSource = sortedVehicleList;
-            vehicleListView.HeightRequest = sortedVehicleList.Count * vehicleListView.RowHeight;
+            if (sortedVehicleList != null)
+            {
+                vehicleListView.ItemsSource = sortedVehicleList;
+                vehicleListView.HeightRequest = sortedVehicleList.Count * vehicleListView.RowHeight;
+            }
+            else
+                vehicleListView.HeightRequest = 0;
         }
         private void RefreshFavouritePlaces()
         {
-            favPlacesListView.ItemsSource = sortedFavPlaceList;
-            favPlacesListView.HeightRequest = sortedFavPlaceList.Count * favPlacesListView.RowHeight;
+            if (sortedFavPlaceList != null)
+            {
+                favPlacesListView.ItemsSource = sortedFavPlaceList;
+                favPlacesListView.HeightRequest = sortedFavPlaceList.Count * favPlacesListView.RowHeight;
+            }
+            else
+                favPlacesListView.HeightRequest = 0;
         }      
     }
 }
