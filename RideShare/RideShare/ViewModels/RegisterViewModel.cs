@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -14,14 +15,15 @@ namespace RideShare.ViewModels
 {
     public class SignUpViewModel : ViewModelBase
     {
-        string firstName;
-        string lastName;
-        string userName;
-        string password;
-        string email;
+        string firstName = String.Empty;
+        string lastName = String.Empty;
+        string userName = String.Empty;
+        string password = String.Empty;
+        string email = String.Empty;
         string gender;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
+        bool isButtonEnabled;
         ObservableCollection<DriverLocator.Models.Vehicle> vehicles;
         ObservableCollection<DriverLocator.Models.FavouritePlace> favPlaces;
         string passwordErrorMessage = "The password must be 8-15 characters long and must include atleast one capital letter and a special character";
@@ -50,6 +52,7 @@ namespace RideShare.ViewModels
                 this.UserName = currentUserDetails.UserName;
                 this.Email = currentUserDetails.EMail;
                 this.gender = currentUserDetails.Gender;
+                this.password = "********";
                 if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
@@ -82,7 +85,16 @@ namespace RideShare.ViewModels
 
         public bool IsButtonEnabled
         {
-            get { return false; }
+            get
+            {
+                return isButtonEnabled;
+            }
+
+            set
+            {
+                isButtonEnabled = value;
+                OnPropertyChanged("IsButtonEnabled");
+            }
         }
 
         public string PasswordErrorMessage
@@ -125,6 +137,7 @@ namespace RideShare.ViewModels
             {
                 firstName = value;
                 OnPropertyChanged("FirstName");
+                CheckFormValiditiy();
             }
         }
 
@@ -139,6 +152,7 @@ namespace RideShare.ViewModels
             {
                 lastName = value;
                 OnPropertyChanged("LastName");
+                CheckFormValiditiy();
             }
         }
 
@@ -151,8 +165,9 @@ namespace RideShare.ViewModels
 
             set
             {
-                userName = value;
+                userName = value.Replace(" ", String.Empty);
                 OnPropertyChanged("UserName");
+                CheckFormValiditiy();
             }
         }
 
@@ -165,8 +180,9 @@ namespace RideShare.ViewModels
 
             set
             {
-                password = value;
+                password = value.Replace(" ", String.Empty);
                 OnPropertyChanged("Password");
+                CheckFormValiditiy();
             }
         }
 
@@ -181,6 +197,7 @@ namespace RideShare.ViewModels
             {
                 email = value;
                 OnPropertyChanged("Email");
+                CheckFormValiditiy();
             }
         }
 
@@ -284,7 +301,7 @@ namespace RideShare.ViewModels
                 LastName = this.LastName,
                 UserName = this.UserName,
                 EMail = this.Email,
-                Password = this.Password,
+                Password = this.password == "********" ? null : this.Password,
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender
             };
@@ -412,6 +429,22 @@ namespace RideShare.ViewModels
         private void OnTappedFavs()
         {
             this.signUpPageProcessor.MoveToPage("RegisterFavouritePlacesPage");
+        }
+
+        private void CheckFormValiditiy()
+        {
+            string emailRegex = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+        @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
+
+            string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";            
+
+            IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
+                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && 
+                    (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
+
+
+
         }
     }
 }

@@ -26,23 +26,22 @@ namespace RideShare.Behaviors
         protected override void OnAttachedTo(Entry entry)
         {
             IsValid = true;
-            entry.TextChanged += HandleTextChanged;
+            entry.Unfocused += Entry_Unfocused;
         }
 
-        void HandleTextChanged(object sender, TextChangedEventArgs e)
+        private void Entry_Unfocused(object sender, FocusEventArgs e)
         {
-            if (String.IsNullOrEmpty(e.NewTextValue))
+            Entry ent = (Entry)sender;
+            if (String.IsNullOrEmpty(ent.Text))
                 IsValid = true;
             else
-                IsValid = (Regex.IsMatch(e.NewTextValue, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
+                IsValid = (Regex.IsMatch(ent.Text, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
             ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
         }
 
         protected override void OnDetachingFrom(Entry entry)
         {
-            
-            entry.TextChanged -= HandleTextChanged;
-
+            entry.Unfocused -= Entry_Unfocused;
         }
     }
 }

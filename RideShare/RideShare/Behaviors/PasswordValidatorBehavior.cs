@@ -25,8 +25,7 @@ namespace RideShare.Behaviors
         protected override void OnAttachedTo(Entry entry)
         {
             IsValid = true;
-            entry.Unfocused += Entry_Unfocused;
-            //entry.TextChanged += HandleTextChanged;
+            entry.Unfocused += Entry_Unfocused;            
         }
 
         private void Entry_Unfocused(object sender, FocusEventArgs e)
@@ -37,22 +36,11 @@ namespace RideShare.Behaviors
             else
                 IsValid = (Regex.IsMatch(ent.Text, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
             ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
-        }
-
-        void HandleTextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (String.IsNullOrEmpty(e.NewTextValue))
-                IsValid = true;
-            else
-                IsValid = (Regex.IsMatch(e.NewTextValue, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250)));
-            ((Entry)sender).TextColor = IsValid ? Color.Default : Color.Red;
-        }
+        }        
 
         protected override void OnDetachingFrom(Entry entry)
-        {
-
-            entry.TextChanged -= HandleTextChanged;
-
+        {            
+            entry.Unfocused -= Entry_Unfocused;
         }
     }
 }

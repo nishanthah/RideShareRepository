@@ -18,26 +18,21 @@
 
         <StackLayout x:Name="profileImageStackLayout" Orientation="Vertical">
         </StackLayout>
-
         <StackLayout Orientation="Horizontal">
           <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name [Required]" FontSize="16">
             <Entry.Behaviors>
               <local:RequiredFieldValidatorBehavior x:Name="fNRequiredFieldValidator"/>
             </Entry.Behaviors>
-          </Entry>
-          <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" 
-                 HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference fNRequiredFieldValidator},
-	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>-->
+          </Entry>          
 
           <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name [Required]" FontSize="16">
             <Entry.Behaviors>
               <local:RequiredFieldValidatorBehavior x:Name="lNRequiredFieldValidator"/>
             </Entry.Behaviors>
-          </Entry>
-          <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+          </Entry>          
         </StackLayout>
 
-        <!--<Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name"/>-->
+        
         <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name [Required]" FontSize="16">
           <Entry.Style>
             <Style TargetType="Entry">
@@ -53,8 +48,7 @@
             <local:RequiredFieldValidatorBehavior x:Name="uNRequiredFieldValidator"/>
           </Entry.Behaviors>
         </Entry>
-        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
-
+        
         <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password [Required]" FontSize="16">
           <Entry.Behaviors>
             <local:PasswordValidatorBehavior x:Name="passwordValidator"/>
@@ -63,7 +57,7 @@
 
           </Entry.Behaviors>
         </Entry>
-        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+        
         <Label Text="{Binding PasswordErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference passwordValidator},
 	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
 
@@ -77,7 +71,7 @@
           </Entry.Behaviors>
 
         </Entry>
-        <!--<Label Text="{Binding RequiredFieldErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>-->
+        
         <Label Text="{Binding EmailAddressErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference emailValidator},
 	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
 
@@ -146,7 +140,7 @@
         </StackLayout>
 
         <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
-        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" IsEnabled="{Binding IsButtonEnabled}" >
+        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}" >
           <Button.Style>
             <Style TargetType="Button">
               <Setter Property="Text" Value="Register"></Setter>
@@ -156,41 +150,10 @@
                 </DataTrigger  >
               </Style.Triggers>
             </Style>
-          </Button.Style>
-          <Button.Triggers>
-            <MultiTrigger TargetType="Button">
-              <MultiTrigger.Conditions>
-                <BindingCondition Binding="{Binding Source={x:Reference emailValidator},
-	                        Path=IsValid}"
-                     Value="True" />
-                <BindingCondition Binding="{Binding Source={x:Reference passwordValidator},
-	                        Path=IsValid}"
-                             Value="True" />
-                <BindingCondition Binding="{Binding Source={x:Reference fNRequiredFieldValidator},
-	                        Path=IsValid}"
-                               Value="True" />
-              <BindingCondition Binding="{Binding Source={x:Reference lNRequiredFieldValidator},
-	                        Path=IsValid}"
-                               Value="True" />
-              <BindingCondition Binding="{Binding Source={x:Reference uNRequiredFieldValidator},
-	                        Path=IsValid}"
-                               Value="True" />
-          <BindingCondition Binding="{Binding Source={x:Reference pwdRequiredFieldValidator},
-	                        Path=IsValid}"
-                               Value="True" />
-        <BindingCondition Binding="{Binding Source={x:Reference emailRequiredFieldValidator},
-	                        Path=IsValid}"
-                               Value="True" />
-              </MultiTrigger.Conditions>
-
-              <Setter Property="IsEnabled" Value="True" />
-              <!-- multiple Setter elements are allowed -->
-            </MultiTrigger>
-
-          </Button.Triggers>
+          </Button.Style>          
         </Button>
 
-        <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold">
+        <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold" IsVisible="{Binding isAuthenticated, Converter={StaticResource inverseBooleanConverter}}" >
           <Label.GestureRecognizers>
             <TapGestureRecognizer
                 Command="{Binding TapCommandLogin}" />
