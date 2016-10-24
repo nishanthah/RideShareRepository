@@ -30,6 +30,7 @@
     <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="ILocationServiceStatusCallback.cs" />
     <Compile Include="Models\Location.cs" />
     <Compile Include="Models\NotificationStatus.cs" />
     <Compile Include="Models\UserTypes.cs" />
