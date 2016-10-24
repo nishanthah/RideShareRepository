@@ -31,6 +31,7 @@ namespace RideShare.Droid.Services
         public void DoWork()
         {
             ILocationService locService = new LocationServiceDroid();
+            locService.StartLocationService();
             LocationUtility locationUtility = new LocationUtility(locService);
 
             System.Threading.Thread t = new System.Threading.Thread(() =>
@@ -38,7 +39,7 @@ namespace RideShare.Droid.Services
                 while (true)
                 {
                     locationUtility.AddHistoryLocation();
-                    System.Threading.Thread.Sleep(2000);
+                    System.Threading.Thread.Sleep(5000);
                 }
             });
             t.IsBackground = false;

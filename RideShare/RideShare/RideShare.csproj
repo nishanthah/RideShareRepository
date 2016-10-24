@@ -101,8 +101,10 @@
     <Compile Include="SharedInterfaces\IAppDataService.cs" />
     <Compile Include="SharedInterfaces\IBaseUrl.cs" />
     <Compile Include="SharedInterfaces\ILocationService.cs" />
+    <Compile Include="SharedInterfaces\ILocationServiceHelper.cs" />
     <Compile Include="SharedInterfaces\IMapSocketService.cs" />
     <Compile Include="SharedInterfaces\IMediaPicker.cs" />
+    <Compile Include="SharedInterfaces\INavigationService.cs" />
     <Compile Include="SharedInterfaces\IUrbanAirshipNotificationService.cs" />
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>

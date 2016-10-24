@@ -181,13 +181,16 @@
   <ItemGroup>
     <AndroidAsset Include="Assets\splash.html" />
     <AndroidAsset Include="Assets\main.css" />
+    <Compile Include="BroadcastRecivers\LocationOnOffReciver.cs" />
     <Compile Include="BroadcastRecivers\LocationServiceReciver.cs" />
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="DependecyServices\AppDataServiceDroid.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroidFused.cs" />
+    <Compile Include="DependecyServices\LocationServiceHelper.cs" />
     <Compile Include="DependecyServices\MapSocketServiceDroid.cs" />
+    <Compile Include="DependecyServices\NavigationServiceDroid.cs" />
     <Compile Include="DependecyServices\UrbanAirshipServiceDroid.cs" />
     <Compile Include="MainActivity.cs" />
     <Compile Include="MainApp.cs" />
@@ -310,6 +313,15 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\add_picture.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\get_directions.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\navigation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\route1.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

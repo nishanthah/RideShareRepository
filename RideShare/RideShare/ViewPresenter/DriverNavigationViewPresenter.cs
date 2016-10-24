@@ -56,7 +56,7 @@ namespace RideShare.ViewPresenter
 
             if (rideHistory.RequestStatus == RequestStatus.Requested)
             {
-                Task.Factory.StartNew<string>(() =>
+                var intiDirectionTask = Task.Factory.StartNew<string>(() =>
                 {
                     var driver = driverLocatorService.GetSelectedUserCoordinate(rideHistory.DiverUserName).UserLocation;
                     var rider = driverLocatorService.GetSelectedUserCoordinate(rideHistory.UserName).UserLocation;
@@ -72,17 +72,27 @@ namespace RideShare.ViewPresenter
                     List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
 
                     var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
+
                     var route = directions.Routes.First();
 
                     var message = String.Format("Distance to destination:{0} | Time to Destination:{1} | Are you want to accept this ride?", route.Legs.SumOfDistanceInKm(), route.Legs.SumOfDuration());
                     return message;
 
-                }).ContinueWith((task) =>
+                });
+
+                intiDirectionTask.ContinueWith((task) =>
                 {
                     RefreshRoute(true);
                     mapPageProcessor.ShowDoubleButtonPopup(task.Result, "Yes", "No", this.UpdateToDriverAccept, this.UpdateToDiverReject);
                     
-                });
+                }, TaskContinuationOptions.OnlyOnRanToCompletion);
+
+                intiDirectionTask.ContinueWith((task) =>
+                {
+                   
+                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = task.Exception.Message,Title = "Error"});
+
+                }, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             else if (rideHistory.RequestStatus == RequestStatus.DriverAccepted)

@@ -32,13 +32,14 @@ namespace RideShare.Droid.Services
         public void DoWork()
         {
             ILocationService locService = new LocationServiceDroid();
+            locService.StartLocationService();
             LocationUtility locationUtility = new LocationUtility(locService);
 
             Thread t = new Thread(() => { 
                 while(true)
                 {
                     locationUtility.UpdateCurrentLocation();
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                 }
             });
             t.IsBackground = false;
