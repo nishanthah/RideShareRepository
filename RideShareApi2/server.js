@@ -7,9 +7,11 @@ var app         = express();
 var bodyParser  = require('body-parser');
 var morgan      = require('morgan');
 var mongoose    = require('mongoose');
+var nodemailer = require('nodemailer');
 var HttpClient = require('node-rest-client').Client;
 var urbanAirshipClient = require("./urban_airship_client");
 var userMapper = require("./helpers/user_mapper");
+var guid = require("guid");
 var httpClient = new HttpClient();
 
 var jwt    = require('jsonwebtoken'); // used to create, sign, and verify tokens
@@ -125,6 +127,76 @@ apiRoutes.get('/vehicledefinitiondata', function (req, res) {
 
 });
 
+apiRoutes.get('/users/:email/resetpassword', function (req, res) {
+       
+       UserCoordinate.findOne( {userName : req.params.userName}, function (err, userCoordinate) {
+              
+              if (err) res.json({ success: false, message: err });
+              
+        if (userCoordinate) {
+
+            var smtpConfig = {
+                host: 'smtp.gmail.com',
+                port: 587,
+                secure: false, // use SSL
+                auth: {
+                    user: 'virtusamicros@gmail.com',
+                    pass: '1qaz2wsx@W'
+                }
+            };
+            
+            var newguid = guid.create();
+
+            var transporter = nodemailer.createTransport(smtpConfig);
+            
+            // setup e-mail data with unicode symbols
+            var mailOptions = {
+                from: '"RideShare" <virtusamicros@gmail.com>', // sender address
+                to: userCoordinate.email, // list of receivers
+                subject: 'Reset Password', // Subject line
+                html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '"' + '>' + newguid + '</a>' 
+            };
+            
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    return console.log(error);
+                }
+                userCoordinate.passwordResetGuid = req.body.guid;                
+                console.log('Message sent: ' + info.response);
+            });
+                     res.json({success: true, message: 'User exists'});
+              }
+              else{
+                     res.json({success: false, message: 'User does not exist'});
+              }             
+       });
+
+});
+
+
+apiRoutes.get('/users/resetpassword/:guid', function (req, res) {
+    
+    UserCoordinate.findOne({ passwordResetGuid : req.params.guid }, function (err, userCoordinate) {
+        
+        if (err) res.json({ success: false, message: err });
+        
+        if (userCoordinate) {
+            userMapper.mapSingleUser(userCoordinate, function (userData) {
+                var userData = userData;
+                res.json({ userData: userData, success: true, message: 'User exists' });
+            });                 
+            //res.json({ userData: userCoordinate, success: true, message: 'User exists' });
+        }
+        else {
+            res.json({ success: false, message: 'User does not exist' });
+        }
+    });
+
+});
+
+
+
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
 
@@ -221,6 +293,7 @@ apiRoutes.post('/users', function(req, res) {
 	
   });
 });   */ 
+
 
 apiRoutes.put('/users/:userName/location', function (req, res) {
     UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
