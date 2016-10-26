@@ -127,7 +127,7 @@ apiRoutes.get('/vehicledefinitiondata', function (req, res) {
 
 });
 
-apiRoutes.get('/users/:email/resetpassword', function (req, res) {
+apiRoutes.get('/users/:userName/resetpassword', function (req, res) {
        
        UserCoordinate.findOne( {userName : req.params.userName}, function (err, userCoordinate) {
               
@@ -207,7 +207,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-    httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
+    httpClient.get("http://172.26.204.15:8078/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)
@@ -243,7 +243,7 @@ apiRoutes.post('/users', function(req, res) {
 		userCoordinate.email = req.body.email;
             userCoordinate.profileImage = req.body.profileImage;
             userCoordinate.gender = req.body.gender;
-
+userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
 		userCoordinate.save(function(err) {
 			if (err) res.json({ success: false, message:err });
 
@@ -261,7 +261,8 @@ apiRoutes.post('/users', function(req, res) {
 			email:req.body.email,
 			firstName:req.body.firstName,
 			lastName:req.body.lastName,
-			profileImage : req.body.profileImage
+			profileImage : req.body.profileImage,
+			resetPasswordGuid : req.body.resetPasswordGuid
 		});
 		
 		newUserCoordinate.save(function(err) {
