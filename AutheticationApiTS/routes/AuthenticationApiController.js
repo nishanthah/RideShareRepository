@@ -150,7 +150,7 @@ var AuthhenticationAPIController = (function () {
                     from: '"RideShare" <virtusamicros@gmail.com>',
                     to: user.email,
                     subject: 'Reset Password',
-                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id="' + newguid + '>' + newguid + '</a>' // html body
+                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '">' + newguid + '</a>' // html body
                 };
                 //send mail with defined transport object
                 transporter.sendMail(mailOptions, function (error, info) {
