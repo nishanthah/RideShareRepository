@@ -28,12 +28,15 @@ namespace RideShare.ViewModels
 
         public ICommand SignUpCommand { protected set; get; }
 
+        public ICommand TapForgotPwdOneCommand { protected set; get; }
+
         public LoginViewModel(ILoginPageProcessor loginProcessor, IUrbanAirshipNotificationService urbanAirshipNotificationService)
         {
             this.loginProcessor = loginProcessor;
             this.urbanAirshipNotificationService = urbanAirshipNotificationService;
             this.LoginCommand = new RelayCommand(Login);
             this.SignUpCommand = new RelayCommand(SignUp);
+            this.TapForgotPwdOneCommand = new RelayCommand(OnForgotPwdNext);
             //InitRecentAuthntication();
         }
 
@@ -193,6 +196,11 @@ namespace RideShare.ViewModels
             dlUser.profileImageEncoded = result.profileImageEncoded;
             dlUser.Gender = result.Gender;
             var response = driverLocatorService.SaveUserData(dlUser);
+        }
+
+        private void OnForgotPwdNext()
+        {
+            this.loginProcessor.MoveToForgotPasswordPage();
         }
     }
 }

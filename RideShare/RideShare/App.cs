@@ -1,4 +1,5 @@
 ﻿using Authentication;
+using Authentication.Models;
 using DriverLocator.Models;
 using RideShare.SharedInterfaces;
 using System;
@@ -40,51 +41,68 @@ namespace RideShare
         public static ObservableCollection<Vehicle> CurrentUserVehicles { get; set; }
         public static ObservableCollection<FavouritePlace> CurrentUserFavouritePlaces { get; set; }
         IAppDataService appDataService = DependencyService.Get<IAppDataService>();
-        
+        public enum DeviceTypes { iOS, Android, Windows };
+        public static DeviceTypes DeviceType;
+        public static int DeviceVersion;
 
-        public App(bool isLoading)
-        { 
+
+        public App(bool isLoading, string guid)
+        {
             if (isLoading)
             {
                 MainPage = new SplashScreen();
-            }
+            }            
             else
             {
+                UserInfoResponse userInfo = null;
                 MainPage = new SplashScreen();
-                Task.Factory.StartNew<bool>(() => {
-
-                    var accessToken = appDataService.Get("access_token");
-                    if (accessToken != null)
+                Task.Factory.StartNew<bool>(() =>
+                {
+                    if (String.IsNullOrEmpty(guid))
                     {
-                        var userInfo = Session.AuthenticationService.GetUserInfo(accessToken);
-                        if (userInfo.IsSuccess)
+                        var accessToken = appDataService.Get("access_token");
+                        if (accessToken != null)
                         {
+                            userInfo = Session.AuthenticationService.GetUserInfo(accessToken);
+                        }
+                        return false;
+                    }
+                    else
+                    {
+                        userInfo = Session.AuthenticationService.GetUserInfoByGUID(guid);
+                    }
+
+                    if (userInfo.IsSuccess)
+                    {
 #if WithNotification
-                        
+
 #else
                             IUrbanAirshipNotificationService urbanAirshipNotificationService = DependencyService.Get<IUrbanAirshipNotificationService>();
                             urbanAirshipNotificationService.InitializeNamedUser(userInfo.UserName);
 #endif
 
-                            Session.CurrentUserName = userInfo.UserName;
-                            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                            var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(userInfo.UserName);
-                            App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                            appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
-                            return true;
-                        }
-                    }
+                        Session.CurrentUserName = userInfo.UserName;
+                        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                        var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(userInfo.UserName);
+                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                        appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                        return true;
+                    }                    
 
                     return false;
 
-                }).ContinueWith((task) => {
+                }).ContinueWith((task) =>
+                {
 
                     Device.BeginInvokeOnMainThread(() =>
                     {
 
                         if (task.Result)
                         {
-                            MainPage = new MainPage();
+                            if (!String.IsNullOrEmpty(guid))
+                                MainPage = new NavigationPage(new RegisterPage());
+                            else
+                                MainPage = new MainPage();
                         }
                         else
                         {
@@ -92,10 +110,10 @@ namespace RideShare
                         }
 
                     });
-                       
-                    
+
+
                 });
-                
+
             }
         }
 

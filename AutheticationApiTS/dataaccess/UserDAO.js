@@ -13,6 +13,7 @@ var UserMongooseDAO = (function () {
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
+        userModel.resetPasswordGuid = user.resetPasswordGuid;
         var status;
         var self = this;
         // save the sample user
@@ -40,6 +41,7 @@ var UserMongooseDAO = (function () {
                     selecteduser.password = user.password;
                 selecteduser.userName = user.userName;
                 selecteduser.profileImage = user.profileImage;
+                selecteduser.resetPasswordGuid = user.resetPasswordGuid;
                 selecteduser.save(function (err) {
                     if (err)
                         self.onUserUpdated(new Error("Error updating user."), null);
@@ -65,6 +67,29 @@ var UserMongooseDAO = (function () {
                 userData.password = user.password;
                 userData.userName = user.userName;
                 userData.profileImage = user.profileImage;
+                userData.resetPasswordGuid = user.resetPasswordGuid;
+                self.onSelectedUserDataReceived(null, userData);
+            }
+        });
+    };
+    UserMongooseDAO.prototype.getSelectedUserByGuid = function (resetPasswordGuid) {
+        var userData = new User();
+        var self = this;
+        User.findOne({ resetPasswordGuid: resetPasswordGuid }, function (err, user) {
+            if (err)
+                self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
+            else if (!user) {
+                self.onSelectedUserDataReceived(new Error("User not found."), null);
+            }
+            else {
+                userData.email = user.email;
+                userData.gender = user.gender;
+                userData.firstName = user.firstName;
+                userData.lastName = user.lastName;
+                userData.password = user.password;
+                userData.userName = user.userName;
+                userData.profileImage = user.profileImage;
+                userData.resetPasswordGuid = user.resetPasswordGuid;
                 self.onSelectedUserDataReceived(null, userData);
             }
         });

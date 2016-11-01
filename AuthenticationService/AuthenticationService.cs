@@ -15,7 +15,7 @@ namespace Authentication
     public class AuthenticationService : IAuthenticationService
     {
 #if Local
-                private const string SERVER = "http://172.26.204.15:8078";
+                private const string SERVER = "http://172.26.204.146:8078";
 #else
         private const string SERVER = "http://vauthapp.herokuapp.com";
         #endif
@@ -23,6 +23,9 @@ namespace Authentication
         private const string CREATE_USER_URL = SERVER + "/authapp/useraccount";
         private const string AUTHENCATION_URL = SERVER + "/authapp/accesstoken";
         private const string USER_INFO_URL = SERVER + "/authapp/userinfo";
+        private const string USER_INFO_BY_GUID = SERVER + "/authapp/userinfobyguid/{0}";
+        private const string USER_INFO_BY_USERNAME_GUID_SEND_EMAIL_URL = SERVER + "/authapp/userinfosendemailwithguid/{0}";
+        private const string USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL = SERVER + "/authapp/userinfosendemailwithcode/{0}/{1}";
 
         public string authenticationToken=String.Empty;
 
@@ -85,5 +88,43 @@ namespace Authentication
             requestHandler.AccessToken = authenticationToken;
             return requestHandler.SendRequest<User, UpdateUserResponse>(user);
         }
+
+        public UserInfoResponse GetUserInfoByGUID(string guid)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Url = String.Format(USER_INFO_BY_GUID, guid);
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.AccessToken = authenticationToken;
+            var userInfo = requestHandler.SendRequest<UserInfoResponse>();
+            if (userInfo.IsSuccess)
+            {
+                IsAuthenticated = true;
+                authenticationToken = userInfo.Message;
+            }
+            else
+            {
+                IsAuthenticated = false;
+            }
+            return userInfo;
+        }
+
+        public ResponseBase GetUserInfoByUserNameAndSendEmail(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Url = String.Format(USER_INFO_BY_USERNAME_GUID_SEND_EMAIL_URL, userName);            
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.AccessToken = authenticationToken;
+            var userInfo = requestHandler.SendRequest<ResponseBase>();
+            return userInfo;
+        }
+
+        public ResponseBase UpdateUserPassWord(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = String.Format(USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL, userName, (userName.GetHashCode() % 100000).ToString());
+            requestHandler.AccessToken = authenticationToken;
+            return requestHandler.SendRequest<ResponseBase>();
+        }        
     }
 }

@@ -7,6 +7,7 @@ interface IUserDAO {
     addUser(user: IUser);
     updateUser(user: IUser);
     getSelectedUser(userName: string);
+    getSelectedUserByGuid(guid: string);
 }
 
 export = IUserDAO;

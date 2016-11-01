@@ -253,7 +253,8 @@ namespace RideShare.ViewModels
                 EMail = this.Email,
                 Password = this.Password,
                 profileImageEncoded = GetProfilePictureEncoded(),
-                Gender = this.gender
+                Gender = this.gender,
+                ResetPasswordGuid = null
             };
 
 
@@ -303,7 +304,8 @@ namespace RideShare.ViewModels
                 EMail = this.Email,
                 Password = this.password == "********" ? null : this.Password,
                 profileImageEncoded = GetProfilePictureEncoded(),
-                Gender = this.gender
+                Gender = this.gender,
+                ResetPasswordGuid = null
             };
 
             var Isvalid = AreDetailsValid(user, true);

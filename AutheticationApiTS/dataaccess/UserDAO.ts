@@ -22,6 +22,7 @@ class UserMongooseDAO implements IUserDAO
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
+        userModel.resetPasswordGuid = user.resetPasswordGuid;
 
         var status: boolean;
         var self = this;
@@ -53,6 +54,7 @@ class UserMongooseDAO implements IUserDAO
                     selecteduser.password = user.password;
                 selecteduser.userName = user.userName;
                 selecteduser.profileImage = user.profileImage;
+                selecteduser.resetPasswordGuid = user.resetPasswordGuid;
                 selecteduser.save(function (err) {
                     if (err) self.onUserUpdated(new Error("Error updating user."), null);
 
@@ -68,7 +70,7 @@ class UserMongooseDAO implements IUserDAO
         var userData: IUser = new User();
         var self = this;
          User.findOne({userName: userName}, function (err, user) {
-
+             
              if (err) self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
 
              else if (!user) {
@@ -82,11 +84,38 @@ class UserMongooseDAO implements IUserDAO
                  userData.password = user.password;
                  userData.userName = user.userName;
                  userData.profileImage = user.profileImage;
+                 userData.resetPasswordGuid = user.resetPasswordGuid;
                  self.onSelectedUserDataReceived(null, userData);
              }
 
          });
    
+    }
+
+    getSelectedUserByGuid(resetPasswordGuid: string) {
+        var userData: IUser = new User();
+        var self = this;
+        User.findOne({ resetPasswordGuid: resetPasswordGuid }, function (err, user) {
+            
+            if (err) self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
+
+            else if (!user) {
+                self.onSelectedUserDataReceived(new Error("User not found."), null);
+            }
+            else {
+                userData.email = user.email;
+                userData.gender = user.gender;
+                userData.firstName = user.firstName;
+                userData.lastName = user.lastName;
+                userData.password = user.password;
+                userData.userName = user.userName;
+                userData.profileImage = user.profileImage;
+                userData.resetPasswordGuid = user.resetPasswordGuid;
+                self.onSelectedUserDataReceived(null, userData);
+            }
+
+        });
+
     }
 }
 

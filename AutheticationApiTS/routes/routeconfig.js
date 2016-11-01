@@ -8,6 +8,9 @@ var RouteConfig = (function () {
     }
     RouteConfig.prototype.initApiRoutes = function () {
         var authenticationApi = new AuthenticationAPI();
+        this.apiRoutes.get('/userinfosendemailwithguid/:userName', authenticationApi.userinfosendemailwithguid);
+        this.apiRoutes.put('/userinfosendemailwithcode/:userName/:code', authenticationApi.userinfosendemailwithcode);
+        this.apiRoutes.get('/userinfobyguid/:resetPasswordGuid', authenticationApi.userinfobyguid);
         this.apiRoutes.post('/useraccount', authenticationApi.useraccount);
         this.apiRoutes.post('/accesstoken', authenticationApi.accesstoken);
         // route middleware to verify a token
@@ -19,4 +22,4 @@ var RouteConfig = (function () {
     return RouteConfig;
 }());
 module.exports = RouteConfig;
-//# sourceMappingURL=routeconfig.js.map
+//# sourceMappingURL=RouteConfig.js.map

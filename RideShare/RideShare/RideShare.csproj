@@ -39,6 +39,7 @@
     <Compile Include="Behaviors\NumberValidatorBehavior.cs" />
     <Compile Include="Behaviors\PasswordValidatorBehavior.cs" />
     <Compile Include="Behaviors\RequiredFieldValidatorBehavior.cs" />
+    <Compile Include="Common\IForgotPasswordPageProcessor.cs" />
     <Compile Include="Common\ILoginPageProcessor.cs" />
     <Compile Include="Common\IMapPageProcessor.cs" />
     <Compile Include="Common\ISignUpPageProcessor.cs" />
@@ -46,6 +47,9 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="CustomMap.cs" />
+    <Compile Include="ForgotPasswordStepOne.xaml.cs">
+      <DependentUpon>ForgotPasswordStepOne.xaml</DependentUpon>
+    </Compile>
     <Compile Include="HistoryView.xaml.cs">
       <DependentUpon>HistoryView.xaml</DependentUpon>
     </Compile>
@@ -109,6 +113,7 @@
     </Compile>
     <Compile Include="Utilities\LocationUtility.cs" />
     <Compile Include="ViewModels\CustomMapViewModel.cs" />
+    <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\HistoryViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\LogOutViewModel.cs" />
@@ -294,7 +299,11 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="ForgotPasswordStepOne.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.2.0.45\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.2.0.45\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

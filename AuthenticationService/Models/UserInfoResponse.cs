@@ -27,5 +27,8 @@ namespace Authentication.Models
         [JsonProperty("gender")]
         public string Gender { get; set; }
 
+        [JsonProperty("resetPasswordGuid")]
+        public string ResetPasswordGuid { get; set; }
+
     }
 }

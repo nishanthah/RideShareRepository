@@ -15,7 +15,8 @@ namespace RideShare.Droid
 {
     //, Icon = "@drawable/app_icon"
     [Activity(Label = "RideShare", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED", "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED", "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED" }, Categories = new[] { "android.intent.category.DEFAULT" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.NOTIFICATIONACCEPTED", "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED", "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED", "com.virtusa.driverlocatorforms.LOADINGCOMPLETED", "android.intent.action.VIEW" }, Categories = new[] { "android.intent.category.DEFAULT" }, DataScheme = "http",
+    DataHost = "rideshareresetpassword")]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
     {
 
@@ -30,10 +31,12 @@ namespace RideShare.Droid
             ActionBar.SetIcon(null);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             Xamarin.FormsMaps.Init(this, bundle);
+            App.DeviceType = App.DeviceTypes.Android;
+            App.DeviceVersion = Convert.ToInt32(Build.VERSION.Sdk);
             
             if(Intent.Action == "com.virtusa.driverlocatorforms.LOADINGCOMPLETED")
             {
-                LoadApplication(new App(false));
+                LoadApplication(new App(false, null));
             }
             else if(Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONREJECTED")
             {
@@ -55,6 +58,14 @@ namespace RideShare.Droid
                     LoadApplication(new App(notificationInfo));
                 }
             }
+            if (Intent.Data != null && Intent.Data.Host != null && Intent.Data.Host == "rideshareresetpassword")
+            {
+                string newguid = "9c122999-e0ae-2a35-de96-b410fc1c2d91";//Intent.GetStringExtra("id");
+            
+            //App.DeviceVersion = Build.VERSION;
+                LoadApplication(new App(false, newguid));
+
+            }
             else if (Intent.Action == "com.virtusa.driverlocatorforms.NOTIFICATIONOPENED")
             {
                 if (Intent.HasExtra(KEY_REQUEST_ID_EXTRA))
@@ -69,14 +80,14 @@ namespace RideShare.Droid
             {
                 ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
                 string channelId = prefs.GetString("urban_airship_client_id", null);
-                if(!String.IsNullOrEmpty(channelId))
+                if (!String.IsNullOrEmpty(channelId))
                 {
-                    LoadApplication(new App(false));
+                    LoadApplication(new App(false, null));
                 }
                 else
                 {
 #if WithNotification
-                            LoadApplication(new App(false));
+                    LoadApplication(new App(false, null));
 #else
                             LoadApplication(new App(true));
 #endif

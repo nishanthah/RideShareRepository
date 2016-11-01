@@ -13,6 +13,9 @@ namespace Authentication.Common
         UserInfoResponse GetUserInfo(string token);
         CreateUserResponse CreateUser(User user);
         UpdateUserResponse UpdateUser(User user);
+        UserInfoResponse GetUserInfoByGUID(string guid);
+        ResponseBase GetUserInfoByUserNameAndSendEmail(string userName);
+        ResponseBase UpdateUserPassWord(string userName);
         string AuthenticationToken { get; set; }
 
         bool IsAuthenticated { get; }

@@ -15,6 +15,9 @@ class RouteConfig {
     initApiRoutes() {
 
         var authenticationApi = new AuthenticationAPI();
+        this.apiRoutes.get('/userinfosendemailwithguid/:userName', authenticationApi.userinfosendemailwithguid);
+        this.apiRoutes.put('/userinfosendemailwithcode/:userName/:code', authenticationApi.userinfosendemailwithcode);
+        this.apiRoutes.get('/userinfobyguid/:resetPasswordGuid', authenticationApi.userinfobyguid);
         this.apiRoutes.post('/useraccount', authenticationApi.useraccount);
         this.apiRoutes.post('/accesstoken', authenticationApi.accesstoken);
         // route middleware to verify a token

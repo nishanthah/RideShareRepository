@@ -16,6 +16,7 @@ namespace RideShare
     {
         IUrbanAirshipNotificationService urbanAirshipNotificationService = DependencyService.Get<IUrbanAirshipNotificationService>();
 
+
         public LogInPage()
         {
             InitializeComponent();
@@ -99,5 +100,9 @@ namespace RideShare
                 
         }
 
+        public void MoveToForgotPasswordPage()
+        {
+            App.Current.MainPage = new ForgotPasswordStepOne();
+        }
     }
 }

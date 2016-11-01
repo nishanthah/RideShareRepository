@@ -38,8 +38,15 @@
           <Button x:Name="translateButon" Text="Log In" Command="{Binding LoginCommand}" BackgroundColor="#467891" WidthRequest="300" HorizontalOptions="Center"/>
           <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="300" HorizontalOptions="Center"/>
           <Label Text="{Binding ErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>
+          
+          <Label Text="Forgot Password" FontSize="16" TextColor="White" HorizontalOptions="Center" Margin="0,5,0,0">
+          <Label.GestureRecognizers>
+            <TapGestureRecognizer
+                Command="{Binding TapForgotPwdOneCommand}" />
+          </Label.GestureRecognizers>
+        </Label>
+          
         </StackLayout>
-
       </Grid>
 
       <ActivityIndicator x:Name="busyIndicator" Color="#8c8c8c" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"

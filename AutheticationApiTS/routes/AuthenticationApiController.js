@@ -1,4 +1,5 @@
-"use strict";
+var guid = require('guid');
+var nodemailer = require('nodemailer');
 var User = require("../models/User");
 var UserResponse = require("../models/UserResponse");
 var TokenPayload = require("../models/TokenPayload");
@@ -19,6 +20,7 @@ var AuthhenticationAPIController = (function () {
         user.password = req.body.password;
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
+        user.resetPasswordGuid = req.body.resetPasswordGuid;
         try {
             var dataAccess = ApplicationContext.getDB();
             dataAccess.addUser(user);
@@ -79,11 +81,151 @@ var AuthhenticationAPIController = (function () {
                 userResponse.lastName = user.lastName;
                 userResponse.userName = user.userName;
                 userResponse.profileImage = user.profileImage;
+                userResponse.resetPasswordGuid = user.resetPasswordGuid;
                 userResponse.success = true;
                 res.json(userResponse);
             }
             else {
                 res.json({ success: false, message: 'No Permissions to access' });
+            }
+        };
+    };
+    // /userinfobyguid
+    AuthhenticationAPIController.prototype.userinfobyguid = function (req, res) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUserByGuid(req.params.resetPasswordGuid);
+        dataAccess.onSelectedUserDataReceived = function (error, user) {
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+            else if (user) {
+                var userResponse = new UserResponse();
+                userResponse.gender = user.gender;
+                userResponse.email = user.email;
+                userResponse.firstName = user.firstName;
+                userResponse.lastName = user.lastName;
+                userResponse.userName = user.userName;
+                userResponse.profileImage = user.profileImage;
+                userResponse.resetPasswordGuid = user.resetPasswordGuid;
+                var tokenPayload = new TokenPayload();
+                tokenPayload.userName = user.userName;
+                tokenPayload.canAccessUserInfo = true;
+                var token = jwt.sign(tokenPayload, Config.secret, {
+                    expiresIn: '24h' // expires in 24 hours
+                });
+                var accessToken = new AccessToken();
+                accessToken.token = token;
+                accessToken.success = true;
+                userResponse.message = token;
+                userResponse.success = true;
+                res.json(userResponse);
+            }
+            else {
+                res.json({ success: false, message: 'No user found' });
+            }
+        };
+    };
+    //userinfosendemailwithguid
+    AuthhenticationAPIController.prototype.userinfosendemailwithguid = function (req, res) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser(req.params.userName);
+        dataAccess.onSelectedUserDataReceived = function (error, user) {
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+            else if (user) {
+                var smtpConfig = {
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: 'virtusamicros@gmail.com',
+                        pass: '1qaz2wsx@W'
+                    }
+                };
+                var newguid = guid.create();
+                var transporter = nodemailer.createTransport(smtpConfig);
+                // setup e-mail data with unicode symbols
+                var mailOptions = {
+                    from: '"RideShare" <virtusamicros@gmail.com>',
+                    to: user.email,
+                    subject: 'Reset Password',
+                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id"' + newguid + '>' + newguid + '</a>' // html body
+                };
+                //send mail with defined transport object
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        return console.log(error);
+                    }
+                    user.resetPasswordGuid = newguid;
+                    dataAccess.updateUser(user);
+                    dataAccess.onUserUpdated = function (error, status) {
+                        if (error) {
+                            res.json({ success: false, message: error.message });
+                        }
+                        else if (status) {
+                            res.json({ success: true });
+                        }
+                        else {
+                            res.json({ success: false, message: "Cant update the User" });
+                        }
+                    };
+                });
+            }
+            else {
+                res.json({ success: false, message: 'No user found' });
+            }
+        };
+    };
+    //userinfosendemailwithcode
+    AuthhenticationAPIController.prototype.userinfosendemailwithcode = function (req, res) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser(req.params.userName);
+        dataAccess.onSelectedUserDataReceived = function (error, user) {
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+            else if (user) {
+                var smtpConfig = {
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    secure: false,
+                    auth: {
+                        user: 'virtusamicros@gmail.com',
+                        pass: '1qaz2wsx@W'
+                    }
+                };
+                var transporter = nodemailer.createTransport(smtpConfig);
+                // setup e-mail data with unicode symbols
+                var mailOptions = {
+                    from: '"RideShare" <virtusamicros@gmail.com>',
+                    to: user.email,
+                    subject: 'Reset Password',
+                    html: '<p>Please enter the following code as your password when login in: </p>' + req.params.code +
+                        '</br> <p> You can reset your password in Edit Profile, once you are logged in </p>' // html body
+                };
+                // send mail with defined transport object
+                transporter.sendMail(mailOptions, function (error, info) {
+                    if (error) {
+                        return console.log(error);
+                    }
+                    user.password = req.params.code;
+                    dataAccess.updateUser(user);
+                    dataAccess.onUserUpdated = function (error, status) {
+                        if (error) {
+                            res.json({ success: false, message: error.message });
+                        }
+                        else if (status) {
+                            res.json({ success: true });
+                        }
+                        else {
+                            res.json({ success: false, message: "Cant update the User" });
+                        }
+                    };
+                });
+            }
+            else {
+                res.json({ success: false, message: 'No user found' });
             }
         };
     };
@@ -97,6 +239,7 @@ var AuthhenticationAPIController = (function () {
         user.password = req.body.password;
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
+        user.resetPasswordGuid = req.body.resetPasswordGuid;
         var dataAccess = ApplicationContext.getDB();
         dataAccess.updateUser(user);
         dataAccess.onUserUpdated = function (error, status) {
@@ -138,6 +281,6 @@ var AuthhenticationAPIController = (function () {
             return res.json({ success: false, message: 'Token not found.' });
     };
     return AuthhenticationAPIController;
-}());
+})();
 module.exports = AuthhenticationAPIController;
 //# sourceMappingURL=AuthenticationApiController.js.map
