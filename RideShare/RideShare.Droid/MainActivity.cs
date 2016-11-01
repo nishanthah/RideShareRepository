@@ -89,7 +89,7 @@ namespace RideShare.Droid
 #if WithNotification
                     LoadApplication(new App(false, null));
 #else
-                            LoadApplication(new App(true));
+                            LoadApplication(new App(true, null));
 #endif
 
                 }
