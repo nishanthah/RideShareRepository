@@ -152,7 +152,7 @@
             </Style>
           </Button.Style>          
         </Button>
-
+        <Label Text="{Binding ErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>
         <Label Text="Already have an account? Login" FontSize="13" HorizontalOptions="Center" FontAttributes="Bold" IsVisible="{Binding isAuthenticated, Converter={StaticResource inverseBooleanConverter}}" >
           <Label.GestureRecognizers>
             <TapGestureRecognizer

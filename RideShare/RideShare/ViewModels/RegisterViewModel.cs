@@ -29,6 +29,7 @@ namespace RideShare.ViewModels
         string passwordErrorMessage = "The password must be 8-15 characters long and must include atleast one capital letter and a special character";
         string requiredFieldErrorMessage = "Required";
         string emailAddressErrorMessage = "Invalid email";
+        string errorMessage;
 
 
         ISignUpPageProcessor signUpPageProcessor;
@@ -76,7 +77,19 @@ namespace RideShare.ViewModels
 
         public ICommand SignUpCommand { protected set; get; }
 
+        public string ErrorMessage
+        {
+            get
+            {
+                return errorMessage;
+            }
 
+            set
+            {
+                errorMessage = value;
+                OnPropertyChanged("ErrorMessage");
+            }
+        }
 
         public bool isAuthenticated
         {
@@ -287,11 +300,7 @@ namespace RideShare.ViewModels
                 }
                 else
                     this.signUpPageProcessor.MoveToLoginPage();
-            }
-            else
-            {
-                ErrorMessage = "Sign up failed";
-            }
+            }            
         }
 
         private void Update()
@@ -349,11 +358,34 @@ namespace RideShare.ViewModels
 
         bool AreDetailsValid(User user, bool isUpdate = false)
         {
+            bool returnValue = true;
             if (!isUpdate)
-                return (!string.IsNullOrWhiteSpace(user.UserName) &&
-                !string.IsNullOrWhiteSpace(user.Password) &&
-                !string.IsNullOrWhiteSpace(user.UserName) &&
-                !string.IsNullOrWhiteSpace(user.EMail));
+            {
+                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                var response = driverLocatorService.GetSelectedUserCoordinate(user.UserName);
+                if (!response.IsSuccess && response.UserLocation == null)
+                {
+                    this.ErrorMessage = "Username already exists";
+                    returnValue = false;
+                }
+                else
+                {
+                    this.ErrorMessage = String.Empty;
+                    returnValue = true;
+                }
+
+                if (string.IsNullOrWhiteSpace(user.UserName) ||
+                string.IsNullOrWhiteSpace(user.Password) ||
+                string.IsNullOrWhiteSpace(user.UserName) ||
+                string.IsNullOrWhiteSpace(user.EMail))
+                {
+                    this.ErrorMessage = "Register failed. One or more fields is/are empty";
+                    returnValue = false;
+                }
+
+                return returnValue;
+            }
+
             else
                 return (!string.IsNullOrWhiteSpace(user.UserName) &&
                !string.IsNullOrWhiteSpace(user.UserName) &&
