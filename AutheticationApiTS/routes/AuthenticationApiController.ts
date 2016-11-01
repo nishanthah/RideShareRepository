@@ -191,7 +191,7 @@ class AuthhenticationAPIController{
                     from: '"RideShare" <virtusamicros@gmail.com>', // sender address
                     to: user.email, // list of receivers
                     subject: 'Reset Password', // Subject line
-                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id"' + newguid + '>' + newguid + '</a>' // html body
+                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id="' + newguid + '>' + newguid + '</a>' // html body
                 };
             
                  //send mail with defined transport object
@@ -258,8 +258,8 @@ class AuthhenticationAPIController{
                     from: '"RideShare" <virtusamicros@gmail.com>', // sender address
                     to: user.email, // list of receivers
                     subject: 'Reset Password', // Subject line
-                    html: '<p>Please enter the following code as your password when login in: </p>' + req.params.code +
-                    '</br> <p> You can reset your password in Edit Profile, once you are logged in </p>' // html body
+                    html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
+                    '</b></br> <p> You can reset your password in Edit Profile, once you are logged in </p>' // html body
                 };
             
                 // send mail with defined transport object
