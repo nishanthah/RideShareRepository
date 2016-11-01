@@ -42,7 +42,7 @@
        </StackLayout>
       </StackLayout>
 
-       <StackLayout x:Name ="infoWindowPopup" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="1, 1, 1, 100" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="5">        
+       <StackLayout x:Name ="infoWindowPopup" IsVisible="False" Orientation="Vertical" AbsoluteLayout.LayoutBounds="1, 1, 1, 150" AbsoluteLayout.LayoutFlags="PositionProportional, WidthProportional" Margin="5">        
         <Label FontSize="18" x:Name ="infoWindowTitle" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
           <Label FontSize="15" x:Name ="infoWindowDescription" TextColor="#ffa31a"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
         <StackLayout Orientation="Horizontal" >        
@@ -54,6 +54,11 @@
         <Label FontSize="15" x:Name="notificationMessage"  VerticalOptions="Center" HorizontalOptions="FillAndExpand" HorizontalTextAlignment="Center" VerticalTextAlignment="Center"  />
       </StackLayout>
 
+      <StackLayout Orientation="Vertical" AbsoluteLayout.LayoutBounds="1,70, AutoSize, AutoSize" AbsoluteLayout.LayoutFlags="XProportional" Margin="10">
+        <Image x:Name="openNavigationButton" Source="route1.png" WidthRequest="50" Margin="5" />
+      </StackLayout>
+     
+      
       <ActivityIndicator x:Name="busyIndicator"
                 AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5" />
 	  </AbsoluteLayout>

@@ -45,7 +45,7 @@ namespace RideShare.ViewPresenter
         {
             OnNewCoordinatesRecived();
         }
-
+       
         private void StartDestinationFinding()
         {
             Action destinationFindingWork = new Action(() =>

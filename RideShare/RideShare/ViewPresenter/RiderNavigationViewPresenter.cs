@@ -44,7 +44,7 @@ namespace RideShare.ViewPresenter
             Coordinate driverCoordinate = new Coordinate() { Latitude = double.Parse(driver.Location.Latitude),Longitude = double.Parse(driver.Location.Longitude) };
             Coordinate riderCoordinate = new Coordinate() { Latitude = double.Parse(rider.Location.Latitude), Longitude = double.Parse(rider.Location.Longitude) };
 
-            var directions = GetDirections(driverCoordinate, riderCoordinate).Routes.SingleOrDefault().Legs.SingleOrDefault();
+            var directions = GetDirections(driverCoordinate, riderCoordinate).Routes.First().Legs.First();
 
             // Create driver pin
             MapPin driverPin = new MapPin();

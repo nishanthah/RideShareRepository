@@ -15,6 +15,7 @@ using Plugin.Toasts;
 using System.Collections.ObjectModel;
 using GoogleApiClient.Models;
 using RideShare.ViewPresenter;
+using Common;
 
 namespace RideShare
 {
@@ -22,7 +23,7 @@ namespace RideShare
     {
         public MapPin SourcePin { get; set; }
         public MapPin DestinationPin { get; set; }
-        public List<Position> RouteCoordinates { get; set; } 
+        public List<Position> RouteCoordinates { get; set; }
     }
 
 
@@ -39,13 +40,16 @@ namespace RideShare
     }
 
 
-    public partial class MapView : ContentPage,IMapPageProcessor,ILocationSelectionResult
+    public partial class MapView : ContentPage, IMapPageProcessor, ILocationSelectionResult, ILocationServiceStatusCallback
     {
         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
         CustomMap map;
         //Label l = new Label() {HorizontalOptions = LayoutOptions.Center};
         IMapSocketService mapSocketService;
+        ILocationServiceHelper locationServiceHelper;
+        INavigationService navigationService;
 
+        bool waitingForLocationServiceEnable = false;
         public Action<LocationSearchResult> OnLocationSelected { get; set; }
         public Action<CustomPin> OnMapInfoWindowClicked { get; set; }
         public Action OnNewCoordinatesRecived { get; set; }
@@ -63,45 +67,58 @@ namespace RideShare
 
         public MapView()
         {
-            Init();
+            Init();           
+            InitMapData();
+        }
+
+
+        private void InitMapData(NotificationInfo notificationInfoData = null)
+        {
             ShowBusyIndecator();
-           
-            Task.Factory.StartNew<BaseMapViewPresenter>(() => {
-                
-                PresenterLocator presenterLocator = new PresenterLocator(this, driverLocatorService);
-                return presenterLocator.GetPrecenter(null);
-
-            }).ContinueWith((task) =>{
-
-                Device.BeginInvokeOnMainThread(() =>
+            if (locationServiceHelper.IsGPSAvailable)
+            {
+                Task.Factory.StartNew<BaseMapViewPresenter>(() =>
                 {
-                    precenter = task.Result;
-                });
-            });
 
+                    PresenterLocator presenterLocator = new PresenterLocator(this, driverLocatorService);
+                    return presenterLocator.GetPrecenter(notificationInfoData);
+
+                }).ContinueWith((task) =>
+                {
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        precenter = task.Result;
+                    });
+                });
+            }
+            else
+            {
+                DisplayAlert("GPS Location Not Available", "Please turn on your device location service", "Yes", "No").ContinueWith((task) =>
+                {
+                    if (task.Result)
+                    {
+                        locationServiceHelper.ShowLocationSettings();
+                    }
+
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        waitingForLocationServiceEnable = true;
+                    });
+
+
+                });
+
+            }
         }
 
         public MapView(NotificationInfo notificationInfoData)
         {
             Init();
-            ShowBusyIndecator();
+            InitMapData(notificationInfoData);
 
-            Task.Factory.StartNew<BaseMapViewPresenter>(() => {
-
-                PresenterLocator presenterLocator = new PresenterLocator(this, driverLocatorService);
-                return presenterLocator.GetPrecenter(notificationInfoData);
-
-            }).ContinueWith((task) => {
-
-                Device.BeginInvokeOnMainThread(() =>
-                {
-                    precenter = task.Result;                   
-                });
-            });
-
-           
         }
-        
+
         async void OnInfoWindowClicked(CustomPin pin)
         {
             SelectedPin = pin;
@@ -115,21 +132,40 @@ namespace RideShare
             InitMap();
             InitPopup();
             MapPins = new List<CustomPin>();
-           
-                    
+
+
             notificationPopup.BackgroundColor = new Color(0, 0, 0, 0.5);
+            
             destinationSelector.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDestinationSelector));
 
-            
+
             cancelPopupButton.Clicked += CancelPopupButton_Clicked;
             sendRequestButon.Clicked += SendRequestButon_Clicked;
+            openNavigationButton.GestureRecognizers.Add(new TapGestureRecognizer(OpenNavigationButton_Clicked));
             btnToolBarChangeStatus.Text = "Set PikedUp";
             cancelinfoWindowPopupButton.Clicked += CancelinfoWindowPopupButton_Clicked;
             this.OnLocationSelected = OnLocationSelecteResult;
             this.OnMapInfoWindowClicked = OnInfoWindowClicked;
             mapSocketService = DependencyService.Get<IMapSocketService>();
+            locationServiceHelper = DependencyService.Get<ILocationServiceHelper>();
+            navigationService = DependencyService.Get<INavigationService>();
+            Session.LocationServiceStatusCallback = this;
 
         }
+
+        private void OpenNavigationButton_Clicked(View sender, object e)
+        {
+            if(SelectedPin!=null)
+            {
+                navigationService.ShowNavigationApp(SelectedPin.Pin.Position.Longitude, SelectedPin.Pin.Position.Latitude);
+            }
+            else
+            {
+                ShowInfoWindowPopupBox(new InfoWindowContent() { Title = "Please Select a pin", Description = "Please select a pin to start navigation" });
+            }
+            
+        }
+
         public void ShowBusyIndecator()
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -138,7 +174,7 @@ namespace RideShare
                 busyIndicator.IsRunning = true;
                 busyIndicator.IsVisible = true;
             });
-           
+
         }
 
         public void HideBusyIndecator()
@@ -149,7 +185,7 @@ namespace RideShare
                 busyIndicator.IsRunning = false;
                 busyIndicator.IsVisible = false;
             });
-               
+
         }
 
         private void BtnToolBarChangeStatus_Clicked(object sender, EventArgs e)
@@ -231,9 +267,10 @@ namespace RideShare
 
         }
 
-        public void RefreshPins(bool canMoveToLocation,Func<List<CustomPin>> loadPinsFunction)
+        public void RefreshPins(bool canMoveToLocation, Func<List<CustomPin>> loadPinsFunction)
         {
-            Task<List<CustomPin>>.Factory.StartNew(loadPinsFunction).ContinueWith((task) => {
+            Task<List<CustomPin>>.Factory.StartNew(loadPinsFunction).ContinueWith((task) =>
+            {
                 Device.BeginInvokeOnMainThread(() =>
                 {
                     try
@@ -249,26 +286,27 @@ namespace RideShare
                         }
                         HideBusyIndecator();
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
 
                     }
-                   
+
                 });
             });
         }
- 
+
         private void SetPins(List<CustomPin> customPins)
         {
-           foreach(var pin in customPins)
+            foreach (var pin in customPins)
             {
                 map.Pins.Add(pin.Pin);
             }
         }
 
-        public void RefreshRoute(bool canMoveToLocation,Func<RouteData> getDataFunction)
+        public void RefreshRoute(bool canMoveToLocation, Func<RouteData> getDataFunction)
         {
-            Task<RouteData>.Factory.StartNew(getDataFunction).ContinueWith((task) => {
+            Task<RouteData>.Factory.StartNew(getDataFunction).ContinueWith((task) =>
+            {
 
                 Device.BeginInvokeOnMainThread(() =>
                 {
@@ -300,7 +338,7 @@ namespace RideShare
 
         }
 
-        public void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText, Action confirmAction,Action cancelAction)
+        public void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText, Action confirmAction, Action cancelAction)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
@@ -312,8 +350,8 @@ namespace RideShare
                 popupCancelAction = cancelAction;
             });
 
-            
-        }        
+
+        }
 
         public void HideDoubleButtonPopupBox()
         {
@@ -333,7 +371,7 @@ namespace RideShare
             Navigation.PushAsync(new LocationSearch(this));
         }
 
-       
+
 
         void OnLocationSelecteResult(LocationSearchResult result)
         {
@@ -349,13 +387,16 @@ namespace RideShare
                 destinationText.Text = String.Format("{0}", destination.LocationName);
                 SelectedDestination = destination;
             });
-                
+
         }
         public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
         {
-            infoWindowTitle.Text = infoWindowContent.Title;
-            infoWindowDescription.Text = infoWindowContent.Description;
-            infoWindowPopup.IsVisible = true;            
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                infoWindowTitle.Text = infoWindowContent.Title;
+                infoWindowDescription.Text = infoWindowContent.Description;
+                infoWindowPopup.IsVisible = true;
+            });
         }
 
         public void HideInfoWindowPopupBox()
@@ -380,8 +421,14 @@ namespace RideShare
                     btnToolBarChangeStatus.Text = status;
                 }
             });
-                
+
         }
+
+        public void OnLocationStatusChange(LocationServiceStatus status)
+        {
+            InitMapData();
+        }
+
 
         #endregion MapViewRelatedFunctions
 

@@ -1,4 +1,5 @@
 ﻿using Authentication.Common;
+using Common;
 using Common.Models;
 using System;
 using System.Collections.Generic;
@@ -63,5 +64,8 @@ namespace RideShare
             get { return favouriteLocations; }
         }
 
+        public static bool IsGPSEnabled { get; set; }
+
+        public static ILocationServiceStatusCallback LocationServiceStatusCallback { get; set; }
     }
 }

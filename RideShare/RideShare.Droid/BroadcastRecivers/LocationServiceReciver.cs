@@ -12,13 +12,15 @@ using Android.Widget;
 using Java.Lang;
 using System.Threading;
 using RideShare.Droid.Services;
+using Android.Provider;
 
 namespace RideShare.Droid.BroadcastRecivers
 {
     [BroadcastReceiver(Enabled = true)]
-    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED", "com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED" })]
+    [IntentFilter(new[] { "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED", "com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED"})]
     public class LocationServiceReciver : BroadcastReceiver
     {
+        private const int LocationModeOff = -1;
         public override void OnReceive(Context context, Intent intent)
         {
             if(intent.Action == "com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED")
@@ -29,6 +31,7 @@ namespace RideShare.Droid.BroadcastRecivers
             {
                 context.StartService(new Intent(context, typeof(HistoryRouteUpdatorService)));
             }
+           
         }
     }
 }

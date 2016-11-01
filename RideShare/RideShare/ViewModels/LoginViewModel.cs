@@ -115,8 +115,6 @@ namespace RideShare.ViewModels
                             App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
                             
                             loginProcessor.MoveToMainPage();                            
-
-                            loginProcessor.MoveToMainPage();
                         });
 
                     }

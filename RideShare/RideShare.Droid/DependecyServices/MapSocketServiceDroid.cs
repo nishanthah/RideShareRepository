@@ -27,7 +27,7 @@ namespace RideShare.Droid.DependecyServices
 
         private void MapUpdated(object obj)
         {
-            MapCoordinateChanged(obj, null);
+            MapCoordinateChanged?.Invoke(obj, null);
         }
     }
 }
