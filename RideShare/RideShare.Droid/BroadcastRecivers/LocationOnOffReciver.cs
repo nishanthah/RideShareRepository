@@ -21,17 +21,17 @@ namespace RideShare.Droid.BroadcastRecivers
         
         public override void OnReceive(Context context, Intent intent)
         {
-            if (intent.Action == LocationManager.ProvidersChangedAction)
+            if (intent.Action == LocationManager.ProvidersChangedAction && Session.LocationServiceStatusCallback != null)
             {
                 LocationManager lm = (LocationManager)MainApp.Context.GetSystemService(Context.LocationService);
                 if(lm.IsProviderEnabled(LocationManager.GpsProvider))
                 {
 
-                    Session.LocationServiceStatusCallback?.OnLocationStatusChange(LocationServiceStatus.Available);
+                    Session.LocationServiceStatusCallback.OnLocationStatusChange(LocationServiceStatus.Available);
                 }
                 else
                 {
-                    Session.LocationServiceStatusCallback?.OnLocationStatusChange(LocationServiceStatus.OutOfService);
+                    Session.LocationServiceStatusCallback.OnLocationStatusChange(LocationServiceStatus.OutOfService);
                 }
 
             }

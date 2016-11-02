@@ -20,7 +20,6 @@ using Android.Gms.Common.Apis;
 using Android.Gms.Common;
 using Android.Gms.Location;
 using Java.Lang;
-using static Android.Content.IntentSender;
 
 [assembly: Xamarin.Forms.Dependency(typeof(RideShare.Droid.DependecyServices.LocationServiceDroid))]
 namespace RideShare.Droid.DependecyServices
