@@ -99,14 +99,6 @@ var AuthhenticationAPIController = (function () {
                 res.json({ success: false, message: error.message });
             }
             else if (user) {
-                var userResponse = new UserResponse();
-                userResponse.gender = user.gender;
-                userResponse.email = user.email;
-                userResponse.firstName = user.firstName;
-                userResponse.lastName = user.lastName;
-                userResponse.userName = user.userName;
-                userResponse.profileImage = user.profileImage;
-                userResponse.resetPasswordGuid = user.resetPasswordGuid;
                 var tokenPayload = new TokenPayload();
                 tokenPayload.userName = user.userName;
                 tokenPayload.canAccessUserInfo = true;
@@ -116,9 +108,7 @@ var AuthhenticationAPIController = (function () {
                 var accessToken = new AccessToken();
                 accessToken.token = token;
                 accessToken.success = true;
-                userResponse.message = token;
-                userResponse.success = true;
-                res.json(userResponse);
+                res.json(accessToken);
             }
             else {
                 res.json({ success: false, message: 'No user found' });
@@ -150,7 +140,8 @@ var AuthhenticationAPIController = (function () {
                     from: '"RideShare" <virtusamicros@gmail.com>',
                     to: user.email,
                     subject: 'Reset Password',
-                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '">' + newguid + '</a>' // html body
+                    html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '">' + newguid + '</a>' +
+                        '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
                 };
                 //send mail with defined transport object
                 transporter.sendMail(mailOptions, function (error, info) {
@@ -202,7 +193,8 @@ var AuthhenticationAPIController = (function () {
                     to: user.email,
                     subject: 'Reset Password',
                     html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
-                        '</b></br> <p> You can reset your password in Edit Profile, once you are logged in </p>' // html body
+                        '</b></br> <p> You can reset your password in Edit Profile, once you are logged in </p>' +
+                        '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
                 };
                 // send mail with defined transport object
                 transporter.sendMail(mailOptions, function (error, info) {

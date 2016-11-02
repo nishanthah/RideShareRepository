@@ -95,11 +95,13 @@ namespace Authentication
             requestHandler.Url = String.Format(USER_INFO_BY_GUID, guid);
             requestHandler.Method = HttpMethod.GET;
             requestHandler.AccessToken = authenticationToken;
-            var userInfo = requestHandler.SendRequest<UserInfoResponse>();
-            if (userInfo.IsSuccess)
+            var authenticationInfo = requestHandler.SendRequest<AuthenticationResponse>();
+            UserInfoResponse userInfo = null;
+            if (authenticationInfo.IsSuccess)
             {
                 IsAuthenticated = true;
-                authenticationToken = userInfo.Message;
+                authenticationToken = authenticationInfo.Token;
+                userInfo = GetUserInfo(authenticationToken);
             }
             else
             {
