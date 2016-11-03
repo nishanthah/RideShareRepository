@@ -470,15 +470,17 @@ namespace RideShare.ViewModels
             string emailRegex = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
         @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
 
-            string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";            
+            string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
 
-            IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
+            if (this.password != "********")
+                IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
                 !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
                 && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && 
                     (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
-
-
-
+            else
+                IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
+                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
         }
     }
 }
