@@ -62,10 +62,9 @@ namespace RideShare
                     {
                         var accessToken = appDataService.Get("access_token");
                         if (accessToken != null)
-                        {
                             userInfo = Session.AuthenticationService.GetUserInfo(accessToken);
-                        }
-                        return false;
+                        else
+                            return false;
                     }
                     else
                     {

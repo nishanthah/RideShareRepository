@@ -363,7 +363,7 @@ namespace RideShare.ViewModels
             {
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var response = driverLocatorService.GetSelectedUserCoordinate(user.UserName);
-                if (!response.IsSuccess && response.UserLocation == null)
+                if (response.IsSuccess && response.UserLocation != null)
                 {
                     this.ErrorMessage = "Username already exists";
                     returnValue = false;

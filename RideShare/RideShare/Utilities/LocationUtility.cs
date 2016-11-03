@@ -24,7 +24,7 @@ namespace RideShare.Utilities
             int plat = 0;
             int plng = 0;
             System.Text.StringBuilder encodedCoordinates = new System.Text.StringBuilder();
-            if(coordinates!= null)
+            if (coordinates != null)
             {
                 foreach (CommonModels.Location coordinate in coordinates)
                 {
@@ -99,68 +99,71 @@ namespace RideShare.Utilities
 
         public void UpdateCurrentLocation()
         {
-            var currentUser = appDataService.Get("current_user");
-
-            var location = locService.GetCurrentLocation();
-
-            if (!System.String.IsNullOrEmpty(currentUser) && location != null)
+            try
             {
-                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                
-                UpdateUserLocationRequest request = new UpdateUserLocationRequest();
-                request.Latitude = location.Latitude;
-                request.Longitude = location.Longitude;
+                var currentUser = appDataService.Get("current_user");
 
-                bool canUpdateLocation = false;
+                var location = locService.GetCurrentLocation();
 
-                
-
-                var isUserLocationUpdated = App.CurrentLoggedUser != null
-                                                && App.CurrentLoggedUser.Location.Latitude != null
-                                                && App.CurrentLoggedUser.Location.Longitude != null
-                                                && double.Parse(App.CurrentLoggedUser.Location.Latitude) != location.Latitude
-                                                && double.Parse(App.CurrentLoggedUser.Location.Longitude) != location.Longitude;
-
-                var isLocationNull = App.CurrentLoggedUser != null
-                                      && App.CurrentLoggedUser.Location.Latitude == null
-                                      && App.CurrentLoggedUser.Location.Longitude == null;
-
-                if (isLocationNull || isUserLocationUpdated)
+                if (!System.String.IsNullOrEmpty(currentUser) && location != null)
                 {
-                    canUpdateLocation = true;
-                }
+                    DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
 
-                if (canUpdateLocation)
-                {
-                    try
-                    {
-                            var result = driverLocatorService.UpdateUserLocation(currentUser, request);
-                            if (result.IsSuccess)
-                            {
-                       
+                    UpdateUserLocationRequest request = new UpdateUserLocationRequest();
+                    request.Latitude = location.Latitude;
+                    request.Longitude = location.Longitude;
 
-                                    App.CurrentLoggedUser.Location.Latitude = location.Latitude.ToString();
-                                    App.CurrentLoggedUser.Location.Longitude = location.Longitude.ToString();
-                                    //Log.Debug(TAG, System.String.Format("Updated App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
-                        
-                            }
-                    }
-                    catch (System.Exception ex)
+                    bool canUpdateLocation = false;
+
+
+
+                    var isUserLocationUpdated = App.CurrentLoggedUser != null
+                                                    && App.CurrentLoggedUser.Location.Latitude != null
+                                                    && App.CurrentLoggedUser.Location.Longitude != null
+                                                    && double.Parse(App.CurrentLoggedUser.Location.Latitude) != location.Latitude
+                                                    && double.Parse(App.CurrentLoggedUser.Location.Longitude) != location.Longitude;
+
+                    var isLocationNull = App.CurrentLoggedUser != null
+                                          && App.CurrentLoggedUser.Location.Latitude == null
+                                          && App.CurrentLoggedUser.Location.Longitude == null;
+
+                    if (isLocationNull || isUserLocationUpdated)
                     {
-                        //Log.Debug(TAG, System.String.Format("Skipped Update App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                        canUpdateLocation = true;
                     }
+
+                    if (canUpdateLocation)
+                    {
+
+                        var result = driverLocatorService.UpdateUserLocation(currentUser, request);
+                        if (result.IsSuccess)
+                        {
+
+
+                            App.CurrentLoggedUser.Location.Latitude = location.Latitude.ToString();
+                            App.CurrentLoggedUser.Location.Longitude = location.Longitude.ToString();
+                            //Log.Debug(TAG, System.String.Format("Updated App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+
+                        }
+
+                    }
+                    else
+                    {
+                        // Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                    }
+
                 }
                 else
                 {
-                    // Log.Debug(TAG, System.String.Format("Location not changed and not updated user location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
+                    //Log.Debug(TAG, "User not logged in for update location");
                 }
 
             }
-            else
+            catch (System.Exception ex)
             {
-                //Log.Debug(TAG, "User not logged in for update location");
+                //Log.Debug(TAG, System.String.Format("Skipped Update App User Location : User = {2}, Lat = {0}, Lng = {1}", location.Latitude, location.Longitude, currentUser));
             }
-            
+
         }
 
         public void AddHistoryLocation()
@@ -198,7 +201,7 @@ namespace RideShare.Utilities
                                 var polyLine = GetCurrentPoints().ToEncodedPolyLine();
                                 if (!String.IsNullOrEmpty(polyLine))
                                 {
-                                    request.PolyLine = GetCurrentPoints().GroupBy(x => x).Select(x=>x.First()).ToList().ToEncodedPolyLine();
+                                    request.PolyLine = GetCurrentPoints().GroupBy(x => x).Select(x => x.First()).ToList().ToEncodedPolyLine();
                                     driverLocatorService.UpdatePolyline(recentRequest, request);
                                     appDataService.Save("user_rideing_points", null);
                                 }
@@ -209,18 +212,18 @@ namespace RideShare.Utilities
                     }
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
 
             }
-     
+
         }
 
         public List<CommonModels.Location> GetCurrentPoints()
         {
-            
+
             var ridingPoints = appDataService.Get("user_rideing_points");
-            if(ridingPoints!=null)
+            if (ridingPoints != null)
             {
                 return JsonConvert.DeserializeObject<List<CommonModels.Location>>(ridingPoints);
             }
@@ -230,10 +233,10 @@ namespace RideShare.Utilities
         public void AddToCurrentPoints(CommonModels.Location location)
         {
             var currentPoints = GetCurrentPoints();
-            if(currentPoints!= null)
+            if (currentPoints != null)
             {
                 currentPoints.Add(location);
-                
+
             }
             else
             {
@@ -244,6 +247,6 @@ namespace RideShare.Utilities
             appDataService.Save("user_rideing_points", JsonConvert.SerializeObject(currentPoints));
         }
 
-        
+
     }
 }

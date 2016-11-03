@@ -72,7 +72,6 @@ namespace RideShare.ViewPresenter
                     List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
 
                     var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
-
                     var route = directions.Routes.First();
 
                     var message = String.Format("Distance to destination:{0} | Time to Destination:{1} | Are you want to accept this ride?", route.Legs.SumOfDistanceInKm(), route.Legs.SumOfDuration());
@@ -90,9 +89,9 @@ namespace RideShare.ViewPresenter
                 intiDirectionTask.ContinueWith((task) =>
                 {
                    
-                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = task.Exception.Message,Title = "Error"});
+                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = "Can't find any route",Title = "Error"});
 
-                }, TaskContinuationOptions.OnlyOnFaulted);
+                    }, TaskContinuationOptions.OnlyOnFaulted);
             }
 
             else if (rideHistory.RequestStatus == RequestStatus.DriverAccepted)
@@ -132,23 +131,25 @@ namespace RideShare.ViewPresenter
 
             List<Coordinate> riderWaypoint = new List<Coordinate>() { riderCoordinate };
             var directions = GetDirections(driverCoordinate, driverDestinationCoordinate, riderWaypoint);
-            var route = directions.Routes.SingleOrDefault();
-            var legs = directions.Routes[0].Legs;
+
+            Route route = null;
+            IList<Leg> legs = null;
+            if(directions.Routes != null )
+            {
+                route = directions.Routes.First();
+                legs = route.Legs;
+            }
 
             // Create driver pin
             MapPin driverPin = new MapPin();
             driverPin.ImageIcon = "userLogActive_icon.png";
             driverPin.Latitude = double.Parse(driver.Location.Latitude);
             driverPin.Longitude = double.Parse(driver.Location.Longitude);
-            driverPin.PhoneNo = driver.User.MobileNo;
+            driverPin.PhoneNo = !String.IsNullOrEmpty(driver.User.MobileNo) ? driver.User.MobileNo : "Not Set";
 
-            driverPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
+            driverPin.Title = String.Format("{0} {1}",
                                     driver.User.FirstName,
-                                    driver.User.LastName,
-                                    driver.Location.Latitude,
-                                    driver.Location.Longitude,
-                                    legs.Sum(x=>x.Distance.Value).ToKilometers(),
-                                    legs.Sum(x => x.Duration.Value).ToTimeString());
+                                    driver.User.LastName);
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;
@@ -159,21 +160,23 @@ namespace RideShare.ViewPresenter
             riderPin.ImageIcon = "userLogActive_icon.png";
             riderPin.Latitude = double.Parse(rider.Location.Latitude);
             riderPin.Longitude = double.Parse(rider.Location.Longitude);
-            riderPin.PhoneNo = rider.User.MobileNo;
+            riderPin.PhoneNo = !String.IsNullOrEmpty(rider.User.MobileNo) ? rider.User.MobileNo : "Not Set";
 
-            riderPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
+            riderPin.Title = String.Format("{0} {1} | ({2} {3})",
                                     rider.User.FirstName,
                                     rider.User.LastName,
-                                    rider.Location.Latitude,
-                                    rider.Location.Longitude,
-                                    legs.Sum(x => x.Distance.Value).ToKilometers(),
-                                    legs.Sum(x => x.Duration.Value).ToTimeString());
+                                    legs != null ? legs.Sum(x => x.Distance.Value).ToKilometers() : String.Empty,
+                                    legs != null ? legs.Sum(x => x.Duration.Value).ToTimeString() : String.Empty);
 
             riderPin.UserName = rider.User.UserName;
             riderPin.UserType = rider.User.UserType;
 
             routeData.DestinationPin = riderPin;
-            routeData.RouteCoordinates = GetRouteCoordinates(directions.Routes.SingleOrDefault());
+            if(directions.Routes != null)
+            {
+                routeData.RouteCoordinates = GetRouteCoordinates(directions.Routes.First());
+            }
+            
             return routeData;
         }
 
@@ -191,15 +194,11 @@ namespace RideShare.ViewPresenter
             driverPin.ImageIcon = "userLogActive_icon.png";
             driverPin.Latitude = double.Parse(driver.Location.Latitude);
             driverPin.Longitude = double.Parse(driver.Location.Longitude);
-            driverPin.PhoneNo = driver.User.MobileNo;
+            driverPin.PhoneNo = !String.IsNullOrEmpty(driver.User.MobileNo) ? driver.User.MobileNo : "Not Set"; ;
 
-            driverPin.Title = String.Format("{0} {1} | Lat={2},Lng={3} | ({4} {5})",
+            driverPin.Title = String.Format("{0} {1}",
                                         driver.User.FirstName,
-                                        driver.User.LastName,
-                                        driver.Location.Latitude,
-                                        driver.Location.Longitude,
-                                        leg.Distance.Text,
-                                        leg.Duration.Text);
+                                        driver.User.LastName);
 
             driverPin.UserName = driver.User.UserName;
             driverPin.UserType = driver.User.UserType;

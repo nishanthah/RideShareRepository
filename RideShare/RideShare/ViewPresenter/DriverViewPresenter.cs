@@ -39,7 +39,7 @@ namespace RideShare.ViewPresenter
                     pin.ImageIcon = "userLogActive_icon.png";
                     pin.Latitude = double.Parse(rider.Location.Latitude);
                     pin.Longitude = double.Parse(rider.Location.Longitude);
-                    pin.PhoneNo = rider.User.MobileNo;
+                    pin.PhoneNo = !String.IsNullOrEmpty(rider.User.MobileNo) ? rider.User.MobileNo : "Not Set";
                     pin.Title = rider.User.FirstName + " " + rider.User.LastName;
                     pin.UserName = rider.User.UserName;
                     pin.UserType = rider.User.UserType;
@@ -54,8 +54,8 @@ namespace RideShare.ViewPresenter
                 driverPin.ImageIcon = "userLogActive_icon.png";
                 driverPin.Latitude = double.Parse(App.CurrentLoggedUser.Location.Latitude);
                 driverPin.Longitude = double.Parse(App.CurrentLoggedUser.Location.Longitude);
-                driverPin.PhoneNo = App.CurrentLoggedUser.User.MobileNo;
-                driverPin.Title = App.CurrentLoggedUser.User.FirstName + " " + App.CurrentLoggedUser.User.LastName + " | Position : " + App.CurrentLoggedUser.Location.Longitude + " , " + App.CurrentLoggedUser.Location.Latitude;
+                driverPin.PhoneNo = !String.IsNullOrEmpty(App.CurrentLoggedUser.User.MobileNo) ? App.CurrentLoggedUser.User.MobileNo : "Not Set";;
+                driverPin.Title = App.CurrentLoggedUser.User.FirstName + " " + App.CurrentLoggedUser.User.LastName;
                 driverPin.UserName = App.CurrentLoggedUser.User.UserName;
                 driverPin.UserType = App.CurrentLoggedUser.User.UserType;
                 mapPins.Add(GetFromatted(driverPin));
