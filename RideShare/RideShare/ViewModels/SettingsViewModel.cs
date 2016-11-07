@@ -47,25 +47,14 @@ namespace RideShare.ViewModels
                 UserName = App.CurrentLoggedUser.User.UserName
             });
             Session.ClearAuthenticationInstance();
-            Session.CurrentUserName = null;
+            Session.CurrentUserName = null;            
 
-            //var loginPage = new LogInPage();
-            //loginPage.Title = "Login Page";
-
-            //App.Current.MainPage = loginPage;
-            //this.pageProcessor.MoveToLoginPage();
-
-            
-                //Session.CurrentUserName = this.UserName;
-                //App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
-
-                this.pageProcessor.MoveToLoginPage();
+            this.pageProcessor.MoveToLoginPage();
            
         }
 
         private void OnPopupCanceled()
-        {
-            //this.pageProcessor.MoveToMainPage();
+        {            
         }        
     }
 }
