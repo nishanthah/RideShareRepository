@@ -24,6 +24,7 @@ class RouteConfig {
         this.apiRoutes.use((authenticationApi.token).bind(authenticationApi));
 
         this.apiRoutes.put('/useraccount', authenticationApi.account);
+        this.apiRoutes.delete('/useraccount', authenticationApi.deleteaccount);
         this.apiRoutes.get('/userinfo', authenticationApi.userinfo);
         this.app.use('/authapp', this.apiRoutes);
     }

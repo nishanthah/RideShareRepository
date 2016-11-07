@@ -8,6 +8,7 @@ interface IUserDAO {
     updateUser(user: IUser);
     getSelectedUser(userName: string);
     getSelectedUserByGuid(guid: string);
+    deleteUser(user: IUser);
 }
 
 export = IUserDAO;

@@ -246,6 +246,24 @@ var AuthhenticationAPIController = (function () {
             }
         };
     };
+    //deleteaccount
+    AuthhenticationAPIController.prototype.deleteaccount = function (req, res) {
+        var user = new User();
+        user.userName = req.body.userName;
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.deleteUser(user);
+        dataAccess.onUserDeleted = function (error, status) {
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+            else if (status) {
+                res.json({ success: true });
+            }
+            else {
+                res.json({ success: false, message: "Can't delete the User" });
+            }
+        };
+    };
     AuthhenticationAPIController.prototype.token = function (req, res, next) {
         var token = req.body.token || req.query.token || req.headers['x-access-token'];
         var self = this;

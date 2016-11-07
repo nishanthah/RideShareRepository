@@ -94,6 +94,24 @@ var UserMongooseDAO = (function () {
             }
         });
     };
+    UserMongooseDAO.prototype.deleteUser = function (user) {
+        var status;
+        var self = this;
+        User.findOne({ userName: user.userName }, function (err, selecteduser) {
+            if (err)
+                self.onUserDeleted(new Error("Error getting user for delete."), null);
+            else if (!selecteduser) {
+                self.onUserDeleted(new Error("User not found."), null);
+            }
+            else {
+                selecteduser.remove(function (err) {
+                    if (err)
+                        self.onUserDeleted(new Error("Error deleting user."), null);
+                    self.onUserDeleted(null, true);
+                });
+            }
+        });
+    };
     return UserMongooseDAO;
 }());
 module.exports = UserMongooseDAO;

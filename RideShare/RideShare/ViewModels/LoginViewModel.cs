@@ -73,6 +73,23 @@ namespace RideShare.ViewModels
             return false;
         }
 
+        bool DoesUserExist(User user)
+        {
+            bool returnValue = false;
+            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+            var response = driverLocatorService.GetSelectedUserCoordinate(user.UserName);
+            if (!response.IsSuccess && response.UserLocation == null)
+            {
+                returnValue = false;
+            }
+            else
+            {
+                returnValue = true;
+            }            
+
+            return returnValue;
+        }
+
         private void Login()
         {
             IsBusy = true;
@@ -86,35 +103,50 @@ namespace RideShare.ViewModels
                     Password = this.Password
                 };
 
-                var isValid = AreCredentialsCorrect(user);
+                var userExists = DoesUserExist(user);
 
-                if (isValid)
+                if (userExists)
                 {
-                    UpdateUserInLocal();
-                    DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                    var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
+                    var isValid = AreCredentialsCorrect(user);
+
+                    if (isValid)
+                    {
+                        UpdateUserInLocal();
+                        DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                        var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
 
 #if WithNotification
-                        
+
 #else
                     urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
 #endif
 
-                    if (userCorrdinateResult.IsSuccess)
-                    {
-                        
+                        if (userCorrdinateResult.IsSuccess)
+                        {
+
                             App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
                             driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
-                        driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
-                        appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                            driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
+                            appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
 
+                            loginProcessor.InvokeInMainThread(() =>
+                            {
+                                Session.CurrentUserName = this.UserName;
+                                App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
+
+                                loginProcessor.MoveToMainPage();
+                            });
+
+                        }
+                    }
+                    else
+                    {
                         loginProcessor.InvokeInMainThread(() =>
                         {
-                            Session.CurrentUserName = this.UserName;
-                            App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
-                            
-                            loginProcessor.MoveToMainPage();                            
+                            this.ErrorMessage = "Login failed";
+                            this.Password = string.Empty;
+                            IsBusy = false;
                         });
 
                     }
@@ -123,11 +155,11 @@ namespace RideShare.ViewModels
                 {
                     loginProcessor.InvokeInMainThread(() =>
                     {
-                        this.ErrorMessage = "Login failed";
+                        this.ErrorMessage = "Username does not exist";
                         this.Password = string.Empty;
+                        this.UserName = string.Empty;
                         IsBusy = false;
                     });
-
                 }
 
 

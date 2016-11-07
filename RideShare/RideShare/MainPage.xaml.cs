@@ -30,6 +30,12 @@ namespace RideShare
             RenderMianPageWithNotificationInfo(notificationInfo);
         }
 
+        public MainPage(bool LoadRegisterPage)
+            : this()
+        {
+            Detail = new NavigationPage(new RegisterPage());
+        }
+
         void RenderMianPageWithNotificationInfo(NotificationInfo notificationInfo)
         {
             Detail = new NavigationPage(new MapView(notificationInfo));

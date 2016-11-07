@@ -8,6 +8,7 @@ class UserMongooseDAO implements IUserDAO
     onSelectedUserDataReceived: (error: Error, userData: IUser) => void ;
     onUserAdded: (error: Error, status: boolean) => void;
     onUserUpdated: (error: Error, status: boolean) => void;
+    onUserDeleted: (error: Error, status: boolean) => void;
     constructor() {
         
     }
@@ -67,6 +68,7 @@ class UserMongooseDAO implements IUserDAO
 
     getSelectedUser(userName: string)
     {
+        
         var userData: IUser = new User();
         var self = this;
          User.findOne({userName: userName}, function (err, user) {
@@ -112,6 +114,28 @@ class UserMongooseDAO implements IUserDAO
                 userData.profileImage = user.profileImage;
                 userData.resetPasswordGuid = user.resetPasswordGuid;
                 self.onSelectedUserDataReceived(null, userData);
+            }
+
+        });
+
+    }
+
+    deleteUser(user: IUser) {
+        var status: boolean;
+        var self = this;
+        User.findOne({ userName: user.userName }, function (err, selecteduser) {
+            
+            if (err) self.onUserDeleted(new Error("Error getting user for delete."), null);
+
+            else if (!selecteduser) {
+                self.onUserDeleted(new Error("User not found."), null);
+            }
+            else {  
+                              
+                selecteduser.remove(function (err) {
+                    if (err) self.onUserDeleted(new Error("Error deleting user."), null);
+                    self.onUserDeleted(null, true);
+                });
             }
 
         });

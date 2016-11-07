@@ -69,6 +69,8 @@ namespace RideShare
                     else
                     {
                         userInfo = Session.AuthenticationService.GetUserInfoByGUID(guid);
+                        if (userInfo.IsSuccess)
+                            appDataService.Save("access_token", Session.AuthenticationService.AuthenticationToken);
                     }
 
                     if (userInfo.IsSuccess)
@@ -99,7 +101,7 @@ namespace RideShare
                         if (task.Result)
                         {
                             if (!String.IsNullOrEmpty(guid))
-                                MainPage = new NavigationPage(new RegisterPage());
+                                MainPage = new MainPage(true);
                             else
                                 MainPage = new MainPage();
                         }

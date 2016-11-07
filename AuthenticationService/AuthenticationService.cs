@@ -127,6 +127,15 @@ namespace Authentication
             requestHandler.Url = String.Format(USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL, userName, (userName.GetHashCode() % 100000).ToString());
             requestHandler.AccessToken = authenticationToken;
             return requestHandler.SendRequest<ResponseBase>();
-        }        
+        }
+
+        public ResponseBase DeleteUser(User user)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Method = HttpMethod.DELETE;
+            requestHandler.Url = CREATE_USER_URL;
+            requestHandler.AccessToken = authenticationToken;
+            return requestHandler.SendRequest<User, ResponseBase>(user);
+        }  
     }
 }

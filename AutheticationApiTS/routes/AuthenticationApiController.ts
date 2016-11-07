@@ -83,10 +83,11 @@ class AuthhenticationAPIController{
     }
 
     // /userinfo
-    userinfo(req: express.Request, res: express.Response) {              
+    userinfo(req: express.Request, res: express.Response) {       
+           
         var dataAccess = ApplicationContext.getDB();
         var user = dataAccess.getSelectedUser(req.body.userName);
-
+        
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
                 if (error) {
@@ -313,6 +314,29 @@ class AuthhenticationAPIController{
             };
 
        
+    }
+
+    //deleteaccount
+    deleteaccount(req: express.Request, res: express.Response) {
+        var user = new User();
+        user.userName = req.body.userName;
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.deleteUser(user);
+        dataAccess.onUserDeleted = (error: Error, status: boolean) => {
+
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+
+            else if (status) {
+                res.json({ success: true });
+            }
+            else {
+                res.json({ success: false, message: "Can't delete the User" });
+            }
+        };
+
+
     }
 
     token(req: express.Request, res: express.Response, next: express.NextFunction) {

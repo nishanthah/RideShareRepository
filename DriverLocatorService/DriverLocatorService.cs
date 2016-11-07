@@ -265,5 +265,15 @@ namespace DriverLocator
             var result = requestHandler.SendRequest<UpdateFavouritePlacesRequest, UpdateFavouritePlacesResponse>(request);
             return result;
         }
+
+        public ResponseBase DeleteUser(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.DELETE;
+            requestHandler.Url = String.Format(SELECTED_USER_COORDINATE_URL, userName);
+            var result = requestHandler.SendRequest<ResponseBase>();
+            return result;
+        }
     }
 }

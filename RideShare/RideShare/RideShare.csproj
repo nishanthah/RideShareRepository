@@ -39,6 +39,7 @@
     <Compile Include="Behaviors\NumberValidatorBehavior.cs" />
     <Compile Include="Behaviors\PasswordValidatorBehavior.cs" />
     <Compile Include="Behaviors\RequiredFieldValidatorBehavior.cs" />
+    <Compile Include="Common\ICommonPageProcessor.cs" />
     <Compile Include="Common\IForgotPasswordPageProcessor.cs" />
     <Compile Include="Common\ILoginPageProcessor.cs" />
     <Compile Include="Common\IMapPageProcessor.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="ViewModels\RegisterVehicleDetailsViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
     <Compile Include="ViewModels\SendRequestViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewPresenter\BaseMapViewPresenter.cs" />
     <Compile Include="ViewPresenter\DriverNavigationViewPresenter.cs" />

@@ -241,9 +241,9 @@ apiRoutes.post('/users', function(req, res) {
 		userCoordinate.firstName= req.body.firstName;
 		userCoordinate.lastName= req.body.lastName;
 		userCoordinate.email = req.body.email;
-            userCoordinate.profileImage = req.body.profileImage;
-            userCoordinate.gender = req.body.gender;
-userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
+        userCoordinate.profileImage = req.body.profileImage;
+        userCoordinate.gender = req.body.gender;
+        userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
 		userCoordinate.save(function(err) {
 			if (err) res.json({ success: false, message:err });
 
@@ -294,6 +294,72 @@ userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
 	
   });
 });   */ 
+
+apiRoutes.delete('/users/:userName', function (req, res) {
+    UserCoordinate.findOne({ userName: req.params.userName }, function (err, selecteduser) {
+        
+        if (err) res.json({ success: false, message: err });
+
+        else if (!selecteduser) {
+            res.json({ success: false, message: "User not found" });
+        }
+        else {
+            selecteduser.remove(function (err) {
+                if (err) res.json({ success: false, message: "Error deleting user" });
+
+                deleteVehicles(req.params.userName, function (resultVehicle) {
+                    deleteFavouritePlaces(req.params.userName, function (result) {                        
+                        res.json({ success: true });
+                    });
+                });      
+                
+            });
+
+            
+        }
+
+    });
+});
+
+function deleteVehicles(useName, resultCallback) {
+    UserVehicle.find({ userName : useName }, function (err, userVehicles) {
+        
+        if (err) resultCallback({ success: false, message: err });
+        
+        if (userVehicles.length != 0) {
+            userVehicles.forEach(function (userVehicle) {
+                userVehicle.remove(function (err) {
+                    if (err) { resultCallback({ success: false, message: "Error deleting vehicle" }); return; }                
+                    
+                })
+            });
+            resultCallback({ success: true });        
+        }
+        else {
+            resultCallback({ success: false, message: 'No User Vehicle details found' });
+        }
+    });
+}
+
+function deleteFavouritePlaces(useName, resultCallback) {
+    UserFavouritePlace.find({ userName : useName }, function (err, userfavPlaces) {
+        
+        if (err) resultCallback({ success: false, message: err });        
+        
+        
+        if (userfavPlaces.length != 0) {
+            userfavPlaces.forEach(function (userfavPlace) {
+                userfavPlace.remove(function (err) {
+                    if (err) resultCallback({ success: false, message: "Error deleting favourite place" });                    
+                })
+            });
+            resultCallback({ success: true });
+        }
+        else {
+            resultCallback({ success: false, message: 'No User favourite places found' });
+        }
+    });
+}
 
 
 apiRoutes.put('/users/:userName/location', function (req, res) {
@@ -540,7 +606,7 @@ apiRoutes.get('/users/:userName', function(req, res) {
 
   
 	UserCoordinate.findOne({userName : req.params.userName}, function(err, userCoordinate) {
-  
+        
 			if (err) res.json({ success: false, message:err });
 			
 			else if(!userCoordinate)
