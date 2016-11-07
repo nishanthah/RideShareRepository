@@ -57,7 +57,7 @@ class AuthhenticationAPIController{
                     res.json({ success: false, message: error.message });
                 }
                 else if (user.password != req.body.password) {
-                    res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                    res.json({ success: false, message: 'Incorrect credentials.' });
                 }
                 else {
 

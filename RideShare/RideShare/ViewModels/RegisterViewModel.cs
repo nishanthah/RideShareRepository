@@ -277,7 +277,7 @@ namespace RideShare.ViewModels
             {
 
                 var result = Session.AuthenticationService.CreateUser(user);
-                if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
+                if (Session.AuthenticationService.Authenticate(user.UserName, user.Password).IsSuccess)
                 {
                     UpdateUserInLocal();
 

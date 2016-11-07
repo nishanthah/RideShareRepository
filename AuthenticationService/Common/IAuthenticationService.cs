@@ -9,7 +9,7 @@ namespace Authentication.Common
 {
     public interface IAuthenticationService
     {
-        bool Authenticate(string userName, string password);
+        AuthenticationResponse Authenticate(string userName, string password);
         UserInfoResponse GetUserInfo(string token);
         CreateUserResponse CreateUser(User user);
         UpdateUserResponse UpdateUser(User user);

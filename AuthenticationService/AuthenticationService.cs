@@ -44,7 +44,7 @@ namespace Authentication
             return requestHandler.SendRequest<User, CreateUserResponse>(user);
         }
 
-        public bool Authenticate(string userName, string password)
+        public AuthenticationResponse Authenticate(string userName, string password)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Url = AUTHENCATION_URL;
@@ -58,7 +58,7 @@ namespace Authentication
                 //UpdateClaimDetails(authenticationToken);              
             }
             IsAuthenticated = authenticationResult.IsSuccess;
-            return authenticationResult.IsSuccess;
+            return authenticationResult;
         }
 
         public UserInfoResponse GetUserInfo(string token)

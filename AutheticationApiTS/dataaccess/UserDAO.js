@@ -57,7 +57,7 @@ var UserMongooseDAO = (function () {
             if (err)
                 self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
             else if (!user) {
-                self.onSelectedUserDataReceived(new Error("User not found."), null);
+                self.onSelectedUserDataReceived(new Error("User does not exist."), null);
             }
             else {
                 userData.email = user.email;
