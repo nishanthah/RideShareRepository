@@ -171,12 +171,12 @@ namespace RideShare.Utilities
             try
             {
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                var currentUser = appDataService.Get("current_user");
-                var currentUserLocation = driverLocatorService.GetSelectedUserCoordinate(currentUser).UserLocation;
+                var currentUser = appDataService.Get("current_user");                
 
-                if (currentUser != null && currentUserLocation != null)
+                if (currentUser != null)
                 {
-                    if (currentUserLocation.User.UserType == CommonModels.UserType.Rider)
+                    var currentUserLocation = driverLocatorService.GetSelectedUserCoordinate(currentUser).UserLocation;
+                    if (currentUserLocation != null && currentUserLocation.User.UserType == CommonModels.UserType.Rider)
                     {
                         var recentRequest = currentUserLocation.User.RecentRequest;
                         if (recentRequest != null)

@@ -234,17 +234,7 @@ namespace DriverLocator
             requestHandler.Url = GET_USER_VEHICLE_DEF_DATA_URL;
             var userVehicleDefinitionDataResponse = requestHandler.SendRequest<UserVehicleDefinitionDataResponse>();
             return userVehicleDefinitionDataResponse;
-        }
-
-        public ResponseBase GetUsersByEmail(string email)
-        {
-            HttpRequestHandler requestHandler = new HttpRequestHandler();
-            requestHandler.AccessToken = authenticationService.AuthenticationToken;
-            requestHandler.Method = HttpMethod.GET;
-            requestHandler.Url = String.Format(GET_USER_BY_EMAIL, "email", email);
-            var usersResponse = requestHandler.SendRequest<ResponseBase>();
-            return usersResponse;
-        }
+        }        
 
         public UserFavouritePlacesResponse GetUserFavouritePlacesByUser(string userName)
         {

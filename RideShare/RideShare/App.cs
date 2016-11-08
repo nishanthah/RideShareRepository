@@ -85,9 +85,13 @@ namespace RideShare
                         Session.CurrentUserName = userInfo.UserName;
                         DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                         var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(userInfo.UserName);
-                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                        appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
-                        return true;
+                        if (userCorrdinateResult.IsSuccess)
+                        {
+                            App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                            App.CurrentLoggedUser.User.RegistrationCode = userInfo.RegistrationCode;
+                            appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                            return true;
+                        }
                     }                    
 
                     return false;
@@ -100,10 +104,15 @@ namespace RideShare
 
                         if (task.Result)
                         {
-                            if (!String.IsNullOrEmpty(guid))
-                                MainPage = new MainPage(true);
+                            if (!String.IsNullOrEmpty(userInfo.RegistrationCode))
+                                MainPage = new MainPage(false);
                             else
-                                MainPage = new MainPage();
+                            {
+                                if (!String.IsNullOrEmpty(guid))
+                                    MainPage = new MainPage(true);
+                                else
+                                    MainPage = new MainPage();
+                            }
                         }
                         else
                         {

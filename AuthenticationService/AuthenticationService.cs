@@ -25,7 +25,8 @@ namespace Authentication
         private const string USER_INFO_URL = SERVER + "/authapp/userinfo";
         private const string USER_INFO_BY_GUID = SERVER + "/authapp/userinfobyguid/{0}";
         private const string USER_INFO_BY_USERNAME_GUID_SEND_EMAIL_URL = SERVER + "/authapp/userinfosendemailwithguid/{0}";
-        private const string USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL = SERVER + "/authapp/userinfosendemailwithcode/{0}/{1}";
+        private const string USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL = SERVER + "/authapp/userinfosendemailwithcode/{0}/{1}/{2}";
+        private const string UPDATE_REGISTRATION_CODE = SERVER + "/authapp/registrationcode/{0}/{1}";
 
         public string authenticationToken=String.Empty;
 
@@ -41,7 +42,12 @@ namespace Authentication
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Method = HttpMethod.POST;
             requestHandler.Url = CREATE_USER_URL;
-            return requestHandler.SendRequest<User, CreateUserResponse>(user);
+            var response =  requestHandler.SendRequest<User, CreateUserResponse>(user);
+            if(response.IsSuccess)
+            {
+                var emailresponse = SendEmailWithCode(user.UserName, "REG");
+            }
+            return response;
         }
 
         public AuthenticationResponse Authenticate(string userName, string password)
@@ -120,14 +126,14 @@ namespace Authentication
             return userInfo;
         }
 
-        public ResponseBase UpdateUserPassWord(string userName)
+        public ResponseBase SendEmailWithCode(string userName, string flag)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.Method = HttpMethod.PUT;
-            requestHandler.Url = String.Format(USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL, userName, (userName.GetHashCode() % 100000).ToString());
+            requestHandler.Url = String.Format(USER_INFO_BY_USERNAME_CODE_SEND_EMAIL_URL, userName, (Math.Abs(userName.GetHashCode()) % 100000).ToString(), flag);
             requestHandler.AccessToken = authenticationToken;
             return requestHandler.SendRequest<ResponseBase>();
-        }
+        }        
 
         public ResponseBase DeleteUser(User user)
         {
@@ -136,6 +142,16 @@ namespace Authentication
             requestHandler.Url = CREATE_USER_URL;
             requestHandler.AccessToken = authenticationToken;
             return requestHandler.SendRequest<User, ResponseBase>(user);
-        }  
+        }
+
+        public ResponseBase UpdateRegistrationCode(string userName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.Url = String.Format(UPDATE_REGISTRATION_CODE, userName, "empty");
+            requestHandler.Method = HttpMethod.POST;
+            requestHandler.AccessToken = authenticationToken;
+            var result = requestHandler.SendRequest<ResponseBase>();
+            return result;
+        }
     }
 }

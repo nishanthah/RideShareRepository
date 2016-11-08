@@ -24,6 +24,7 @@ class UserMongooseDAO implements IUserDAO
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
         userModel.resetPasswordGuid = user.resetPasswordGuid;
+        userModel.registrationCode = user.registrationCode;
 
         var status: boolean;
         var self = this;
@@ -46,7 +47,7 @@ class UserMongooseDAO implements IUserDAO
             else if (!selecteduser) {
                 self.onUserUpdated(new Error("User not found."), null);
             }
-            else {
+            else {                
                 selecteduser.email = user.email;
                 selecteduser.gender = user.gender;
                 selecteduser.firstName = user.firstName;
@@ -56,6 +57,7 @@ class UserMongooseDAO implements IUserDAO
                 selecteduser.userName = user.userName;
                 selecteduser.profileImage = user.profileImage;
                 selecteduser.resetPasswordGuid = user.resetPasswordGuid;
+                selecteduser.registrationCode = user.registrationCode;
                 selecteduser.save(function (err) {
                     if (err) self.onUserUpdated(new Error("Error updating user."), null);
 
@@ -66,12 +68,13 @@ class UserMongooseDAO implements IUserDAO
         });
     }
 
-    getSelectedUser(userName: string)
-    {
-        
+    getSelectedUser(field: string, value: string)
+    {  
+        var query = {};
+        query[field] = value;     
         var userData: IUser = new User();
         var self = this;
-         User.findOne({userName: userName}, function (err, user) {
+         User.findOne(query, function (err, user) {
              
              if (err) self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
 
@@ -87,38 +90,13 @@ class UserMongooseDAO implements IUserDAO
                  userData.userName = user.userName;
                  userData.profileImage = user.profileImage;
                  userData.resetPasswordGuid = user.resetPasswordGuid;
+                 userData.registrationCode = user.registrationCode;
                  self.onSelectedUserDataReceived(null, userData);
              }
 
          });
    
-    }
-
-    getSelectedUserByGuid(resetPasswordGuid: string) {
-        var userData: IUser = new User();
-        var self = this;
-        User.findOne({ resetPasswordGuid: resetPasswordGuid }, function (err, user) {
-            
-            if (err) self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
-
-            else if (!user) {
-                self.onSelectedUserDataReceived(new Error("User not found."), null);
-            }
-            else {
-                userData.email = user.email;
-                userData.gender = user.gender;
-                userData.firstName = user.firstName;
-                userData.lastName = user.lastName;
-                userData.password = user.password;
-                userData.userName = user.userName;
-                userData.profileImage = user.profileImage;
-                userData.resetPasswordGuid = user.resetPasswordGuid;
-                self.onSelectedUserDataReceived(null, userData);
-            }
-
-        });
-
-    }
+    }    
 
     deleteUser(user: IUser) {
         var status: boolean;
@@ -140,7 +118,7 @@ class UserMongooseDAO implements IUserDAO
 
         });
 
-    }
+    }    
 }
 
 export = UserMongooseDAO;

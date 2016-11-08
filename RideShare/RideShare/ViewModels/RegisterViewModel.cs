@@ -277,9 +277,8 @@ namespace RideShare.ViewModels
             {
 
                 var result = Session.AuthenticationService.CreateUser(user);
-                if (Session.AuthenticationService.Authenticate(user.UserName, user.Password).IsSuccess)
-                {
-                    UpdateUserInLocal();
+                
+                UpdateUserInLocal(user);
 
 
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
@@ -297,9 +296,7 @@ namespace RideShare.ViewModels
                         UpdateFavPlacesInLocal();
 
                     this.signUpPageProcessor.MoveToLoginPage();
-                }
-                else
-                    this.signUpPageProcessor.MoveToLoginPage();
+                
             }            
         }
 
@@ -322,7 +319,7 @@ namespace RideShare.ViewModels
             if (Isvalid)
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
-                UpdateUserInLocal();
+                UpdateUserInLocal(user);
 
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
@@ -392,17 +389,16 @@ namespace RideShare.ViewModels
                !string.IsNullOrWhiteSpace(user.EMail));
         }
 
-        public void UpdateUserInLocal()
+        public void UpdateUserInLocal(User user)
         {
-            var result = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken);
             DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
             DriverLocator.Models.User dlUser = new DriverLocator.Models.User();
-            dlUser.UserName = result.UserName;
-            dlUser.FirstName = result.FirstName;
-            dlUser.LastName = result.LastName;
-            dlUser.EMail = result.EMail;
-            dlUser.profileImageEncoded = result.profileImageEncoded;
-            dlUser.Gender = result.Gender;
+            dlUser.UserName = user.UserName;
+            dlUser.FirstName = user.FirstName;
+            dlUser.LastName = user.LastName;
+            dlUser.EMail = user.EMail;
+            dlUser.profileImageEncoded = user.profileImageEncoded;
+            dlUser.Gender = user.Gender;
             var response = driverLocatorService.SaveUserData(dlUser);
         }
 

@@ -70,13 +70,11 @@ function ReadData()
                 for (vehicle in vehicles) {
                     thisvehicleobject = vehicles[vehicle];
                     if (thisvehicleobject.firstChild) {
-                        if (thisvehicleobject.attributes[0].nodeName = 'make') {
-                            console.log(thisvehicleobject.attributes[0].nodeValue);
+                        if (thisvehicleobject.attributes[0].nodeName = 'make') {                            
                             //all the 'model' objects
                             for (a1 in thisvehicleobject.childNodes) {
                                 thismodel = thisvehicleobject.childNodes[a1];
-                                if (thismodel.firstChild && thismodel.tagName == 'model') {
-                                    console.log(thismodel.firstChild.nodeValue);
+                                if (thismodel.firstChild && thismodel.tagName == 'model') {                                    
 
                                     var newVehicleDefinitionData = new VehicleDefinitionData({
                                         make: thisvehicleobject.attributes[0].nodeValue,
@@ -127,74 +125,49 @@ apiRoutes.get('/vehicledefinitiondata', function (req, res) {
 
 });
 
-apiRoutes.get('/users/:userName/resetpassword', function (req, res) {
-       
-       UserCoordinate.findOne( {userName : req.params.userName}, function (err, userCoordinate) {
-              
-              if (err) res.json({ success: false, message: err });
-              
-        if (userCoordinate) {
-
-            var smtpConfig = {
-                host: 'smtp.gmail.com',
-                port: 587,
-                secure: false, // use SSL
-                auth: {
-                    user: 'virtusamicros@gmail.com',
-                    pass: '1qaz2wsx@W'
-                }
-            };
-            
-            var newguid = guid.create();
-
-            var transporter = nodemailer.createTransport(smtpConfig);
-            
-            // setup e-mail data with unicode symbols
-            var mailOptions = {
-                from: '"RideShare" <virtusamicros@gmail.com>', // sender address
-                to: userCoordinate.email, // list of receivers
-                subject: 'Reset Password', // Subject line
-                html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '"' + '>' + newguid + '</a>' 
-            };
-            
-            // send mail with defined transport object
-            transporter.sendMail(mailOptions, function (error, info) {
-                if (error) {
-                    return console.log(error);
-                }
-                userCoordinate.passwordResetGuid = req.body.guid;                
-                console.log('Message sent: ' + info.response);
-            });
-                     res.json({success: true, message: 'User exists'});
-              }
-              else{
-                     res.json({success: false, message: 'User does not exist'});
-              }             
-       });
-
-});
-
-
-apiRoutes.get('/users/resetpassword/:guid', function (req, res) {
-    
-    UserCoordinate.findOne({ passwordResetGuid : req.params.guid }, function (err, userCoordinate) {
-        
+apiRoutes.post('/users', function (req, res) {
+    UserCoordinate.findOne({ userName : req.body.userName }, function (err, userCoordinate) {        
         if (err) res.json({ success: false, message: err });
         
-        if (userCoordinate) {
-            userMapper.mapSingleUser(userCoordinate, function (userData) {
-                var userData = userData;
-                res.json({ userData: userData, success: true, message: 'User exists' });
-            });                 
-            //res.json({ userData: userCoordinate, success: true, message: 'User exists' });
+        if (userCoordinate != null) {            
+            userCoordinate.firstName = req.body.firstName;
+            userCoordinate.lastName = req.body.lastName;
+            userCoordinate.email = req.body.email;
+            userCoordinate.profileImage = req.body.profileImage;
+            userCoordinate.gender = req.body.gender;
+            userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
+            userCoordinate.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('User data successfully updated');
+                io.emit('coordinate_changed', "Changed");
+                res.json({ success: true });
+            });
         }
+	
         else {
-            res.json({ success: false, message: 'User does not exist' });
+            var newUserCoordinate = new UserCoordinate({
+                gender: req.body.gender,
+                userName: req.body.userName,
+                email: req.body.email,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                profileImage : req.body.profileImage,
+                resetPasswordGuid : req.body.resetPasswordGuid
+            });
+            
+            newUserCoordinate.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('User added successfully');
+                io.emit('coordinate_changed', "Changed");
+                res.json({ success: true });
+            });
         }
+	
+	
     });
-
 });
-
 
 
 // route middleware to verify a token
@@ -230,53 +203,7 @@ apiRoutes.use(function(req, res, next) {
   res.json({ message: 'Welcome to the coolest API on earth!' });
 });
 
-apiRoutes.post('/users', function(req, res) {
-  UserCoordinate.findOne({userName : req.body.userName}, function(err, userCoordinate) {
   
-	if (err) res.json({ success: false, message:err });
-
-	if(userCoordinate != null)
-	{
-		
-		userCoordinate.firstName= req.body.firstName;
-		userCoordinate.lastName= req.body.lastName;
-		userCoordinate.email = req.body.email;
-        userCoordinate.profileImage = req.body.profileImage;
-        userCoordinate.gender = req.body.gender;
-        userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
-		userCoordinate.save(function(err) {
-			if (err) res.json({ success: false, message:err });
-
-			console.log('User data successfully updated');
-			io.emit('coordinate_changed', "Changed");
-			res.json({ success: true });
-		});
-	}
-	
-	else
-	{
-		var newUserCoordinate= new UserCoordinate({ 
-            gender: req.body.gender,
-			userName:req.body.userName,
-			email:req.body.email,
-			firstName:req.body.firstName,
-			lastName:req.body.lastName,
-			profileImage : req.body.profileImage,
-			resetPasswordGuid : req.body.resetPasswordGuid
-		});
-		
-		newUserCoordinate.save(function(err) {
-			if (err) res.json({ success: false, message:err });
-
-			console.log('User added successfully');
-			io.emit('coordinate_changed', "Changed");
-			res.json({ success: true });
-		});
-	}
-	
-	
-  });
-});  
 
 /* apiRoutes.post('/updatecoordinates', function(req, res) {
   UserCoordinate.findOne({userName : req.userInfo.userName}, function(err, userCoordinate) {

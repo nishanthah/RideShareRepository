@@ -9,6 +9,7 @@ class User implements IUser{
     profileImage: string;
     gender: string;
     resetPasswordGuid: string;
+    registrationCode: string;
 }
 
 export = User;

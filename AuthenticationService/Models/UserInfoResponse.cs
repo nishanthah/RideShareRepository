@@ -30,5 +30,8 @@ namespace Authentication.Models
         [JsonProperty("resetPasswordGuid")]
         public string ResetPasswordGuid { get; set; }
 
+        [JsonProperty("registrationCode")]
+        public string RegistrationCode { get; set; }
+
     }
 }

@@ -33,7 +33,10 @@ namespace RideShare
         public MainPage(bool LoadRegisterPage)
             : this()
         {
-            Detail = new NavigationPage(new RegisterPage());
+            if (LoadRegisterPage)
+                Detail = new NavigationPage(new RegisterPage());
+            else
+                Detail = new NavigationPage(new RegistrationComplete());
         }
 
         void RenderMianPageWithNotificationInfo(NotificationInfo notificationInfo)

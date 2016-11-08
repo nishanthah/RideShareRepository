@@ -10,7 +10,8 @@ var userSchema = new mongoose.Schema({
     password: String,
     profileImage: String,
     gender: String,
-    resetPasswordGuid: String
+    resetPasswordGuid: String,
+    registrationCode: String
 });
 
 interface IUserModel extends IUser, mongoose.Document { }

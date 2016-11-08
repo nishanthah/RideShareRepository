@@ -77,6 +77,7 @@ namespace RideShare.ViewModels
 
         private void Login()
         {
+            this.ErrorMessage = String.Empty;
             IsBusy = true;
 
             Task.Factory.StartNew(() =>
@@ -93,7 +94,7 @@ namespace RideShare.ViewModels
 
                 if (isValid)
                 {
-                    UpdateUserInLocal();
+                    //UpdateUserInLocal();
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                     var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
@@ -106,8 +107,8 @@ namespace RideShare.ViewModels
 
                     if (userCorrdinateResult.IsSuccess)
                     {
-
                         App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                        App.CurrentLoggedUser.User.RegistrationCode = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken).RegistrationCode;
                         driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
                         driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
                         appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
@@ -117,10 +118,19 @@ namespace RideShare.ViewModels
                             Session.CurrentUserName = this.UserName;
                             App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
 
-                            loginProcessor.MoveToMainPage();
+                            if (!String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode))
+                                loginProcessor.MoveToRegistrationCompletePage();
+                            else
+                                loginProcessor.MoveToMainPage();
                         });
 
                     }
+                    loginProcessor.InvokeInMainThread(() =>
+                    {
+                        this.ErrorMessage = userCorrdinateResult.Message;
+                        this.Password = string.Empty;
+                        IsBusy = false;
+                    });
                 }
                 else
                 {

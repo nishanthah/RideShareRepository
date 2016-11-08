@@ -13,5 +13,6 @@ namespace RideShare.Common
         void MoveToSignUpPage();
         void InvokeInMainThread(Action action);
         void MoveToForgotPasswordPage();
+        void MoveToRegistrationCompletePage();
     }
 }

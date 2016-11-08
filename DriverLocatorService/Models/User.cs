@@ -49,6 +49,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("gender")]
         public string Gender { get; set; }
+
+        [JsonProperty("registrationCode")]
+        public string RegistrationCode { get; set; }
     }
 
     public class UserLocation

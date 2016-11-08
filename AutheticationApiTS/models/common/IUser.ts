@@ -7,5 +7,6 @@
     profileImage: string;
     gender: string;
     resetPasswordGuid: string;
+    registrationCode: string;
 }
 export = IUser;
