@@ -1,7 +1,7 @@
 ﻿import express = require('express');
 import bodyParser = require('body-parser');
 import morgan = require('morgan');
-import RouteConfig = require('./routes/routeconfig');
+import RouteConfig = require('./routes/RouteConfig');
 
 // all environments
 
