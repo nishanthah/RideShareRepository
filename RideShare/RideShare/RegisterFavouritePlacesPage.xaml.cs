@@ -91,7 +91,7 @@ namespace RideShare
                         newfavPlaces.Add(fp);
                 }
             }
-            else
+            else if (App.CurrentUserFavouritePlaces != null)
             {
                 foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
                 {

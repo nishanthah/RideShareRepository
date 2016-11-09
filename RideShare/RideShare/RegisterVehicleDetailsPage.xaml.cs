@@ -106,7 +106,7 @@ namespace RideShare
                         newVehicles.Add(vehi);
                 }
             }
-            else
+            else if (App.CurrentUserVehicles != null)
             {
                 foreach (DriverLocator.Models.Vehicle vehi in App.CurrentUserVehicles)
                 {
