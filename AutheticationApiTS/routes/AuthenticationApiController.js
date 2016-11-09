@@ -1,3 +1,4 @@
+"use strict";
 var guid = require('guid');
 var nodemailer = require('nodemailer');
 var User = require("../models/User");
@@ -54,7 +55,8 @@ var AuthhenticationAPIController = (function () {
                 var tokenPayload = new TokenPayload();
                 tokenPayload.userName = user.userName;
                 tokenPayload.canAccessUserInfo = true;
-                var token = jwt.sign(tokenPayload, Config.secret, {
+                var secret = process.env.RIDESHARE_SECRET || Config.secret;
+                var token = jwt.sign(tokenPayload, secret, {
                     expiresIn: '24h' // expires in 24 hours
                 });
                 var accessToken = new AccessToken();
@@ -102,7 +104,8 @@ var AuthhenticationAPIController = (function () {
                 var tokenPayload = new TokenPayload();
                 tokenPayload.userName = user.userName;
                 tokenPayload.canAccessUserInfo = true;
-                var token = jwt.sign(tokenPayload, Config.secret, {
+                var secret = process.env.RIDESHARE_SECRET || Config.secret;
+                var token = jwt.sign(tokenPayload, secret, {
                     expiresIn: '24h' // expires in 24 hours
                 });
                 var accessToken = new AccessToken();
@@ -251,7 +254,8 @@ var AuthhenticationAPIController = (function () {
         var self = this;
         // decode token
         if (token) {
-            jwt.verify(token, Config.secret, function (err, decoded) {
+            var secret = process.env.RIDESHARE_SECRET || Config.secret;
+            jwt.verify(token, secret, function (err, decoded) {
                 if (err) {
                     res.json({ success: false, message: 'Failed to authenticate token.' });
                 }
@@ -273,6 +277,6 @@ var AuthhenticationAPIController = (function () {
             return res.json({ success: false, message: 'Token not found.' });
     };
     return AuthhenticationAPIController;
-})();
+}());
 module.exports = AuthhenticationAPIController;
 //# sourceMappingURL=AuthenticationApiController.js.map

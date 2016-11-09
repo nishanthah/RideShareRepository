@@ -7,7 +7,8 @@ var ApplicationContext = (function () {
     }
     ApplicationContext.getDB = function () {
         if (!ApplicationContext.isDBConnected) {
-            mongoose.connect(Config.database);
+            var database = process.env.RIDESHAREDB || Config.database;
+            mongoose.connect(database);
             ApplicationContext.isDBConnected = true;
         }
         return new UserMongooseDAO();

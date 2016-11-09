@@ -27,8 +27,11 @@ var UserFavouritePlace = require('./app/models/favourite_place.js'); // Favourit
 // =======================
 var port = process.env.PORT || 8079; // used to create, sign, and verify tokens
 mongoose.Promise = global.Promise;
-mongoose.connect(config.database); // connect to database
-app.set('superSecret', config.secret); // secret variable
+var dbConnection = process.env.RIDESHAREDB || config.database;
+mongoose.connect(dbConnection); // connect to database
+
+var secret = process.env.RIDESHARE_SECRET || config.secret;
+app.set('superSecret', secret); // secret variable
 
 // use body parser so we can get info from POST and/or URL parameters
 app.use(bodyParser.urlencoded({ extended: false, limit: '50mb' }));

@@ -1,4 +1,4 @@
 "use strict";
-exports.secret = "vappsecret";
-exports.database = "mongodb://admin:admin@jello.modulusmongo.net:27017/xyje9Hed";
+exports.secret = "testsecret";
+exports.database = "mongodb://localhost:27017/authapp";
 //# sourceMappingURL=config.js.map
