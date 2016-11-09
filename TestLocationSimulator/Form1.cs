@@ -65,7 +65,7 @@ namespace TestLocationSimulator
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(authenticationService.Authenticate(textBox6.Text,textBox7.Text))
+            if(authenticationService.Authenticate(textBox6.Text,textBox7.Text).IsSuccess)
             {
                 label7.Text = "Success";
             }

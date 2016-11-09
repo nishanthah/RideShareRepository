@@ -29,6 +29,7 @@ class AuthhenticationAPIController{
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
         user.resetPasswordGuid = req.body.resetPasswordGuid;
+        user.registrationCode = req.body.registrationCode;
         try {
             var dataAccess = ApplicationContext.getDB();
             dataAccess.addUser(user);
@@ -51,13 +52,13 @@ class AuthhenticationAPIController{
     // /accesstoken
     accesstoken(req: express.Request, res: express.Response) {
         var dataAccess = ApplicationContext.getDB();
-        dataAccess.getSelectedUser(req.body.userName);
+        dataAccess.getSelectedUser('userName', req.body.userName);
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
                 if (error) {
                     res.json({ success: false, message: error.message });
                 }
                 else if (user.password != req.body.password) {
-                    res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                    res.json({ success: false, message: 'Incorrect credentials.' });
                 }
                 else {
 
@@ -83,10 +84,11 @@ class AuthhenticationAPIController{
     }
 
     // /userinfo
-    userinfo(req: express.Request, res: express.Response) {              
+    userinfo(req: express.Request, res: express.Response) {       
+           
         var dataAccess = ApplicationContext.getDB();
-        var user = dataAccess.getSelectedUser(req.body.userName);
-
+        var user = dataAccess.getSelectedUser('userName', req.body.userName);
+        
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
                 if (error) {
@@ -103,6 +105,7 @@ class AuthhenticationAPIController{
                     userResponse.userName = user.userName;
                     userResponse.profileImage = user.profileImage;
                     userResponse.resetPasswordGuid = user.resetPasswordGuid;
+                    userResponse.registrationCode = user.registrationCode;
                     userResponse.success = true;
                     res.json(userResponse);
                 }
@@ -113,10 +116,10 @@ class AuthhenticationAPIController{
 
     }
 
-    // /userinfobyguid
+    //userinfobyguid
     userinfobyguid(req: express.Request, res: express.Response) {
         var dataAccess = ApplicationContext.getDB();
-        var user = dataAccess.getSelectedUserByGuid(req.params.resetPasswordGuid);
+        var user = dataAccess.getSelectedUser('resetPasswordGuid', req.params.resetPasswordGuid);
 
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
@@ -147,10 +150,41 @@ class AuthhenticationAPIController{
 
     }
 
+    //userinfobyregistrationcode
+    userinfobyregistrationcode(req: express.Request, res: express.Response) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser('registrationCode', req.params.registrationCode);
+
+        dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
+
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+
+            else if (user) {
+
+                var userResponse = new UserResponse();
+                userResponse.gender = user.gender;
+                userResponse.email = user.email;
+                userResponse.firstName = user.firstName;
+                userResponse.lastName = user.lastName;
+                userResponse.userName = user.userName;
+                userResponse.profileImage = user.profileImage;
+                userResponse.resetPasswordGuid = user.resetPasswordGuid;
+                userResponse.registrationCode = user.registrationCode;
+                userResponse.success = true;
+                res.json(userResponse);
+            }
+            else {
+                res.json({ success: false, message: 'No user found' });
+            }
+        };
+    }
+
     //userinfosendemailwithguid
     userinfosendemailwithguid(req: express.Request, res: express.Response) {
         var dataAccess = ApplicationContext.getDB();
-        var user = dataAccess.getSelectedUser(req.params.userName);
+        var user = dataAccess.getSelectedUser('userName', req.params.userName);
 
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
@@ -219,7 +253,7 @@ class AuthhenticationAPIController{
     //userinfosendemailwithcode
     userinfosendemailwithcode(req: express.Request, res: express.Response) {
         var dataAccess = ApplicationContext.getDB();
-        var user = dataAccess.getSelectedUser(req.params.userName);
+        var user = dataAccess.getSelectedUser('userName', req.params.userName);
         
         dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
 
@@ -242,16 +276,26 @@ class AuthhenticationAPIController{
                 
                 
                 var transporter = nodemailer.createTransport(smtpConfig);
-            
-                // setup e-mail data with unicode symbols
+                
                 var mailOptions = {
                     from: '"RideShare" <virtusamicros@gmail.com>', // sender address
                     to: user.email, // list of receivers
                     subject: 'Reset Password', // Subject line
-                    html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
-                    '</b></br> <p> You can reset your password in Edit Profile, once you are logged in </p>' +
+                    html: '<p>Please enter the following code to complete the registration: </p> <b>' + req.params.code +
                     '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
                 };
+            
+                if (req.params.flag == 'FPWD') {                    
+                    // setup e-mail data with unicode symbols
+                    mailOptions = {
+                        from: '"RideShare" <virtusamicros@gmail.com>', // sender address
+                        to: user.email, // list of receivers
+                        subject: 'Reset Password', // Subject line
+                        html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
+                        '</b></br> <p> You can reset your password in Edit Profile, once you are logged in. </p>' +
+                        '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
+                    };
+                }
             
                 // send mail with defined transport object
                 transporter.sendMail(mailOptions, function (error, info) {
@@ -259,7 +303,12 @@ class AuthhenticationAPIController{
                         return console.log(error);
                     }
 
-                    user.password = req.params.code;
+                    if (req.params.flag == 'FPWD') {
+                        user.password = req.params.code;
+                    }
+                    else {
+                        user.registrationCode = req.params.code;
+                    }
 
                     dataAccess.updateUser(user);
                     dataAccess.onUserUpdated = (error: Error, status: boolean) => {
@@ -297,6 +346,7 @@ class AuthhenticationAPIController{
         user.userName = req.body.userName;
         user.profileImage = req.body.profileImage;
         user.resetPasswordGuid = req.body.resetPasswordGuid;
+        user.registrationCode = req.body.registrationCode;
         var dataAccess = ApplicationContext.getDB();
         dataAccess.updateUser(user);
         dataAccess.onUserUpdated = (error: Error, status: boolean) => {
@@ -314,6 +364,68 @@ class AuthhenticationAPIController{
             };
 
        
+    }
+
+    //deleteaccount
+    deleteaccount(req: express.Request, res: express.Response) {
+        var user = new User();
+        user.userName = req.body.userName;
+        var dataAccess = ApplicationContext.getDB();
+        dataAccess.deleteUser(user);
+        dataAccess.onUserDeleted = (error: Error, status: boolean) => {
+
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+
+            else if (status) {
+                res.json({ success: true });
+            }
+            else {
+                res.json({ success: false, message: "Can't delete the User" });
+            }
+        };
+
+
+    }
+
+    //updateregistrationcode
+    updateregistrationcode(req: express.Request, res: express.Response) {
+        var dataAccess = ApplicationContext.getDB();
+        var user = dataAccess.getSelectedUser('userName', req.params.userName);
+
+        dataAccess.onSelectedUserDataReceived = (error: Error, user: IUser) => {
+
+            if (error) {
+                res.json({ success: false, message: error.message });
+            }
+
+            else if (user) {
+                
+                if (req.params.code == "empty")
+                user.registrationCode = null;                
+
+                dataAccess.updateUser(user);
+                dataAccess.onUserUpdated = (error: Error, status: boolean) => {
+
+                    if (error) {
+                        res.json({ success: false, message: error.message });
+                    }
+
+                    else if (status) {
+                        res.json({ success: true });
+                    }
+                    else {
+                        res.json({ success: false, message: "User update failed" });
+                    }
+                };               
+
+            }
+            else {
+                res.json({ success: false, message: 'User does not exist' });
+            }
+        };
+
     }
 
     token(req: express.Request, res: express.Response, next: express.NextFunction) {

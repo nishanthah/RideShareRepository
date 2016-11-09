@@ -39,6 +39,7 @@
     <Compile Include="Behaviors\NumberValidatorBehavior.cs" />
     <Compile Include="Behaviors\PasswordValidatorBehavior.cs" />
     <Compile Include="Behaviors\RequiredFieldValidatorBehavior.cs" />
+    <Compile Include="Common\ICommonPageProcessor.cs" />
     <Compile Include="Common\IForgotPasswordPageProcessor.cs" />
     <Compile Include="Common\ILoginPageProcessor.cs" />
     <Compile Include="Common\IMapPageProcessor.cs" />
@@ -98,6 +99,9 @@
     <Compile Include="RegisterVehicleDetailsPage.xaml.cs">
       <DependentUpon>RegisterVehicleDetailsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="RegistrationComplete.xaml.cs">
+      <DependentUpon>RegistrationComplete.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Session.cs" />
     <Compile Include="SettingsPage.xaml.cs">
       <DependentUpon>SettingsPage.xaml</DependentUpon>
@@ -123,7 +127,9 @@
     <Compile Include="ViewModels\RegisterFavouritePlacesViewModel.cs" />
     <Compile Include="ViewModels\RegisterVehicleDetailsViewModel.cs" />
     <Compile Include="ViewModels\RegisterViewModel.cs" />
+    <Compile Include="ViewModels\RegistrationCompleteViewModel.cs" />
     <Compile Include="ViewModels\SendRequestViewModel.cs" />
+    <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="ViewPresenter\BaseMapViewPresenter.cs" />
     <Compile Include="ViewPresenter\DriverNavigationViewPresenter.cs" />
@@ -303,6 +309,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ForgotPasswordStepOne.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RegistrationComplete.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
   </ItemGroup>

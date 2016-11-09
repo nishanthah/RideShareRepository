@@ -14,6 +14,7 @@ var UserMongooseDAO = (function () {
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
         userModel.resetPasswordGuid = user.resetPasswordGuid;
+        userModel.registrationCode = user.registrationCode;
         var status;
         var self = this;
         // save the sample user
@@ -42,6 +43,7 @@ var UserMongooseDAO = (function () {
                 selecteduser.userName = user.userName;
                 selecteduser.profileImage = user.profileImage;
                 selecteduser.resetPasswordGuid = user.resetPasswordGuid;
+                selecteduser.registrationCode = user.registrationCode;
                 selecteduser.save(function (err) {
                     if (err)
                         self.onUserUpdated(new Error("Error updating user."), null);
@@ -50,14 +52,16 @@ var UserMongooseDAO = (function () {
             }
         });
     };
-    UserMongooseDAO.prototype.getSelectedUser = function (userName) {
+    UserMongooseDAO.prototype.getSelectedUser = function (field, value) {
+        var query = {};
+        query[field] = value;
         var userData = new User();
         var self = this;
-        User.findOne({ userName: userName }, function (err, user) {
+        User.findOne(query, function (err, user) {
             if (err)
                 self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
             else if (!user) {
-                self.onSelectedUserDataReceived(new Error("User not found."), null);
+                self.onSelectedUserDataReceived(new Error("User does not exist."), null);
             }
             else {
                 userData.email = user.email;
@@ -68,29 +72,26 @@ var UserMongooseDAO = (function () {
                 userData.userName = user.userName;
                 userData.profileImage = user.profileImage;
                 userData.resetPasswordGuid = user.resetPasswordGuid;
+                userData.registrationCode = user.registrationCode;
                 self.onSelectedUserDataReceived(null, userData);
             }
         });
     };
-    UserMongooseDAO.prototype.getSelectedUserByGuid = function (resetPasswordGuid) {
-        var userData = new User();
+    UserMongooseDAO.prototype.deleteUser = function (user) {
+        var status;
         var self = this;
-        User.findOne({ resetPasswordGuid: resetPasswordGuid }, function (err, user) {
+        User.findOne({ userName: user.userName }, function (err, selecteduser) {
             if (err)
-                self.onSelectedUserDataReceived(new Error("Error retriving user."), null);
-            else if (!user) {
-                self.onSelectedUserDataReceived(new Error("User not found."), null);
+                self.onUserDeleted(new Error("Error getting user for delete."), null);
+            else if (!selecteduser) {
+                self.onUserDeleted(new Error("User not found."), null);
             }
             else {
-                userData.email = user.email;
-                userData.gender = user.gender;
-                userData.firstName = user.firstName;
-                userData.lastName = user.lastName;
-                userData.password = user.password;
-                userData.userName = user.userName;
-                userData.profileImage = user.profileImage;
-                userData.resetPasswordGuid = user.resetPasswordGuid;
-                self.onSelectedUserDataReceived(null, userData);
+                selecteduser.remove(function (err) {
+                    if (err)
+                        self.onUserDeleted(new Error("Error deleting user."), null);
+                    self.onUserDeleted(null, true);
+                });
             }
         });
     };

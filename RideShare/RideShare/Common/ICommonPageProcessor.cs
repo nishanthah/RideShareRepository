@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RideShare.Common
 {
-    public interface ILoginPageProcessor
+    public interface ICommonPageProcessor
     {
+        void MoveToLoginPage();
         void MoveToMainPage();
-        void MoveToCreateUserPage();
-        void MoveToSignUpPage();
+        //void MoveToPage(string page);
+        //void MoveToPreviousPage();
+        //void MoveToNextPage();
         void InvokeInMainThread(Action action);
-        void MoveToForgotPasswordPage();
-        void MoveToRegistrationCompletePage();
     }
 }

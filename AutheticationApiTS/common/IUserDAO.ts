@@ -6,8 +6,8 @@ interface IUserDAO {
     onUserUpdated: (error: Error, status: boolean) => void;
     addUser(user: IUser);
     updateUser(user: IUser);
-    getSelectedUser(userName: string);
-    getSelectedUserByGuid(guid: string);
+    getSelectedUser(field: string, value: string);    
+    deleteUser(user: IUser);
 }
 
 export = IUserDAO;

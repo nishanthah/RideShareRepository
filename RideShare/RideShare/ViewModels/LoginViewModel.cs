@@ -64,17 +64,20 @@ namespace RideShare.ViewModels
 
         bool AreCredentialsCorrect(User user)
         {
-            if (Session.AuthenticationService.Authenticate(user.UserName, user.Password))
+            var result = Session.AuthenticationService.Authenticate(user.UserName, user.Password);
+            if (result.IsSuccess)
             {
                 appDataService.Save("access_token", Session.AuthenticationService.AuthenticationToken);
                 return true;
             }
+            this.ErrorMessage = result.Message;
 
             return false;
-        }
+        }        
 
         private void Login()
         {
+            this.ErrorMessage = String.Empty;
             IsBusy = true;
 
             Task.Factory.StartNew(() =>
@@ -86,26 +89,27 @@ namespace RideShare.ViewModels
                     Password = this.Password
                 };
 
+
                 var isValid = AreCredentialsCorrect(user);
 
                 if (isValid)
                 {
-                    UpdateUserInLocal();
+                    //UpdateUserInLocal();
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                     var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
 
 #if WithNotification
-                        
+
 #else
                     urbanAirshipNotificationService.InitializeNamedUser(this.UserName);
 #endif
 
                     if (userCorrdinateResult.IsSuccess)
                     {
-                        
-                            App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                            driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
+                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
+                        App.CurrentLoggedUser.User.RegistrationCode = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken).RegistrationCode;
+                        driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
                         driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
                         appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
 
@@ -113,23 +117,30 @@ namespace RideShare.ViewModels
                         {
                             Session.CurrentUserName = this.UserName;
                             App.CurrentLoggedUser.User.UserType = Session.CurrentUserType;
-                            
-                            loginProcessor.MoveToMainPage();                            
+
+                            if (!String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode))
+                                loginProcessor.MoveToRegistrationCompletePage();
+                            else
+                                loginProcessor.MoveToMainPage();
                         });
 
                     }
+                    loginProcessor.InvokeInMainThread(() =>
+                    {
+                        this.ErrorMessage = userCorrdinateResult.Message;
+                        this.Password = string.Empty;
+                        IsBusy = false;
+                    });
                 }
                 else
                 {
                     loginProcessor.InvokeInMainThread(() =>
                     {
-                        this.ErrorMessage = "Login failed";
                         this.Password = string.Empty;
                         IsBusy = false;
                     });
 
                 }
-
 
             });
             

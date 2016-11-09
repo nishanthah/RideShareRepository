@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="RideShare.RegistrationComplete">  
+  <ContentPage.Content>
+    <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
+      <Entry x:Name="registrationCodeEntry" Text="{Binding Path=RegistrationCode}" Placeholder="Registration Code"/>
+      <Button x:Name="nextButton" Command="{Binding NextCommand}" Text="Next" />
+    </StackLayout>
+  </ContentPage.Content>
+</ContentPage>

@@ -14,7 +14,6 @@ namespace RideShare.ViewModels
     public class ForgotPasswordViewModel : ViewModelBase
     {
         string userName;
-        ObservableCollection<DriverLocator.Models.UserLocation> users = new ObservableCollection<DriverLocator.Models.UserLocation>();
         IForgotPasswordPageProcessor fpwdPageProcessor;
         public ICommand NextCommand { protected set; get; }
 
@@ -47,7 +46,7 @@ namespace RideShare.ViewModels
                 if (App.DeviceVersion >= 23)
                     userInfo = Session.AuthenticationService.GetUserInfoByUserNameAndSendEmail(this.userName);
                 else
-                    userInfo = Session.AuthenticationService.UpdateUserPassWord(this.userName);
+                    userInfo = Session.AuthenticationService.SendEmailWithCode(this.userName, "FPWD");
                 
                 bool userExists = userInfo.IsSuccess && (userInfo.Message == "User exists");
             }

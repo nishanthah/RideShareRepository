@@ -10,6 +10,7 @@ class UserResponse extends BaseResponse{
     profileImage: string;
     gender: string;
     resetPasswordGuid: string;
+    registrationCode: string;
 }
 
 export = UserResponse;
