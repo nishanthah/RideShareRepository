@@ -37,49 +37,57 @@ namespace RideShare
             {
                 Title = "Notifications",
                 IconSource = "edit.png",
-                TargetType = typeof(NotificationView)
+                TargetType = typeof(NotificationView),
+                IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
 
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Edit Profile",
                 IconSource = "edit.png",
-                TargetType = typeof(RegisterPage)
+                TargetType = typeof(RegisterPage),
+                IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "History",
                 IconSource = "history.png",
-                TargetType = typeof(HistoryView)
+                TargetType = typeof(HistoryView),
+                IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Settings",
                 IconSource = "settings.png",
-                TargetType = typeof(SettingsPage)
+                TargetType = typeof(SettingsPage),
+                IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "About",
                 IconSource = "about.png",
-                TargetType = typeof(AboutPage)
+                TargetType = typeof(AboutPage),
+                IsEnabled = true
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Map View",
                 IconSource = "logout.png",
-                TargetType = typeof(MapView)
+                TargetType = typeof(MapView),
+                IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Logout",
                 IconSource = "logout.png",
-                TargetType = typeof(LogoutPage)
+                TargetType = typeof(LogoutPage),
+                IsEnabled = true
             });
             
             listView.ItemsSource = masterPageItems;
         }
 
+        
       
     }
 }

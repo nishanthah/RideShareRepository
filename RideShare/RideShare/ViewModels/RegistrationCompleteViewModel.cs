@@ -39,8 +39,12 @@ namespace RideShare.ViewModels
         {
             if (this.registrationCode == App.CurrentLoggedUser.User.RegistrationCode)
             {
-                Session.AuthenticationService.UpdateRegistrationCode(App.CurrentLoggedUser.User.UserName);
-                nextPageProcessor.MoveToMainPage();
+                var response = Session.AuthenticationService.UpdateRegistrationCode(App.CurrentLoggedUser.User.UserName);
+                if (response.IsSuccess)
+                {
+                    App.CurrentLoggedUser.User.RegistrationCode = String.Empty;
+                    nextPageProcessor.MoveToMainPage();
+                }
             }
         }
 

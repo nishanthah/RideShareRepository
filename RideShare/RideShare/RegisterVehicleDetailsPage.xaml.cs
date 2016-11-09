@@ -96,7 +96,13 @@ namespace RideShare
 
         private void RegisterButtonClicked(object sender, EventArgs e)
         {
-            this.userVehicleAdditionResult.OnUserVehicleAdded(App.CurrentUserVehicles);
+            ObservableCollection<DriverLocator.Models.Vehicle> newVehicles = App.CurrentLoggedUser.Vehicles;
+            foreach (DriverLocator.Models.Vehicle vehi in App.CurrentUserVehicles)
+            {
+                if (!App.CurrentLoggedUser.Vehicles.Contains(vehi))
+                    newVehicles.Add(vehi);
+            }
+            this.userVehicleAdditionResult.OnUserVehicleAdded(newVehicles);
         }
 
         public void MoveToLoginPage()

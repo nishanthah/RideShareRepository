@@ -13,5 +13,7 @@ namespace RideShare
         public string IconSource { get; set; }
 
         public Type TargetType { get; set; }
+
+        public bool IsEnabled { get; set; }
     }
 }

@@ -24,7 +24,7 @@ namespace RideShare
 
         public void MoveToNextPage()
         {
-            App.Current.MainPage = new NavigationPage(new ForgotPasswordStepOne());
+            App.Current.MainPage = new MainPage(new ForgotPasswordStepOne());
         }
 
         public void MoveToPreviousPage()

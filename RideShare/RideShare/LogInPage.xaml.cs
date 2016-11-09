@@ -102,13 +102,13 @@ namespace RideShare
 
         public void MoveToForgotPasswordPage()
         {
-            App.Current.MainPage = new ForgotPasswordStepOne();
+            App.Current.MainPage = new MainPage(new ForgotPasswordStepOne());
         }
 
 
         public void MoveToRegistrationCompletePage()
         {
-            App.Current.MainPage = new RegistrationComplete();
+            App.Current.MainPage = new MainPage(new RegistrationComplete());
         }
     }
 }

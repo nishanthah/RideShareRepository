@@ -32,7 +32,7 @@
                 <StackLayout Orientation="Vertical">
                   <StackLayout Orientation="Horizontal">
                     <Image Source="{Binding IconSource}" VerticalOptions="Center" />
-                    <Label Text="{Binding Title}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" FontSize="20"/>
+                    <Label Text="{Binding Title}" HorizontalOptions="StartAndExpand" VerticalOptions="Center" FontSize="20" IsEnabled="{Binding IsEnabled}"/>
                   </StackLayout>
                 </StackLayout>
               </ViewCell>

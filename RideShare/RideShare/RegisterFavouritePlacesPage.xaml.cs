@@ -81,8 +81,13 @@ namespace RideShare
 
         private void RegisterButtonClicked(object sender, EventArgs e)
         {
-            //this.userVehicleAdditionResult.OnUserVehicleAdded(App.CurrentUserVehicles);
-            this.userFavPlaceAdditionResult.OnUserFavouritePlaceAdded(App.CurrentUserFavouritePlaces);
+            ObservableCollection<DriverLocator.Models.FavouritePlace> newfavPlaces = App.CurrentLoggedUser.FavouritePlaces;
+            foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+            {
+                if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                    newfavPlaces.Add(fp);
+            }
+            this.userFavPlaceAdditionResult.OnUserFavouritePlaceAdded(newfavPlaces);
         }
 
         public void MoveToLoginPage()

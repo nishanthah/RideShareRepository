@@ -125,27 +125,9 @@ apiRoutes.get('/vehicledefinitiondata', function (req, res) {
 
 });
 
-apiRoutes.post('/users', function (req, res) {
-    UserCoordinate.findOne({ userName : req.body.userName }, function (err, userCoordinate) {        
-        if (err) res.json({ success: false, message: err });
+
+apiRoutes.post('/users', function (req, res) {	
         
-        if (userCoordinate != null) {            
-            userCoordinate.firstName = req.body.firstName;
-            userCoordinate.lastName = req.body.lastName;
-            userCoordinate.email = req.body.email;
-            userCoordinate.profileImage = req.body.profileImage;
-            userCoordinate.gender = req.body.gender;
-            userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
-            userCoordinate.save(function (err) {
-                if (err) res.json({ success: false, message: err });
-                
-                console.log('User data successfully updated');
-                io.emit('coordinate_changed', "Changed");
-                res.json({ success: true });
-            });
-        }
-	
-        else {
             var newUserCoordinate = new UserCoordinate({
                 gender: req.body.gender,
                 userName: req.body.userName,
@@ -163,9 +145,51 @@ apiRoutes.post('/users', function (req, res) {
                 io.emit('coordinate_changed', "Changed");
                 res.json({ success: true });
             });
-        }
+        
 	
 	
+    
+});
+
+apiRoutes.post('/vehicles', function (req, res) {
+    
+    var newUserVehicle = new UserVehicle({
+        userName: req.body.userName,
+        vehicleMake: req.body.vehicleMake,
+        vehicleModel: req.body.vehicleModel,
+        vehicleColor: req.body.vehicleColor,
+        vehicleMaxPassengerCount: req.body.vehicleMaxPassengerCount,
+        vehicleNumberPlate: req.body.vehicleNumberPlate
+    });
+    
+    newUserVehicle.save(function (err) {
+        if (err) res.json({ success: false, message: err });
+        
+        console.log('Inserted User Vehicle successfully');
+        io.emit('coordinate_changed', "Changed");
+        res.json({ success: true, message: 'Inserted User Vehicle successfully' });
+    });
+        
+       
+});
+
+apiRoutes.post('/favouriteplaces', function (req, res) {
+    
+    var newUserFavPlace = new UserFavouritePlace({
+        userName: req.body.userName,
+        userGivenplaceName: req.body.userGivenplaceName,
+        placeName: req.body.placeName,
+        longitude: req.body.longitude,
+        latitude: req.body.latitude,
+        placeID: req.body.placeID,
+        placeReference: req.body.placeReference
+    });
+    
+    newUserFavPlace.save(function (err) {
+        if (err) res.json({ success: false, message: err });
+        
+        console.log('Inserted User Favourite Places successfully');
+        res.json({ success: true, message: 'Inserted User Favourite Places successfully' });
     });
 });
 
@@ -248,6 +272,34 @@ apiRoutes.delete('/users/:userName', function (req, res) {
     });
 });
 
+apiRoutes.put('/users', function (req, res) {
+    UserCoordinate.findOne({ userName : req.body.userName }, function (err, userCoordinate) {
+        if (err) res.json({ success: false, message: err });
+        
+        if (userCoordinate != null) {
+            userCoordinate.firstName = req.body.firstName;
+            userCoordinate.lastName = req.body.lastName;
+            userCoordinate.email = req.body.email;
+            userCoordinate.profileImage = req.body.profileImage;
+            userCoordinate.gender = req.body.gender;
+            userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
+            userCoordinate.save(function (err) {
+                if (err) res.json({ success: false, message: err });
+                
+                console.log('User data successfully updated');
+                io.emit('coordinate_changed', "Changed");
+                res.json({ success: true });
+            });
+        }
+	
+        else {
+            res.json({ success: false, message: 'User does not exist' });
+        }
+	
+	
+    });
+});
+
 function deleteVehicles(useName, resultCallback) {
     UserVehicle.find({ userName : useName }, function (err, userVehicles) {
         
@@ -308,9 +360,7 @@ apiRoutes.put('/users/:userName/location', function (req, res) {
     });
 });
 
-
-
-apiRoutes.post('/vehicles', function (req, res) {
+apiRoutes.put('/vehicles', function (req, res) {
     
     UserVehicle.findOne({ $and: [{ userName : req.body.userName }, { vehicleNumberPlate : req.body.previousVehicleNumberPlate }] }, function (err, userVehicle) {
         
@@ -331,9 +381,9 @@ apiRoutes.post('/vehicles', function (req, res) {
                 console.log('Updated User Vehicle successfully');
                 io.emit('coordinate_changed', "Changed");
                 res.json({ success: true, message: 'Updated User Vehicle successfully' });
-            });        
+            });
         }
-        else {
+        else {            
             var newUserVehicle = new UserVehicle({
                 userName: req.body.userName,
                 vehicleMake: req.body.vehicleMake,
@@ -349,12 +399,13 @@ apiRoutes.post('/vehicles', function (req, res) {
                 console.log('Inserted User Vehicle successfully');
                 io.emit('coordinate_changed', "Changed");
                 res.json({ success: true, message: 'Inserted User Vehicle successfully' });
-            });            
+            });
         }
-    });   
+    });
 });
 
-apiRoutes.post('/favouriteplaces', function (req, res) {
+
+apiRoutes.put('/favouriteplaces', function (req, res) {
     
     UserFavouritePlace.findOne({ $and: [{ userName : req.body.userName }, { userGivenplaceName : req.body.previousUserGivenPlaceName }] }, function (err, userFavPlace) {
         
@@ -367,9 +418,9 @@ apiRoutes.post('/favouriteplaces', function (req, res) {
             userFavPlace.placeName = req.body.placeName;
             userFavPlace.longitude = req.body.longitude;
             userFavPlace.latitude = req.body.latitude;
-			userFavPlace.placeID = req.body.placeID;
-			userFavPlace.placeReference = req.body.placeReference;
-                        
+            userFavPlace.placeID = req.body.placeID;
+            userFavPlace.placeReference = req.body.placeReference;
+            
             userFavPlace.save(function (err) {
                 if (err) res.json({ success: false, message: err });
                 
@@ -384,8 +435,8 @@ apiRoutes.post('/favouriteplaces', function (req, res) {
                 placeName: req.body.placeName,
                 longitude: req.body.longitude,
                 latitude: req.body.latitude,
-				placeID: req.body.placeID,
-			    placeReference: req.body.placeReference
+                placeID: req.body.placeID,
+                placeReference: req.body.placeReference
             });
             
             newUserFavPlace.save(function (err) {

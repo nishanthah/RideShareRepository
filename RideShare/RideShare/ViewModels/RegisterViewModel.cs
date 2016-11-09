@@ -58,8 +58,8 @@ namespace RideShare.ViewModels
                 {
                     this.ProfilePhoto = Convert.FromBase64String(currentUserDetails.profileImageEncoded);
                 }
-                vehicles = App.CurrentUserVehicles = App.CurrentLoggedUser.Vehicles;
-                favPlaces = App.CurrentUserFavouritePlaces = App.CurrentLoggedUser.FavouritePlaces;
+                vehicles = App.CurrentLoggedUser.Vehicles;
+                favPlaces = App.CurrentLoggedUser.FavouritePlaces;
                 this.SignUpCommand = new RelayCommand(Update);
             }
             else
@@ -270,7 +270,6 @@ namespace RideShare.ViewModels
                 ResetPasswordGuid = null
             };
 
-
             var signUpSucceeded = AreDetailsValid(user);
 
             if (signUpSucceeded)
@@ -278,24 +277,15 @@ namespace RideShare.ViewModels
 
                 var result = Session.AuthenticationService.CreateUser(user);
                 
-                UpdateUserInLocal(user);
+                UpdateUserInLocal(user, false);
 
+                if (App.CurrentUserVehicles != null)
+                    UpdateVehiclesInLocal(user, false);
 
-                    DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-                    var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
+                if (App.CurrentUserFavouritePlaces != null)
+                    UpdateFavPlacesInLocal(user, false);
 
-                    if (userCorrdinateResult.IsSuccess)
-                    {
-                        App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
-                    }
-
-                    if (App.CurrentUserVehicles != null)
-                        UpdateVehiclesInLocal();
-
-                    if (App.CurrentUserFavouritePlaces != null)
-                        UpdateFavPlacesInLocal();
-
-                    this.signUpPageProcessor.MoveToLoginPage();
+                this.signUpPageProcessor.MoveToLoginPage();
                 
             }            
         }
@@ -319,7 +309,7 @@ namespace RideShare.ViewModels
             if (Isvalid)
             {
                 var result = Session.AuthenticationService.UpdateUser(user);
-                UpdateUserInLocal(user);
+                UpdateUserInLocal(user, true);
 
                 DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                 var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
@@ -330,10 +320,10 @@ namespace RideShare.ViewModels
                 }
 
                 if (App.CurrentUserVehicles != null)
-                    UpdateVehiclesInLocal();
+                    UpdateVehiclesInLocal(user, true);
 
                 if (App.CurrentUserFavouritePlaces != null)
-                    UpdateFavPlacesInLocal();
+                    UpdateFavPlacesInLocal(user, true);
 
                 this.signUpPageProcessor.MoveToMainPage();
             }
@@ -389,7 +379,7 @@ namespace RideShare.ViewModels
                !string.IsNullOrWhiteSpace(user.EMail));
         }
 
-        public void UpdateUserInLocal(User user)
+        public void UpdateUserInLocal(User user, bool isUpdate)
         {
             DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
             DriverLocator.Models.User dlUser = new DriverLocator.Models.User();
@@ -399,10 +389,14 @@ namespace RideShare.ViewModels
             dlUser.EMail = user.EMail;
             dlUser.profileImageEncoded = user.profileImageEncoded;
             dlUser.Gender = user.Gender;
-            var response = driverLocatorService.SaveUserData(dlUser);
+            DriverLocator.Models.SaveUserDataResponse response = null;
+            if(isUpdate)
+                response = driverLocatorService.UpdateUserData(dlUser);
+            else
+                response = driverLocatorService.AddUserData(dlUser);
         }
 
-        public void UpdateVehiclesInLocal()
+        public void UpdateVehiclesInLocal(User user, bool isUpdate)
         {
             DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
 
@@ -411,19 +405,29 @@ namespace RideShare.ViewModels
                 foreach (DriverLocator.Models.Vehicle v in App.CurrentUserVehicles)
                 {
                     DriverLocator.Models.UpdateVehicleDetailsRequest dlVehicleRequest = new DriverLocator.Models.UpdateVehicleDetailsRequest();
-                    dlVehicleRequest.UserName = App.CurrentLoggedUser.User.UserName;
+                    dlVehicleRequest.UserName = user.UserName;
                     dlVehicleRequest.VehicleMake = v.VehicleMake;
                     dlVehicleRequest.VehicleModel = v.VehicleModel;
                     dlVehicleRequest.VehicleColor = v.VehicleColor;
                     dlVehicleRequest.VehicleMaxPassengerCount = v.VehicleMaxPassengerCount;
                     dlVehicleRequest.VehicleNumberPlate = v.VehicleNumberPlate;
                     dlVehicleRequest.PreviousVehicleNumberPlate = v.PreviousVehicleNumberPlate;
-                    var response = driverLocatorService.UpdateVehicleDetails(dlVehicleRequest);
+                    DriverLocator.Models.UpdateVehicleDetailsResponse response = null;
+                    if(isUpdate)
+                        response = driverLocatorService.UpdateVehicleDetails(dlVehicleRequest);
+                    else
+                        response = driverLocatorService.AddVehicleDetails(dlVehicleRequest);
+
+                    if(response.IsSuccess)
+                    {
+                        if (!App.CurrentLoggedUser.Vehicles.Contains(v))
+                            App.CurrentLoggedUser.Vehicles.Add(v);                        
+                    }
                 }
             }
         }
 
-        public void UpdateFavPlacesInLocal()
+        public void UpdateFavPlacesInLocal(User user, bool isUpdate)
         {
             DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
 
@@ -432,7 +436,7 @@ namespace RideShare.ViewModels
                 foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
                 {
                     DriverLocator.Models.UpdateFavouritePlacesRequest dlFavPlacesRequest = new DriverLocator.Models.UpdateFavouritePlacesRequest();
-                    dlFavPlacesRequest.UserName = App.CurrentLoggedUser.User.UserName;
+                    dlFavPlacesRequest.UserName = user.UserName;
                     dlFavPlacesRequest.Latitude = fp.Latitude;
                     dlFavPlacesRequest.Longitude = fp.Longitude;
                     dlFavPlacesRequest.PlaceName = fp.PlaceName;
@@ -440,7 +444,17 @@ namespace RideShare.ViewModels
                     dlFavPlacesRequest.UserGivenplaceName = fp.UserGivenplaceName;
                     dlFavPlacesRequest.PlaceID = fp.PlaceID;
                     dlFavPlacesRequest.PlaceReference = fp.PlaceReference;
-                    var response = driverLocatorService.UpdateUserFavouritePlaces(dlFavPlacesRequest);
+                    DriverLocator.Models.UpdateFavouritePlacesResponse response = null;
+                    if(isUpdate)
+                        response = driverLocatorService.UpdateUserFavouritePlaces(dlFavPlacesRequest);
+                    else
+                        response = driverLocatorService.AddUserFavouritePlaces(dlFavPlacesRequest);
+
+                    if (response.IsSuccess)
+                    {
+                        if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                            App.CurrentLoggedUser.FavouritePlaces.Add(fp);
+                    }
                 }
             }
         }

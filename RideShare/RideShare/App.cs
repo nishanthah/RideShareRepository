@@ -105,11 +105,11 @@ namespace RideShare
                         if (task.Result)
                         {
                             if (!String.IsNullOrEmpty(userInfo.RegistrationCode))
-                                MainPage = new MainPage(false);
+                                MainPage = new MainPage(new RegistrationComplete());
                             else
                             {
                                 if (!String.IsNullOrEmpty(guid))
-                                    MainPage = new MainPage(true);
+                                    MainPage = new MainPage(new RegisterPage());
                                 else
                                     MainPage = new MainPage();
                             }

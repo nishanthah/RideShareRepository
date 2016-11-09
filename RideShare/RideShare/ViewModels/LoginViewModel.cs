@@ -94,7 +94,6 @@ namespace RideShare.ViewModels
 
                 if (isValid)
                 {
-                    //UpdateUserInLocal();
                     DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
                     var userCorrdinateResult = driverLocatorService.GetSelectedUserCoordinate(this.userName);
 
@@ -191,21 +190,7 @@ namespace RideShare.ViewModels
                 errorMessage = value;
                 OnPropertyChanged("ErrorMessage");
             }
-        }
-
-        public void UpdateUserInLocal()
-        {
-            var result = Session.AuthenticationService.GetUserInfo(Session.AuthenticationService.AuthenticationToken);
-            DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
-            DriverLocator.Models.User dlUser = new DriverLocator.Models.User();
-            dlUser.UserName = this.UserName;
-            dlUser.FirstName = result.FirstName;
-            dlUser.LastName = result.LastName;
-            dlUser.EMail = result.EMail;
-            dlUser.profileImageEncoded = result.profileImageEncoded;
-            dlUser.Gender = result.Gender;
-            var response = driverLocatorService.SaveUserData(dlUser);
-        }
+        }        
 
         private void OnForgotPwdNext()
         {

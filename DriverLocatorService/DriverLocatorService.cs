@@ -33,7 +33,7 @@ namespace DriverLocator
         private const string UPDATE_USER_DESTINATION_URL = SERVER + "/api/users/{0}/destination";
         private const string GET_DRIVERS_URL = SERVER + "/api/drivers";
         private const string GET_RIDERS_URL = SERVER + "/api/riders";
-        private const string UPDATE_USER_VEHICLE_URL = SERVER + "/api/vehicles";
+        private const string SAVE_USER_VEHICLE_URL = SERVER + "/api/vehicles";
         private const string GET_USER_VEHICLE_URL = SERVER + "/api/users/{0}/vehicles";
         private const string FINISH_RIDE_URL = SERVER + "/api/ridehistory/driver/{0}/ride/end";
         private const string UPDATE_NOTIFICATION_STATUS_URL = SERVER + "/api/ridehistory/notification_status/{0}";
@@ -41,7 +41,7 @@ namespace DriverLocator
 		private const string GET_USER_VEHICLE_DEF_DATA_URL = SERVER + "/api/vehicledefinitiondata";
         private const string GET_USER_BY_EMAIL = SERVER + "/api/users/{0}/?filter={1}";
         private const string GET_USER_FAV_PLACES_URL = SERVER + "/api/users/{0}/favouriteplaces";
-        private const string UPDATE_USER_FAV_PLACES_URL = SERVER + "/api/favouriteplaces";
+        private const string SAVE_USER_FAV_PLACES_URL = SERVER + "/api/favouriteplaces";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -74,13 +74,23 @@ namespace DriverLocator
             return userVehiclesResponse;
         }
 
-        public SaveUserDataResponse SaveUserData(User userCoordinate)
+        public SaveUserDataResponse AddUserData(User userCoordinate)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = HttpMethod.POST;
             requestHandler.Url = SAVE_USERS_URL;
             var result=requestHandler.SendRequest<User, SaveUserDataResponse>(userCoordinate);
+            return result;
+        }
+
+        public SaveUserDataResponse UpdateUserData(User userCoordinate)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = SAVE_USERS_URL;
+            var result = requestHandler.SendRequest<User, SaveUserDataResponse>(userCoordinate);
             return result;
         }
 
@@ -105,12 +115,22 @@ namespace DriverLocator
             return result;
         }
 
-        public UpdateVehicleDetailsResponse UpdateVehicleDetails(UpdateVehicleDetailsRequest request)
+        public UpdateVehicleDetailsResponse AddVehicleDetails(UpdateVehicleDetailsRequest request)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = HttpMethod.POST;
-            requestHandler.Url = UPDATE_USER_VEHICLE_URL;
+            requestHandler.Url = SAVE_USER_VEHICLE_URL;
+            var result = requestHandler.SendRequest<UpdateVehicleDetailsRequest, UpdateVehicleDetailsResponse>(request);
+            return result;
+        }
+
+        public UpdateVehicleDetailsResponse UpdateVehicleDetails(UpdateVehicleDetailsRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = SAVE_USER_VEHICLE_URL;
             var result = requestHandler.SendRequest<UpdateVehicleDetailsRequest, UpdateVehicleDetailsResponse>(request);
             return result;
         }
@@ -246,12 +266,22 @@ namespace DriverLocator
             return userFavPlsResponse;
         }
 
-        public UpdateFavouritePlacesResponse UpdateUserFavouritePlaces(UpdateFavouritePlacesRequest request)
+        public UpdateFavouritePlacesResponse AddUserFavouritePlaces(UpdateFavouritePlacesRequest request)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = HttpMethod.POST;
-            requestHandler.Url = UPDATE_USER_FAV_PLACES_URL;
+            requestHandler.Url = SAVE_USER_FAV_PLACES_URL;
+            var result = requestHandler.SendRequest<UpdateFavouritePlacesRequest, UpdateFavouritePlacesResponse>(request);
+            return result;
+        }
+
+        public UpdateFavouritePlacesResponse UpdateUserFavouritePlaces(UpdateFavouritePlacesRequest request)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.PUT;
+            requestHandler.Url = SAVE_USER_FAV_PLACES_URL;
             var result = requestHandler.SendRequest<UpdateFavouritePlacesRequest, UpdateFavouritePlacesResponse>(request);
             return result;
         }
