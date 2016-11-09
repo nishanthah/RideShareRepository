@@ -67,8 +67,8 @@ class AuthhenticationAPIController{
                     var tokenPayload = new TokenPayload();
                     tokenPayload.userName = user.userName;
                     tokenPayload.canAccessUserInfo = true;
-
-                    var token = jwt.sign(tokenPayload, Config.secret, {
+                    var secret = process.env.RIDESHARE_SECRET || Config.secret;
+                    var token = jwt.sign(tokenPayload,secret, {
                         expiresIn: '24h' // expires in 24 hours
                     });
 
@@ -132,8 +132,8 @@ class AuthhenticationAPIController{
                 var tokenPayload = new TokenPayload();
                     tokenPayload.userName = user.userName;
                     tokenPayload.canAccessUserInfo = true;
-                    
-                    var token = jwt.sign(tokenPayload, Config.secret, {
+                    var secret = process.env.RIDESHARE_SECRET || Config.secret;
+                    var token = jwt.sign(tokenPayload, secret, {
                         expiresIn: '24h' // expires in 24 hours
                     });
 
@@ -221,6 +221,7 @@ class AuthhenticationAPIController{
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
                         return console.log(error);
+
                     }
 
                     user.resetPasswordGuid = newguid;
@@ -433,7 +434,8 @@ class AuthhenticationAPIController{
         var self = this;
         // decode token
         if (token) {
-            jwt.verify(token, Config.secret, function (err, decoded) {
+            var secret = process.env.RIDESHARE_SECRET || Config.secret;
+            jwt.verify(token, secret, function (err, decoded) {
                 if (err) {
                     res.json({ success: false, message: 'Failed to authenticate token.' });
                 }

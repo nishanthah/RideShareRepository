@@ -9,7 +9,8 @@ class ApplicationContext {
     static getDB(): UserMongooseDAO{
 
         if (!ApplicationContext.isDBConnected) {
-            mongoose.connect(Config.database);
+            var database = process.env.RIDESHAREDB || Config.database;
+            mongoose.connect(database);
             ApplicationContext.isDBConnected = true;
         }
         return new UserMongooseDAO();
