@@ -81,11 +81,22 @@ namespace RideShare
 
         private void RegisterButtonClicked(object sender, EventArgs e)
         {
-            ObservableCollection<DriverLocator.Models.FavouritePlace> newfavPlaces = App.CurrentLoggedUser.FavouritePlaces;
-            foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+            ObservableCollection<DriverLocator.Models.FavouritePlace> newfavPlaces = new ObservableCollection<DriverLocator.Models.FavouritePlace>();
+            if (App.CurrentLoggedUser != null && App.CurrentLoggedUser.FavouritePlaces != null)
             {
-                if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                newfavPlaces = App.CurrentLoggedUser.FavouritePlaces;
+                foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+                {
+                    if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                        newfavPlaces.Add(fp);
+                }
+            }
+            else
+            {
+                foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+                {
                     newfavPlaces.Add(fp);
+                }
             }
             this.userFavPlaceAdditionResult.OnUserFavouritePlaceAdded(newfavPlaces);
         }
