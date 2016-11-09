@@ -196,6 +196,28 @@ apiRoutes.post('/favouriteplaces', function (req, res) {
     });
 });
 
+apiRoutes.get('/users/:userName', function (req, res) {
+        
+    UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {
+        
+        if (err) res.json({ success: false, message: err });
+			
+        else if (!userCoordinate) {
+            res.json({ success: false, message: "User Not Found" });
+        }
+        else {
+            userMapper.mapSingleUser(userCoordinate, function (userData) {
+                var userData = userData;
+                res.json({ userData: userData, success: true });
+            });
+        }
+			
+			
+	
+    });
+
+}); 
+
 
 // route middleware to verify a token
 apiRoutes.use(function(req, res, next) {
@@ -581,31 +603,6 @@ function updateUserRecentRequest(userName,requestId)
         });
     });
 }
-
-
-apiRoutes.get('/users/:userName', function(req, res) {
-
-  
-	UserCoordinate.findOne({userName : req.params.userName}, function(err, userCoordinate) {
-        
-			if (err) res.json({ success: false, message:err });
-			
-			else if(!userCoordinate)
-			{
-				res.json({ success: false, message:"User Not Found" });				
-			}
-			else {
-				userMapper.mapSingleUser(userCoordinate, function (userData) {
-					var userData = userData;
-					res.json({ userData: userData, success: true });
-				});				
-			}
-			
-			
-	
-	});
-
-}); 
 
 apiRoutes.get('/users', function(req, res) {
 
