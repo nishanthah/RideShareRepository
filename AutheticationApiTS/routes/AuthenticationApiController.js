@@ -217,23 +217,28 @@ var AuthhenticationAPIController = (function () {
                         pass: '1qaz2wsx@W'
                     }
                 };
+                var subject = 'Registration Completion';
+                if (req.params.flag == 'FPWD') {
+                    subject = 'Reset Password';
+                }
                 var transporter = nodemailer.createTransport(smtpConfig);
                 var mailOptions = {
                     from: '"RideShare" <virtusamicros@gmail.com>',
                     to: user.email,
-                    subject: 'Reset Password',
-                    html: '<p>Please enter the following code to complete the registration: </p> <b>' + req.params.code +
-                        '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
+                    subject: subject,
+                    html: '<p>Welcome,</p> Please enter the following code to complete the registration: <b>' + req.params.code +
+                        '</b></br> You must enter this code, once you have logged in with the username and password entered at the registration.' +
+                        '</br></br> Best Regards,</br> RideShare Team' // html body
                 };
                 if (req.params.flag == 'FPWD') {
                     // setup e-mail data with unicode symbols
                     mailOptions = {
                         from: '"RideShare" <virtusamicros@gmail.com>',
                         to: user.email,
-                        subject: 'Reset Password',
-                        html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
-                            '</b></br> <p> You can reset your password in Edit Profile, once you are logged in. </p>' +
-                            '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
+                        subject: subject,
+                        html: '<p>Hello,</p> Please enter the following code as your password when login in:  <b>' + req.params.code +
+                            '</b></br> You can reset your password in Edit Profile, once you are logged in.' +
+                            '</br></br> Best Regards,</br> RideShare Team' // html body
                     };
                 }
                 // send mail with defined transport object

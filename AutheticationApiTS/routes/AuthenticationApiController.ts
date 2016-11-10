@@ -274,15 +274,20 @@ class AuthhenticationAPIController{
                 };
 
                 
-                
+                var subject = 'Registration Completion';
+                if (req.params.flag == 'FPWD') {
+                    subject = 'Reset Password';
+                }
+
                 var transporter = nodemailer.createTransport(smtpConfig);
                 
                 var mailOptions = {
                     from: '"RideShare" <virtusamicros@gmail.com>', // sender address
                     to: user.email, // list of receivers
-                    subject: 'Reset Password', // Subject line
-                    html: '<p>Please enter the following code to complete the registration: </p> <b>' + req.params.code +
-                    '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
+                    subject: subject, // Subject line
+                    html: '<p>Welcome,</p> Please enter the following code to complete the registration: <b>' + req.params.code +
+                    '</b></br> You must enter this code, once you have logged in with the username and password entered at the registration.' +
+                    '</br></br> Best Regards,</br> RideShare Team' // html body
                 };
             
                 if (req.params.flag == 'FPWD') {                    
@@ -290,10 +295,10 @@ class AuthhenticationAPIController{
                     mailOptions = {
                         from: '"RideShare" <virtusamicros@gmail.com>', // sender address
                         to: user.email, // list of receivers
-                        subject: 'Reset Password', // Subject line
-                        html: '<p>Please enter the following code as your password when login in: </p> <b>' + req.params.code +
-                        '</b></br> <p> You can reset your password in Edit Profile, once you are logged in. </p>' +
-                        '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
+                        subject: subject, // Subject line
+                        html: '<p>Hello,</p> Please enter the following code as your password when login in:  <b>' + req.params.code +
+                        '</b></br> You can reset your password in Edit Profile, once you are logged in.' +
+                        '</br></br> Best Regards,</br> RideShare Team' // html body
                     };
                 }
             
@@ -302,7 +307,7 @@ class AuthhenticationAPIController{
                     if (error) {
                         return console.log(error);
                     }
-
+                
                     if (req.params.flag == 'FPWD') {
                         user.password = req.params.code;
                     }
