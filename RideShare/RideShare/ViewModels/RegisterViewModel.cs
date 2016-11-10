@@ -420,7 +420,7 @@ namespace RideShare.ViewModels
 
                     if(response.IsSuccess)
                     {
-                        if (!App.CurrentLoggedUser.Vehicles.Contains(v))
+                        if (App.CurrentLoggedUser != null && App.CurrentLoggedUser.Vehicles != null && !App.CurrentLoggedUser.Vehicles.Contains(v))
                             App.CurrentLoggedUser.Vehicles.Add(v);                        
                     }
                 }
@@ -452,7 +452,7 @@ namespace RideShare.ViewModels
 
                     if (response.IsSuccess)
                     {
-                        if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                        if (App.CurrentLoggedUser != null && App.CurrentLoggedUser.FavouritePlaces != null && !App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
                             App.CurrentLoggedUser.FavouritePlaces.Add(fp);
                     }
                 }
@@ -477,6 +477,7 @@ namespace RideShare.ViewModels
 
         private void CheckFormValiditiy()
         {
+            this.ErrorMessage = String.Empty;
             string emailRegex = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
         @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
 

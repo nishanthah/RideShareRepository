@@ -102,7 +102,7 @@ namespace RideShare
 
         public void MoveToForgotPasswordPage()
         {
-            App.Current.MainPage = new MainPage(new ForgotPasswordStepOne());
+            App.Current.MainPage = new NavigationPage(new ForgotPasswordStepOne());
         }
 
 

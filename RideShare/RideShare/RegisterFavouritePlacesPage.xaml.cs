@@ -85,10 +85,13 @@ namespace RideShare
             if (App.CurrentLoggedUser != null && App.CurrentLoggedUser.FavouritePlaces != null)
             {
                 newfavPlaces = App.CurrentLoggedUser.FavouritePlaces;
-                foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+                if (App.CurrentUserFavouritePlaces != null)
                 {
-                    if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
-                        newfavPlaces.Add(fp);
+                    foreach (DriverLocator.Models.FavouritePlace fp in App.CurrentUserFavouritePlaces)
+                    {
+                        if (!App.CurrentLoggedUser.FavouritePlaces.Contains(fp))
+                            newfavPlaces.Add(fp);
+                    }
                 }
             }
             else if (App.CurrentUserFavouritePlaces != null)

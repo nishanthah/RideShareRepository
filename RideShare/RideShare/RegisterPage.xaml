@@ -19,13 +19,13 @@
         <StackLayout x:Name="profileImageStackLayout" Orientation="Vertical">
         </StackLayout>
         <StackLayout Orientation="Horizontal">
-          <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name [Required]" FontSize="16">
+          <Entry x:Name="firstNameEntry" Text="{Binding Path=FirstName}" Placeholder="First Name [Required]">
             <Entry.Behaviors>
               <local:RequiredFieldValidatorBehavior x:Name="fNRequiredFieldValidator"/>
             </Entry.Behaviors>
           </Entry>          
 
-          <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name [Required]" FontSize="16">
+          <Entry x:Name="lastNameEntry" Text="{Binding Path=LastName}" Placeholder="Last Name [Required]">
             <Entry.Behaviors>
               <local:RequiredFieldValidatorBehavior x:Name="lNRequiredFieldValidator"/>
             </Entry.Behaviors>
@@ -33,7 +33,7 @@
         </StackLayout>
 
         
-        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name [Required]" FontSize="16">
+        <Entry x:Name="userNameEntry" Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name [Required]">
           <Entry.Style>
             <Style TargetType="Entry">
               <Setter Property="IsEnabled" Value="true" />
@@ -49,7 +49,7 @@
           </Entry.Behaviors>
         </Entry>
         
-        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password [Required]" FontSize="16">
+        <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password [Required]">
           <Entry.Behaviors>
             <local:PasswordValidatorBehavior x:Name="passwordValidator"/>
 
@@ -61,7 +61,7 @@
         <Label Text="{Binding PasswordErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference passwordValidator},
 	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
 
-        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email - e.g. example@email.com [Required]" FontSize="16" Keyboard="Email">
+        <Entry x:Name="emailEntry" Text="{Binding Email, Mode=TwoWay}" Placeholder="Email - e.g. example@email.com [Required]" Keyboard="Email">
 
           <Entry.Behaviors>
             <local:EmailValidatorBehavior x:Name="emailValidator"/>

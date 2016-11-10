@@ -4,7 +4,7 @@
              x:Class="RideShare.RegistrationComplete">  
   <ContentPage.Content>
     <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
-      <Entry x:Name="registrationCodeEntry" Text="{Binding Path=RegistrationCode}" Placeholder="Registration Code"/>
+      <Entry x:Name="registrationCodeEntry" Text="{Binding Path=RegistrationCode}" Placeholder="Registration Code" Keyboard="Numeric"/>
       <Button x:Name="nextButton" Command="{Binding NextCommand}" Text="Next" />
     </StackLayout>
   </ContentPage.Content>
