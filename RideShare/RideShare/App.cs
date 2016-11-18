@@ -44,6 +44,7 @@ namespace RideShare
         public enum DeviceTypes { iOS, Android, Windows };
         public static DeviceTypes DeviceType;
         public static int DeviceVersion;
+        public static string DeviceUniqueID;
 
 
         public App(bool isLoading, string guid)
@@ -90,6 +91,7 @@ namespace RideShare
                             App.CurrentLoggedUser = userCorrdinateResult.UserLocation;
                             App.CurrentLoggedUser.User.RegistrationCode = userInfo.RegistrationCode;
                             appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
+                            appDataService.Save("is_user_logged_in", "true");
                             return true;
                         }
                     }                    
@@ -157,6 +159,17 @@ namespace RideShare
         protected override void OnResume()
         {
             // Handle when your app resumes
+        }
+
+        public static void LogoutUser()
+        {
+            if (Session.AuthenticationService != null && App.CurrentLoggedUser != null && App.CurrentLoggedUser.User != null)
+            {
+                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, false);
+                driverLocatorService.SendLogoutNotificationSelf(App.CurrentLoggedUser.User.UserName);
+                driverLocatorService.SendLogoutNotificationConnections(App.CurrentLoggedUser.User.UserName, Session.CurrentUserType.ToString());                
+            }
         }
     }
 }

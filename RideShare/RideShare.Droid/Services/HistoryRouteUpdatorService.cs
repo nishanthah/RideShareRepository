@@ -13,6 +13,7 @@ using Android.Util;
 using RideShare.SharedInterfaces;
 using RideShare.Droid.DependecyServices;
 using RideShare.Utilities;
+using Xamarin.Forms;
 
 namespace RideShare.Droid.Services
 {
@@ -30,16 +31,17 @@ namespace RideShare.Droid.Services
 
         public void DoWork()
         {
-            ILocationService locService = new LocationServiceDroid();
-            locService.StartLocationService();
-            LocationUtility locationUtility = new LocationUtility(locService);
 
+            ILocationService locService = new LocationServiceDroid();
+            locService.InitLocationService();
+            LocationUtility locationUtility = new LocationUtility(locService);
             System.Threading.Thread t = new System.Threading.Thread(() =>
             {
                 while (true)
                 {
+                   
                     locationUtility.AddHistoryLocation();
-                    System.Threading.Thread.Sleep(5000);
+                    System.Threading.Thread.Sleep(5000);               
                 }
             });
             t.IsBackground = false;
@@ -48,8 +50,12 @@ namespace RideShare.Droid.Services
 
         public override void OnDestroy()
         {
-            Intent intent = new Intent("com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED");
-            SendBroadcast(intent);
+            IAppDataService appDataService = DependencyService.Get<IAppDataService>();
+            if (appDataService.Get("is_user_logged_in") == "true")
+            {
+                Intent intent = new Intent("com.virtusa.driverlocatorforms.HISTORY_ROUTE_SERVICE_STOPPED");
+                SendBroadcast(intent);
+            }
             //base.OnDestroy();
             // cleanup code
         }

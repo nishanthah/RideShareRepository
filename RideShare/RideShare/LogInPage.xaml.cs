@@ -23,8 +23,20 @@ namespace RideShare
             InitUserType();
             Title = "Login Page";
             Content.BindingContext = new LoginViewModel(this, urbanAirshipNotificationService);
-            driverIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDriver));
-            riderIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapRider));
+            loginAsRiderButton.Clicked += loginAsRiderButton_Clicked;
+            loginAsDriverButton.Clicked += loginAsDriverButton_Clicked;
+            //driverIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapDriver));
+            //riderIcon.GestureRecognizers.Add(new TapGestureRecognizer(OnTapRider));
+        }
+
+        void loginAsDriverButton_Clicked(object sender, EventArgs e)
+        {
+            ChangeUserType(UserType.Driver);
+        }
+
+        void loginAsRiderButton_Clicked(object sender, EventArgs e)
+        {
+            ChangeUserType(UserType.Rider);
         }
 
         void OnMainPage(object sender, EventArgs e)
@@ -43,14 +55,14 @@ namespace RideShare
         {
             if(userType== UserType.Driver)
             {
-                driverIcon.Source = "driverLogActive_icon.png";
-                riderIcon.Source = "userLog_icon.png";
+                //driverIcon.Source = "driverLogActive_icon.png";
+                //riderIcon.Source = "userLog_icon.png";
                 Session.CurrentUserType = UserType.Driver;
             }
             else
             {
-                driverIcon.Source = "driverLog_icon.png";
-                riderIcon.Source = "userLogActive_icon.png";
+                //driverIcon.Source = "driverLog_icon.png";
+                //riderIcon.Source = "userLogActive_icon.png";
                 Session.CurrentUserType = UserType.Rider;
             }
         }

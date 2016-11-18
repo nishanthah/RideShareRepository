@@ -24,22 +24,28 @@ namespace RideShare.Droid
 
         public override void OnCreate()
         {
-            base.OnCreate();
-            UAirship.TakeOff(this, (UAirship airship) =>
+            try
             {
-                UAirship.Shared().PushManager.UserNotificationsEnabled = true;
-            });
+                base.OnCreate();
+                UAirship.TakeOff(this, (UAirship airship) =>
+                {
+                    UAirship.Shared().PushManager.UserNotificationsEnabled = true;
+                });
+            }
+            catch (Exception ex)
+            {                
+            }
+            
+            
 
-            Thread t = new Thread(new ThreadStart(() => {
-                StartService(new Intent(this, typeof(LocationUpdatorService)));
-                StartService(new Intent(this, typeof(HistoryRouteUpdatorService)));
-            }));
-            t.IsBackground = false;
-            t.Start();
-
+            //Thread t = new Thread(new ThreadStart(() => {
+            //    StartService(new Intent(this, typeof(LocationUpdatorService)));
+            //    StartService(new Intent(this, typeof(HistoryRouteUpdatorService)));
+                
+            //}));
+            //t.IsBackground = false;
+            //t.Start();
            
-        }
-        
-      
+        }        
     }
 }

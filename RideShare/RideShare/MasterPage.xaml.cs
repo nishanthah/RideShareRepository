@@ -71,7 +71,7 @@ namespace RideShare
             });
             masterPageItems.Add(new MasterPageItem
             {
-                Title = "Map View",
+                Title = Session.CurrentUserType == null ? "Provide Ride" : (Session.CurrentUserType == global::Common.Models.UserType.Driver ? "Provide Ride" : "Get Ride"),
                 IconSource = "logout.png",
                 TargetType = typeof(MapView),
                 IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)

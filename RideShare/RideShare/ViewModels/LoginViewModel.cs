@@ -111,7 +111,8 @@ namespace RideShare.ViewModels
                         driverLocatorService.UpdateUserType(App.CurrentLoggedUser.User.UserName, new DriverLocator.Models.UpdateUserTypeRequest() { UserType = Session.CurrentUserType });
                         driverLocatorService.UpdateUserLoginStatus(App.CurrentLoggedUser.User.UserName, true);
                         appDataService.Save("current_user", App.CurrentLoggedUser.User.UserName);
-
+                        appDataService.Save("is_user_logged_in", "true");
+                        StartServices();
                         loginProcessor.InvokeInMainThread(() =>
                         {
                             Session.CurrentUserName = this.UserName;
@@ -195,6 +196,14 @@ namespace RideShare.ViewModels
         private void OnForgotPwdNext()
         {
             this.loginProcessor.MoveToForgotPasswordPage();
+        }
+
+        private void StartServices()
+        {
+            ILocationService locationService = DependencyService.Get<ILocationService>();
+            IHistoryUpdator historyUpdator = DependencyService.Get<IHistoryUpdator>();
+            locationService.StartLocationService();
+            historyUpdator.StartHistoryUpdatorService();
         }
     }
 }

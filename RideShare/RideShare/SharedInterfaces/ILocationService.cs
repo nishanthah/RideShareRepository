@@ -10,8 +10,10 @@ namespace RideShare.SharedInterfaces
 {
     public interface ILocationService
     {
-        void StartLocationService();
+        void InitLocationService();
+        void StopLocationService();
         Location GetCurrentLocation();
+        void StartLocationService();
     }
 
 }

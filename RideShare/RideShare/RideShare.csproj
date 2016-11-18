@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="SharedInterfaces\IAppDataService.cs" />
     <Compile Include="SharedInterfaces\IBaseUrl.cs" />
+    <Compile Include="SharedInterfaces\IHistoryUpdator.cs" />
     <Compile Include="SharedInterfaces\ILocationService.cs" />
     <Compile Include="SharedInterfaces\ILocationServiceHelper.cs" />
     <Compile Include="SharedInterfaces\IMapSocketService.cs" />

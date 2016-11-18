@@ -22,12 +22,17 @@ namespace RideShare.ViewModels
             IAppDataService appDataService = DependencyService.Get<IAppDataService>();
             appDataService.Save("access_token", null);
             appDataService.Save("current_user", null);
+            appDataService.Save("is_user_logged_in", "false");
             Session.ClearAuthenticationInstance();
             Session.CurrentUserName = null;
 
             var loginPage = new LogInPage();
             loginPage.Title = "Login Page";
-            
+
+            ILocationService locationService = DependencyService.Get<ILocationService>();
+            IHistoryUpdator historyUpdator = DependencyService.Get<IHistoryUpdator>();
+            locationService.StopLocationService();
+            historyUpdator.StopHistoryUpdatorService();
             Application.Current.MainPage = loginPage;
         }
 

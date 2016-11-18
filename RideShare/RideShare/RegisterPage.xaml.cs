@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult, IUserFavouritePlaceAdditionResult
+    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult, IUserFavouritePlaceAdditionResult, IAgreementResult
     {
         //bool isNewItem;
 
@@ -271,6 +271,26 @@ namespace RideShare
             }
             else
                 favPlacesListView.HeightRequest = 0;
-        }      
+        }
+
+        public void ShowDoubleButtonPopup(string title, string message, Action successAction, Action failedAction)
+        {
+            DisplayAlert(title, message, "I Agree", "I do not Agree").ContinueWith((task) =>
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    if (task.Result)
+                    {
+                        successAction();
+                    }
+                    else
+                    {
+                        failedAction();
+                    }
+                });
+
+
+            });            
+        }
     }
 }

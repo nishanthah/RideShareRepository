@@ -138,7 +138,8 @@ apiRoutes.post('/users', function (req, res) {
                 firstName: req.body.firstName,
                 lastName: req.body.lastName,
                 profileImage : req.body.profileImage,
-                resetPasswordGuid : req.body.resetPasswordGuid
+                resetPasswordGuid : req.body.resetPasswordGuid,
+                deviceID : req.body.deviceID
             });
             
             newUserCoordinate.save(function (err) {
@@ -216,7 +217,26 @@ apiRoutes.get('/users/:userName', function (req, res) {
 	
     });
 
-}); 
+});
+
+apiRoutes.get('/users/device/:deviceID', function (req, res) {
+    
+    UserCoordinate.findOne({ deviceID : req.params.deviceID }, function (err, userCoordinate) {
+        
+        if (err) res.json({ success: false, message: err });
+			
+        else if (!userCoordinate) {
+            res.json({ success: false, message: "User does not exist" });
+        }
+        else {
+            res.json({ success: true, message: "User exists" });
+        }
+			
+			
+	
+    });
+
+});
 
 
 // route middleware to verify a token
@@ -365,6 +385,86 @@ function deleteFavouritePlaces(useName, resultCallback) {
     });
 }
 
+apiRoutes.get('/logoutnotificationself/:userName', function (req, res) {	
+		
+		var notificationData = {};
+		notificationData.userName = req.params.userName;
+		//notificationData.id = saved.id;
+		notificationData.title = "You have been logged out. Please login again to resume your drive";
+		
+		urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
+			console.log('To self: ' + notificationSentStatus.message);	
+			res.json({ success: true });
+		});			
+	});
+
+
+
+apiRoutes.get('/logoutnotificationconnections/:userName/:userType', function (req, res) {	
+	getConnections(req.params.userName, req.params.userType, function (connections) {	
+		if (connections != null && connections.length != 0) {
+            connections.forEach(function (connection) {
+				if(req.params.userType == "Driver"){
+					var notificationData = {};
+					notificationData.userName = connection.userName;
+					//notificationData.id = saved.id;
+					notificationData.title = "Driver " + connections.driverUserName + " has been logged out. Please contact the driver to resume the ride.";
+		
+					urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
+						console.log('To rider: ' + notificationSentStatus.message);						
+					});
+					
+				}
+				else{
+					var notificationData = {};
+					notificationData.userName = connection.driverUserName;
+					//notificationData.id = saved.id;
+					notificationData.title = "Driver " + connections.userName + " has been logged out. Please contact the driver to resume the ride.";
+		
+					urbanAirshipClient.sendNotification(notificationData, function (notificationSentStatus) {
+						console.log('To driver: ' + notificationSentStatus.message);						
+					});					
+				}
+            }); 
+			res.json({ success: true });			
+        }
+		else{
+			res.json({ success: false, message: 'No connections to send notifications' });
+		}
+	});
+});
+
+
+ function getConnections(userName, userType, resultCallback){
+ 
+	if(userType == 'Driver'){
+	
+		RideHistory.find({ $and: [ {driverUserName : userName}, {requestStatus : { $in: [ 1, 2 ] }} ]}, function (err, connections) {
+        
+			if (err) resultCallback(null);   
+        
+			if (connections.length != 0) {            
+				resultCallback(connections);
+			}
+			else {
+				resultCallback(null);
+			}
+		});
+	}
+	else{
+		RideHistory.find({ $and: [{userName : userName}, {requestStatus : { $in: [ 1, 2 ] } }]}, function (err, connections) {
+        
+			if (err) resultCallback(null);       
+        
+			if (connections.length != 0) {            
+				resultCallback(connections);
+			}
+			else {
+				resultCallback(null);
+			}
+		});
+	}
+ }
 
 apiRoutes.put('/users/:userName/location', function (req, res) {
     UserCoordinate.findOne({ userName : req.params.userName }, function (err, userCoordinate) {

@@ -19,5 +19,6 @@ module.exports = mongoose.model('UserCoordinate', new Schema({
 	profileImage: String,
 	resentRequest:String,
     isRiding: Boolean,
-    gender: String
+    gender: String,
+    deviceID: String
 }));

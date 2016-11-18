@@ -32,14 +32,14 @@ namespace RideShare.Droid.Services
         public void DoWork()
         {
             ILocationService locService = new LocationServiceDroid();
-            locService.StartLocationService();
+            locService.InitLocationService();
             LocationUtility locationUtility = new LocationUtility(locService);
 
             Thread t = new Thread(() => { 
                 while(true)
                 {
                     locationUtility.UpdateCurrentLocation();
-                    Thread.Sleep(10000);
+                    Thread.Sleep(10000);                  
                 }
             });
             t.IsBackground = false;
@@ -48,8 +48,12 @@ namespace RideShare.Droid.Services
 
         public override void OnDestroy()
         {
-            Intent intent = new Intent("com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED");
-            SendBroadcast(intent);
+            IAppDataService appDataService = DependencyService.Get<IAppDataService>();
+            if (appDataService.Get("is_user_logged_in") == "true")
+            {
+                Intent intent = new Intent("com.virtusa.driverlocatorforms.LOCATION_SERVICE_STOPPED");
+                SendBroadcast(intent);
+            }
             //base.OnDestroy();
             // cleanup code
         }

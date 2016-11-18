@@ -52,6 +52,9 @@ namespace DriverLocator.Models
 
         [JsonProperty("registrationCode")]
         public string RegistrationCode { get; set; }
+
+        [JsonProperty("deviceID")]
+        public string DeviceID { get; set; }
     }
 
     public class UserLocation

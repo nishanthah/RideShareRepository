@@ -38,6 +38,22 @@ namespace RideShare.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             App.DeviceType = App.DeviceTypes.Android;
             App.DeviceVersion = Convert.ToInt32(Build.VERSION.Sdk);
+
+            //**ANDROID_ID - this id is newly generated once the device is wiped
+            App.DeviceUniqueID = Android.Provider.Settings.Secure.GetString(MainApp.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
+
+            ////**MacAddress - Needs Wifi
+            //Android.Net.Wifi.WifiManager wManager = (Android.Net.Wifi.WifiManager)GetSystemService(Context.WifiService);
+            //Android.Net.Wifi.WifiInfo wInfo = wManager.ConnectionInfo;
+            //App.DeviceUniqueID = wInfo.MacAddress;
+
+            ////**DeviceID - What happens in a DUAL SIM device, since device id is per SIM
+            //Android.Telephony.TelephonyManager tMgr = (Android.Telephony.TelephonyManager)this.GetSystemService(Android.Content.Context.TelephonyService);
+            //App.DeviceUniqueID = tMgr.GetDeviceId(1);
+
+            ////**SerialNumber - non-telephony devices does not have this number
+            //App.DeviceUniqueID = Android.Provider.Settings.Secure.GetString(MainApp.Context.ContentResolver, Android.OS.Build.Serial);
+
             ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(Application.Context);
             string channelId = prefs.GetString("urban_airship_client_id", null);
             if (!String.IsNullOrEmpty(channelId))
@@ -55,11 +71,6 @@ namespace RideShare.Droid
             }
 
 
-
-        }
-
-        private void LoadApp()
-        {
 
         }
 
@@ -106,6 +117,29 @@ namespace RideShare.Droid
                     notificationInfo.RequestId = Intent.GetStringExtra(KEY_REQUEST_ID_EXTRA);
                     LoadApplication(new App(notificationInfo));
                 }
+            }
+
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            RideShare.SharedInterfaces.IAppDataService appDataService = Xamarin.Forms.DependencyService.Get<RideShare.SharedInterfaces.IAppDataService>();
+            if (appDataService.Get("is_user_logged_in") == "true")
+            {
+                App.LogoutUser(); 
+             
+                appDataService.Save("access_token", null);
+                appDataService.Save("current_user", null);
+                appDataService.Save("is_user_logged_in", "false");
+                Session.ClearAuthenticationInstance();
+                Session.CurrentUserName = null;
+                
+                RideShare.SharedInterfaces.ILocationService locationService = Xamarin.Forms.DependencyService.Get<RideShare.SharedInterfaces.ILocationService>();
+                RideShare.SharedInterfaces.IHistoryUpdator historyUpdator = Xamarin.Forms.DependencyService.Get<RideShare.SharedInterfaces.IHistoryUpdator>();
+                locationService.StopLocationService();
+                historyUpdator.StopHistoryUpdatorService();
             }
 
         }

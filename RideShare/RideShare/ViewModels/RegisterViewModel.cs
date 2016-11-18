@@ -13,6 +13,10 @@ using System.Windows.Input;
 
 namespace RideShare.ViewModels
 {
+    public interface IAgreementResult
+    {
+        void ShowDoubleButtonPopup(string title, string message, Action successAction, Action failedAction);
+    }
     public class SignUpViewModel : ViewModelBase
     {
         string firstName = String.Empty;
@@ -30,6 +34,7 @@ namespace RideShare.ViewModels
         string requiredFieldErrorMessage = "Required";
         string emailAddressErrorMessage = "Invalid email";
         string errorMessage;
+        IAgreementResult agreementResult;
 
 
         ISignUpPageProcessor signUpPageProcessor;
@@ -39,6 +44,7 @@ namespace RideShare.ViewModels
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
+            this.agreementResult = (IAgreementResult)signUpPageProcessor;
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
             this.TapCommandLogin = new RelayCommand(OnTappedLogin);
@@ -64,7 +70,7 @@ namespace RideShare.ViewModels
             }
             else
             {
-                this.SignUpCommand = new RelayCommand(SignUp);
+                this.SignUpCommand = new RelayCommand(AgreementDisplay);
 
                 if (App.CurrentUserVehicles != null)
                     App.CurrentUserVehicles.Clear();
@@ -256,6 +262,17 @@ namespace RideShare.ViewModels
             }
         }
 
+        private void AgreementDisplay()
+        {
+            agreementResult.ShowDoubleButtonPopup("RideShare Agreement",
+                "RideShare will only be accountable for the communication between rider and driver, before the ride starts and will not be accoutable once " +
+                "the ride starts. Based on the nature of the application the telephone number and the email address will be available between riders and drivers.", SignUp, OnPopupCanceled);
+        }
+
+        private void OnPopupCanceled()
+        {
+        } 
+
         private void SignUp()
         {
             var user = new User()
@@ -271,7 +288,7 @@ namespace RideShare.ViewModels
             };
 
             var signUpSucceeded = AreDetailsValid(user);
-
+            
             if (signUpSucceeded)
             {
 
@@ -361,6 +378,18 @@ namespace RideShare.ViewModels
                     returnValue = true;
                 }
 
+                var deviceResponse = driverLocatorService.GetUserStatusByDeviceID(App.DeviceUniqueID);
+                if (deviceResponse.IsSuccess)
+                {
+                    this.ErrorMessage = "This device has already been registered";
+                    returnValue = false;
+                }
+                else
+                {
+                    this.ErrorMessage = String.Empty;
+                    returnValue = true;
+                }
+
                 if (string.IsNullOrWhiteSpace(user.UserName) ||
                 string.IsNullOrWhiteSpace(user.Password) ||
                 string.IsNullOrWhiteSpace(user.UserName) ||
@@ -389,6 +418,7 @@ namespace RideShare.ViewModels
             dlUser.EMail = user.EMail;
             dlUser.profileImageEncoded = user.profileImageEncoded;
             dlUser.Gender = user.Gender;
+            dlUser.DeviceID = App.DeviceUniqueID;
             DriverLocator.Models.SaveUserDataResponse response = null;
             if(isUpdate)
                 response = driverLocatorService.UpdateUserData(dlUser);

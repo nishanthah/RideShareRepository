@@ -42,6 +42,9 @@ namespace DriverLocator
         private const string GET_USER_BY_EMAIL = SERVER + "/api/users/{0}/?filter={1}";
         private const string GET_USER_FAV_PLACES_URL = SERVER + "/api/users/{0}/favouriteplaces";
         private const string SAVE_USER_FAV_PLACES_URL = SERVER + "/api/favouriteplaces";
+        private const string GET_USER_STATUS_BY_DEVICE_ID_URL = SERVER + "/api/users/device/{0}";
+        private const string SEND_LOGOUT_NOTIFICATION_SELF = SERVER + "/api/logoutnotificationself/{0}";
+        private const string SEND_LOGOUT_NOTIFICATION_CONNECTIONS = SERVER + "/api/logoutnotificationconnections/{0}/{1}";
         //private const string WEB_SOCKET_URL = "http://172.28.40.120:8079/";
 
         IAuthenticationService authenticationService;
@@ -292,6 +295,36 @@ namespace DriverLocator
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = HttpMethod.DELETE;
             requestHandler.Url = String.Format(SELECTED_USER_COORDINATE_URL, userName);
+            var result = requestHandler.SendRequest<ResponseBase>();
+            return result;
+        }
+
+        public ResponseBase GetUserStatusByDeviceID(string deviceID)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(GET_USER_STATUS_BY_DEVICE_ID_URL, deviceID);
+            var result = requestHandler.SendRequest<ResponseBase>();
+            return result;
+        }
+
+        public ResponseBase SendLogoutNotificationSelf(string driverUserName)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(SEND_LOGOUT_NOTIFICATION_SELF, driverUserName);
+            var result = requestHandler.SendRequest<ResponseBase>();
+            return result;
+        }
+
+        public ResponseBase SendLogoutNotificationConnections(string driverUserName, string userType)
+        {
+            HttpRequestHandler requestHandler = new HttpRequestHandler();
+            requestHandler.AccessToken = authenticationService.AuthenticationToken;
+            requestHandler.Method = HttpMethod.GET;
+            requestHandler.Url = String.Format(SEND_LOGOUT_NOTIFICATION_CONNECTIONS, driverUserName, userType);
             var result = requestHandler.SendRequest<ResponseBase>();
             return result;
         }

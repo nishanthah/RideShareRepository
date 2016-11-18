@@ -15,12 +15,15 @@ namespace RideShare.ViewModels
     {
         string userName;
         IForgotPasswordPageProcessor fpwdPageProcessor;
+        string errorMessage;
         public ICommand NextCommand { protected set; get; }
+        public ICommand TapCommandLogin { protected set; get; }
 
         public ForgotPasswordViewModel(IForgotPasswordPageProcessor fpwdProcessor)
         {
             this.fpwdPageProcessor = fpwdProcessor;
             this.NextCommand = new RelayCommand(VerifyEmailAddressExists);
+            this.TapCommandLogin = new RelayCommand(OnTappedLogin);
         }
 
         public string UserName
@@ -37,22 +40,45 @@ namespace RideShare.ViewModels
             }
         }
 
+        public string ErrorMessage
+        {
+            get
+            {
+                return errorMessage;
+            }
+
+            set
+            {
+                errorMessage = value;
+                OnPropertyChanged("ErrorMessage");
+            }
+        }
+
         private void VerifyEmailAddressExists()
         {
             ResponseBase userInfo = null;
+            ErrorMessage = String.Empty;
 
             if (App.DeviceType == App.DeviceTypes.Android)
             {
-                if (App.DeviceVersion >= 23)
-                    userInfo = Session.AuthenticationService.GetUserInfoByUserNameAndSendEmail(this.userName);
-                else
+                //if (App.DeviceVersion >= 23)
+                //    userInfo = Session.AuthenticationService.GetUserInfoByUserNameAndSendEmail(this.userName);
+                //else
                     userInfo = Session.AuthenticationService.SendEmailWithCode(this.userName, "FPWD");
                 
                 bool userExists = userInfo.IsSuccess && (userInfo.Message == "User exists");
-            }
 
-            fpwdPageProcessor.MoveToLoginPage();
+                if (!userExists)
+                    ErrorMessage = userInfo.Message;
+                else
+                    fpwdPageProcessor.MoveToLoginPage();
+            }          
 
+        }
+
+        private void OnTappedLogin()
+        {
+            this.fpwdPageProcessor.MoveToLoginPage();
         }
     }
 }

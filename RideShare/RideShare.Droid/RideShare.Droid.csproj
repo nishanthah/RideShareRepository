@@ -186,6 +186,7 @@
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="DependecyServices\AppDataServiceDroid.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />
+    <Compile Include="DependecyServices\HistoryUpdatorDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroidFused.cs" />
     <Compile Include="DependecyServices\LocationServiceHelper.cs" />

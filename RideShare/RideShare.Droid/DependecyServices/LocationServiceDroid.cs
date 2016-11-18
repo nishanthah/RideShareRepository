@@ -20,6 +20,8 @@ using Android.Gms.Common.Apis;
 using Android.Gms.Common;
 using Android.Gms.Location;
 using Java.Lang;
+using RideShare.Droid.Services;
+using System.Threading;
 
 [assembly: Xamarin.Forms.Dependency(typeof(RideShare.Droid.DependecyServices.LocationServiceDroid))]
 namespace RideShare.Droid.DependecyServices
@@ -94,7 +96,7 @@ namespace RideShare.Droid.DependecyServices
             }
         }
 
-        public void StartLocationService()
+        public void InitLocationService()
         {
             apiClient = new GoogleApiClient.Builder(MainApp.Context, this, this).AddApi(LocationServices.API).Build();
 
@@ -107,10 +109,21 @@ namespace RideShare.Droid.DependecyServices
             //    .AddLocationRequest(locRequest);
 
             //builder.SetNeedBle(false);
-            Session.IsGPSEnabled= IsGPSAvailable;
+            //Session.IsGPSEnabled= IsGPSAvailable;
             apiClient.Connect();
             //PendingResult result = LocationServices.SettingsApi.CheckLocationSettings(apiClient, builder.Build());
             //result.SetResultCallback(this);
+        }
+
+        public void StartLocationService()
+        {
+            System.Threading.Thread t = new System.Threading.Thread(new ThreadStart(() =>
+            {
+                MainApp.Context.StartService(new Intent(MainApp.Context, typeof(LocationUpdatorService)));                
+
+            }));
+            t.IsBackground = false;
+            t.Start();
         }
 
         public void OnResult(Java.Lang.Object result)
@@ -142,6 +155,11 @@ namespace RideShare.Droid.DependecyServices
             //        Session.IsGPSEnabled = false;
             //     break;
             //}
+        }
+
+        public void StopLocationService()
+        {
+            MainApp.Context.StopService(new Intent(MainApp.Context, typeof(LocationUpdatorService)));
         }
     }
 
