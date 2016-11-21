@@ -25,6 +25,7 @@ namespace RideShare.ViewModels
         string password = String.Empty;
         string email = String.Empty;
         string gender;
+        string mobileNumber;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
         bool isButtonEnabled;
@@ -59,6 +60,7 @@ namespace RideShare.ViewModels
                 this.UserName = currentUserDetails.UserName;
                 this.Email = currentUserDetails.EMail;
                 this.gender = currentUserDetails.Gender;
+                this.mobileNumber = currentUserDetails.MobileNo;
                 this.password = "********";
                 if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
                 {
@@ -234,6 +236,21 @@ namespace RideShare.ViewModels
             }
         }
 
+        public string MobileNumber
+        {
+            get
+            {
+                return mobileNumber;
+            }
+
+            set
+            {
+                mobileNumber = value;
+                OnPropertyChanged("MobileNumber");
+                CheckFormValiditiy();
+            }
+        }
+
         public ObservableCollection<DriverLocator.Models.Vehicle> Vehicles
         {
             get
@@ -260,7 +277,7 @@ namespace RideShare.ViewModels
                 favPlaces = value;
                 OnPropertyChanged("FavPlaces");
             }
-        }
+        }        
 
         private void AgreementDisplay()
         {
@@ -284,7 +301,8 @@ namespace RideShare.ViewModels
                 Password = this.Password,
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
-                ResetPasswordGuid = null
+                ResetPasswordGuid = null,
+                MobileNumber = this.mobileNumber
             };
 
             var signUpSucceeded = AreDetailsValid(user);
@@ -318,7 +336,8 @@ namespace RideShare.ViewModels
                 Password = this.password == "********" ? null : this.Password,
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
-                ResetPasswordGuid = null
+                ResetPasswordGuid = null,
+                MobileNumber = this.mobileNumber
             };
 
             var Isvalid = AreDetailsValid(user, true);
@@ -419,6 +438,7 @@ namespace RideShare.ViewModels
             dlUser.profileImageEncoded = user.profileImageEncoded;
             dlUser.Gender = user.Gender;
             dlUser.DeviceID = App.DeviceUniqueID;
+            dlUser.MobileNo = user.MobileNumber;
             DriverLocator.Models.SaveUserDataResponse response = null;
             if(isUpdate)
                 response = driverLocatorService.UpdateUserData(dlUser);
@@ -515,12 +535,17 @@ namespace RideShare.ViewModels
 
             if (this.password != "********")
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) &&
+                ((this.mobileNumber[0] == '0' && this.mobileNumber.Length == 10) || (this.mobileNumber[0] != '0' && this.mobileNumber.Length == 9)) 
+                && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
                 && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && 
                     (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
             else
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) &&
+                ((this.mobileNumber[0] == '0' && this.mobileNumber.Length == 10) || (this.mobileNumber[0] != '0' && this.mobileNumber.Length == 9)) 
+                && !String.IsNullOrEmpty(this.lastName) 
+                && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
                 && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
         }
     }

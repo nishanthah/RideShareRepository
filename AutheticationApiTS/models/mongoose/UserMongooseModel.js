@@ -1,4 +1,3 @@
-"use strict";
 var mongoose = require("mongoose");
 var userSchema = new mongoose.Schema({
     firstName: String,
@@ -9,7 +8,8 @@ var userSchema = new mongoose.Schema({
     profileImage: String,
     gender: String,
     resetPasswordGuid: String,
-    registrationCode: String
+    registrationCode: String,
+    mobileNumber: String
 });
 var UserMongooseModel = mongoose.model("User", userSchema);
 module.exports = UserMongooseModel;

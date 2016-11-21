@@ -8,5 +8,6 @@
     gender: string;
     resetPasswordGuid: string;
     registrationCode: string;
+    mobileNumber: string;
 }
 export = IUser;

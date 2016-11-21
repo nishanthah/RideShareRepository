@@ -30,6 +30,7 @@ class AuthhenticationAPIController{
         user.profileImage = req.body.profileImage;
         user.resetPasswordGuid = req.body.resetPasswordGuid;
         user.registrationCode = req.body.registrationCode;
+        user.mobileNumber = req.body.mobileNumber;
         try {
             var dataAccess = ApplicationContext.getDB();
             dataAccess.addUser(user);
@@ -99,6 +100,7 @@ class AuthhenticationAPIController{
 
                     var userResponse = new UserResponse();
                     userResponse.gender = user.gender;
+                    userResponse.mobileNumber = user.mobileNumber;
                     userResponse.email = user.email;
                     userResponse.firstName = user.firstName;
                     userResponse.lastName = user.lastName;
@@ -165,6 +167,7 @@ class AuthhenticationAPIController{
 
                 var userResponse = new UserResponse();
                 userResponse.gender = user.gender;
+                userResponse.mobileNumber = user.mobileNumber;
                 userResponse.email = user.email;
                 userResponse.firstName = user.firstName;
                 userResponse.lastName = user.lastName;
@@ -344,6 +347,7 @@ class AuthhenticationAPIController{
 
         var user = new User();
         user.gender = req.body.gender;
+        user.mobileNumber = req.body.mobileNumber;
         user.email = req.body.email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;

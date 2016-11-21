@@ -74,6 +74,15 @@
         
         <Label Text="{Binding EmailAddressErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference emailValidator},
 	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
+        
+        <Entry x:Name="mobileNumberEntry" Text="{Binding MobileNumber, Mode=TwoWay}" Placeholder="Mobile Number - e.g. 0771234567 [Required]" Keyboard="Telephone">
+
+          <Entry.Behaviors>
+            <local:RequiredFieldValidatorBehavior x:Name="mobileNumberRequiredFieldValidator"/>
+          </Entry.Behaviors>
+
+        </Entry>       
+        
 
         <Picker x:Name="genderPicker" Title="Gender"></Picker>
 

@@ -23,6 +23,7 @@ var AuthhenticationAPIController = (function () {
         user.profileImage = req.body.profileImage;
         user.resetPasswordGuid = req.body.resetPasswordGuid;
         user.registrationCode = req.body.registrationCode;
+        user.mobileNumber = req.body.mobileNumber;
         try {
             var dataAccess = ApplicationContext.getDB();
             dataAccess.addUser(user);
@@ -79,6 +80,7 @@ var AuthhenticationAPIController = (function () {
             else if (req.body.canAccessUserInfo) {
                 var userResponse = new UserResponse();
                 userResponse.gender = user.gender;
+                userResponse.mobileNumber = user.mobileNumber;
                 userResponse.email = user.email;
                 userResponse.firstName = user.firstName;
                 userResponse.lastName = user.lastName;
@@ -131,6 +133,7 @@ var AuthhenticationAPIController = (function () {
             else if (user) {
                 var userResponse = new UserResponse();
                 userResponse.gender = user.gender;
+                userResponse.mobileNumber = user.mobileNumber;
                 userResponse.email = user.email;
                 userResponse.firstName = user.firstName;
                 userResponse.lastName = user.lastName;
@@ -174,6 +177,7 @@ var AuthhenticationAPIController = (function () {
                     html: '<p>Please click on the following link to reset your password: </p> <a href="http://rideshareresetpassword?id=' + newguid + '">' + newguid + '</a>' +
                         '</br></br> <p>Best Regards,</p> </br> <p>RideShare Team</p>' // html body
                 };
+                
                 //send mail with defined transport object
                 transporter.sendMail(mailOptions, function (error, info) {
                     if (error) {
@@ -275,6 +279,7 @@ var AuthhenticationAPIController = (function () {
     AuthhenticationAPIController.prototype.account = function (req, res) {
         var user = new User();
         user.gender = req.body.gender;
+        user.mobileNumber = req.body.mobileNumber;
         user.email = req.body.email;
         user.firstName = req.body.firstName;
         user.lastName = req.body.lastName;

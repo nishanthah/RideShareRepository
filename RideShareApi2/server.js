@@ -129,8 +129,7 @@ apiRoutes.get('/vehicledefinitiondata', function (req, res) {
 });
 
 
-apiRoutes.post('/users', function (req, res) {	
-        
+apiRoutes.post('/users', function (req, res) {	        
             var newUserCoordinate = new UserCoordinate({
                 gender: req.body.gender,
                 userName: req.body.userName,
@@ -139,7 +138,8 @@ apiRoutes.post('/users', function (req, res) {
                 lastName: req.body.lastName,
                 profileImage : req.body.profileImage,
                 resetPasswordGuid : req.body.resetPasswordGuid,
-                deviceID : req.body.deviceID
+                deviceID : req.body.deviceID,
+				mobileNo: req.body.mobileNo
             });
             
             newUserCoordinate.save(function (err) {
@@ -328,6 +328,7 @@ apiRoutes.put('/users', function (req, res) {
             userCoordinate.profileImage = req.body.profileImage;
             userCoordinate.gender = req.body.gender;
             userCoordinate.resetPasswordGuid = req.body.resetPasswordGuid;
+			userCoordinate.mobileNo = req.body.mobileNo;
             userCoordinate.save(function (err) {
                 if (err) res.json({ success: false, message: err });
                 
@@ -725,7 +726,7 @@ apiRoutes.get('/users', function(req, res) {
 				userData.userType = userCoordinate.userType;
 				userData.destinationName = userCoordinate.destinationName;
 				userData.destinationLongitude = userCoordinate.destinationLongitude;
-				userData.destinationLatitude = userCoordinate.destinationLatitude;
+				userData.destinationLatitude = userCoordinate.destinationLatitude;				
 				userDatas.push(userData);
 		});
 		res.json({ userCoordinates: userDatas, success: true });

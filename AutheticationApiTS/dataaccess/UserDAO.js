@@ -13,8 +13,10 @@ var UserMongooseDAO = (function () {
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
+        userModel.mobileNumber = user.mobileNumber;
         userModel.resetPasswordGuid = user.resetPasswordGuid;
         userModel.registrationCode = user.registrationCode;
+        
         var status;
         var self = this;
         // save the sample user
@@ -36,6 +38,7 @@ var UserMongooseDAO = (function () {
             else {
                 selecteduser.email = user.email;
                 selecteduser.gender = user.gender;
+                selecteduser.mobileNumber = user.mobileNumber;
                 selecteduser.firstName = user.firstName;
                 selecteduser.lastName = user.lastName;
                 if (user.password != null)
@@ -66,6 +69,7 @@ var UserMongooseDAO = (function () {
             else {
                 userData.email = user.email;
                 userData.gender = user.gender;
+                userData.mobileNumber = user.mobileNumber;
                 userData.firstName = user.firstName;
                 userData.lastName = user.lastName;
                 userData.password = user.password;

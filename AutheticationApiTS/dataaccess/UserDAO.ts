@@ -23,9 +23,10 @@ class UserMongooseDAO implements IUserDAO
         userModel.password = user.password;
         userModel.profileImage = user.profileImage;
         userModel.gender = user.gender;
+        userModel.mobileNumber = user.mobileNumber;
         userModel.resetPasswordGuid = user.resetPasswordGuid;
         userModel.registrationCode = user.registrationCode;
-
+        
         var status: boolean;
         var self = this;
         // save the sample user
@@ -50,6 +51,7 @@ class UserMongooseDAO implements IUserDAO
             else {                
                 selecteduser.email = user.email;
                 selecteduser.gender = user.gender;
+                selecteduser.mobileNumber = user.mobileNumber;
                 selecteduser.firstName = user.firstName;
                 selecteduser.lastName = user.lastName;
                 if (user.password != null)
@@ -84,6 +86,7 @@ class UserMongooseDAO implements IUserDAO
              else{
                  userData.email = user.email;
                  userData.gender = user.gender;
+                 userData.mobileNumber = user.mobileNumber;
                  userData.firstName = user.firstName;
                  userData.lastName = user.lastName;
                  userData.password = user.password;

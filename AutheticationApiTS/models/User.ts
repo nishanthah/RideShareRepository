@@ -10,6 +10,7 @@ class User implements IUser{
     gender: string;
     resetPasswordGuid: string;
     registrationCode: string;
+    mobileNumber: string;
 }
 
 export = User;

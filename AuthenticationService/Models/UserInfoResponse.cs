@@ -33,5 +33,8 @@ namespace Authentication.Models
         [JsonProperty("registrationCode")]
         public string RegistrationCode { get; set; }
 
+        [JsonProperty("mobileNumber")]
+        public string MobileNumber { get; set; }
+
     }
 }
