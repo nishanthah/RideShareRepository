@@ -34,6 +34,7 @@ namespace RideShare.ViewModels
         string passwordErrorMessage = "The password must be 8-15 characters long and must include atleast one capital letter and a special character";
         string requiredFieldErrorMessage = "Required";
         string emailAddressErrorMessage = "Invalid email";
+        string mobileNumberErrorMessage = "Please enter a mobile number";
         string errorMessage;
         IAgreementResult agreementResult;
 
@@ -120,7 +121,7 @@ namespace RideShare.ViewModels
 
         public string PasswordErrorMessage
         {
-            get { return passwordErrorMessage; }
+            get { return passwordErrorMessage; }            
         }
 
         public string RequiredFieldErrorMessage
@@ -130,7 +131,12 @@ namespace RideShare.ViewModels
 
         public string EmailAddressErrorMessage
         {
-            get { return emailAddressErrorMessage; }
+            get { return emailAddressErrorMessage; }            
+        }
+
+        public string MobileNumberErrorMessage
+        {
+            get { return mobileNumberErrorMessage; }            
         }
 
         public byte[] ProfilePhoto
@@ -527,26 +533,29 @@ namespace RideShare.ViewModels
 
         private void CheckFormValiditiy()
         {
-            this.ErrorMessage = String.Empty;
+            this.ErrorMessage = String.Empty;            
+
             string emailRegex = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
         @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
 
             string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
 
+            const string mobileNumberRegex = @"^0[7][0-9]{8}$";
+
             if (this.password != "********")
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) &&
-                ((this.mobileNumber[0] == '0' && this.mobileNumber.Length == 10) || (this.mobileNumber[0] != '0' && this.mobileNumber.Length == 9)) 
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber)  
                 && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
                 && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && 
-                    (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
+                    (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) &&
+                    (Regex.IsMatch(this.mobileNumber, mobileNumberRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
             else
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) &&
-                ((this.mobileNumber[0] == '0' && this.mobileNumber.Length == 10) || (this.mobileNumber[0] != '0' && this.mobileNumber.Length == 9)) 
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) 
                 && !String.IsNullOrEmpty(this.lastName) 
                 && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
-                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
+                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) &&
+                    (Regex.IsMatch(this.mobileNumber, mobileNumberRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
         }
     }
 }

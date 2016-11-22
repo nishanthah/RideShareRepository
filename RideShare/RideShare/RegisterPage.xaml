@@ -79,10 +79,12 @@
 
           <Entry.Behaviors>
             <local:RequiredFieldValidatorBehavior x:Name="mobileNumberRequiredFieldValidator"/>
+            <local:MobileNumberValidatorBehavior x:Name="mobileNumberValidator"/>
           </Entry.Behaviors>
 
-        </Entry>       
-        
+        </Entry>
+        <Label Text="{Binding MobileNumberErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference mobileNumberValidator},
+	                        Path=IsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
 
         <Picker x:Name="genderPicker" Title="Gender"></Picker>
 

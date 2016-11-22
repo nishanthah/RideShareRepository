@@ -3,7 +3,7 @@
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="RideShare" android:icon="@drawable/app_icon">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyBbcxl06cjEs9o7nnX9b5sJxxe9SZiaU8c" />
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDLbarg8-ZWjkc8Ukuat40tj7m8OfqLsq8" />
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
