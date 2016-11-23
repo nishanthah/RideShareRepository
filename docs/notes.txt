@@ -1,0 +1,47 @@
+* For use Xamarin.Maps you need to put Google API KEY in AndroidManifest.xml, 
+  for generate that key you need to follow this steps
+
+Steps 1. Navigate to this path "C:\Users\[USERNAME]\AppData\Local\Xamarin\Mono for Android\"  and copy the "debug.keystore" file.
+Step 2: Navigate to JDK bin path and paste the debug.keystore file. (To find the JDK path, navigate to visual studio > Tools > Options > Xamarin and find the path of JDK location)
+Step 3: Open command prompt from JDK/bin folder and execute following command
+	"keytool -list -v -keystore debug.keystore -alias androiddebugkey -storepass android"
+Step 4: Copy the SHA1 value and register it with Google Developer Console
+	Further detaisl follow this link https://developer.xamarin.com/guides/android/platform_features/maps_and_location/maps/obtaining_a_google_maps_api_key/
+
+
+	
+
+C:\Program Files (x86)\Java\jdk1.7.0_55\bin>keytool -list -v -keystore debug.key
+store -alias androiddebugkey -storepass android
+
+Alias name: androiddebugkey
+Creation date: Jun 19, 2016
+Entry type: PrivateKeyEntry
+Certificate chain length: 1
+Certificate[1]:
+Owner: CN=Android Debug, O=Android, C=US
+Issuer: CN=Android Debug, O=Android, C=US
+Serial number: 57661c44
+Valid from: Sun Jun 19 09:45:00 IST 2016 until: Tue Jun 12 09:45:00 IST 2046
+Certificate fingerprints:
+         MD5:  95:64:B8:AA:15:13:2E:E8:D5:D1:A5:24:BB:54:D5:9A
+         SHA1: 0E:45:B0:F4:89:D3:78:17:EA:DB:F0:51:15:35:DC:69:90:31:DA:4A
+         SHA256: A4:A0:5C:B4:4F:E0:06:56:F8:05:38:F4:AA:A9:E4:36:26:A8:C5:D9:2F:
+45:02:93:97:77:83:7A:B4:8C:17:77
+         Signature algorithm name: SHA1withRSA
+         Version: 3
+
+
+0E:45:B0:F4:89:D3:78:17:EA:DB:F0:51:15:35:DC:69:90:31:DA:4A
+
+
+
+API KEY
+AndroidkeyForGoogleMaps
+AIzaSyCROgvWStvV6ygacZtrUU2TdLLCoJKSQBA
+
+channelid "8f9d8ec9-e92a-4be3-a2ed-1c514ac8b227"
+
+
+mongo command
+> db.users.find( { $where: function() { return (this.userName == 'uz') }}).pretty();
