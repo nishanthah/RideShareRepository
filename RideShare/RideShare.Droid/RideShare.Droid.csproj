@@ -66,7 +66,12 @@
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
     <DebugSymbols>False</DebugSymbols>
-  </PropertyGroup>
+    <AndroidKeyStore>True</AndroidKeyStore>
+    <AndroidSigningKeyStore>rideshare.keystore</AndroidSigningKeyStore>
+    <AndroidSigningStorePass>1qaz2wsx@</AndroidSigningStorePass>
+    <AndroidSigningKeyAlias>rrkey</AndroidSigningKeyAlias>
+    <AndroidSigningKeyPass>1qaz2wsx@</AndroidSigningKeyPass>
+  </PropertyGroup>  
   <ItemGroup>
     <Reference Include="AirshipBindings, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\urbanairship.2.2.0\lib\MonoAndroid41\AirshipBindings.dll</HintPath>
