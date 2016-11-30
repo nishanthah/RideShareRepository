@@ -35,12 +35,12 @@
         <StackLayout Grid.Row="1">
           <Entry x:Name="userNameEntry"  Text="{Binding UserName, Mode=TwoWay}" Placeholder="User Name" WidthRequest="300" HorizontalOptions="Center"/>
           <Entry x:Name="passwordEntry" Text="{Binding Password, Mode=TwoWay}" Placeholder="Password" WidthRequest="300" HorizontalOptions="Center" IsPassword="True"/>
+          <Label Text="{Binding ErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>
           <StackLayout Orientation="Horizontal" HorizontalOptions="Center">
           <Button x:Name="loginAsRiderButton" FontSize="13" Text="Log in as Rider" Command="{Binding LoginCommand}" BackgroundColor="#467891" HorizontalOptions="Center"/>
           <Button x:Name="loginAsDriverButton" FontSize="13" Text="Log in as Driver" Command="{Binding LoginCommand}" BackgroundColor="#467891" HorizontalOptions="Center"/>
           </StackLayout>
-          <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="245" HorizontalOptions="Center"/>
-          <Label Text="{Binding ErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Center" TextColor="Red" FontAttributes="Bold"></Label>
+          <Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" WidthRequest="238" HorizontalOptions="Center"/>          
           
           <Label Text="Forgot Password" FontSize="16" TextColor="White" HorizontalOptions="Center" Margin="0,5,0,0">
           <Label.GestureRecognizers>
@@ -53,7 +53,7 @@
       </Grid>
 
       <ActivityIndicator x:Name="busyIndicator" Color="#8c8c8c" IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}"
-                AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,1,0.15,0.15" />
+                AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="0.5,0.5,0.5,0.5" />
     </AbsoluteLayout>
   </ContentPage.Content>
 </ContentPage>

@@ -16,7 +16,7 @@
         <Entry x:Name="vehicleNumberPlateEntry" Text="{Binding Path=VehicleNumberPlate}" Placeholder="Number Plate"/>
       </StackLayout>
 
-      <Button x:Name="registerButton" Command="{Binding SignUpCommand}" Text="Done" />
+      <Button x:Name="registerButton" Command="{Binding SignUpCommand}" Text="Done" BackgroundColor="#467891" />
     </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

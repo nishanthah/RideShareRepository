@@ -71,7 +71,7 @@
     <AndroidSigningStorePass>1qaz2wsx@</AndroidSigningStorePass>
     <AndroidSigningKeyAlias>rrkey</AndroidSigningKeyAlias>
     <AndroidSigningKeyPass>1qaz2wsx@</AndroidSigningKeyPass>
-  </PropertyGroup>  
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AirshipBindings, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\urbanairship.2.2.0\lib\MonoAndroid41\AirshipBindings.dll</HintPath>
@@ -191,6 +191,7 @@
     <Compile Include="CustomMapRenderer.cs" />
     <Compile Include="DependecyServices\AppDataServiceDroid.cs" />
     <Compile Include="DependecyServices\BaseUrlDroid.cs" />
+    <Compile Include="DependecyServices\FileReaderServiceDroid.cs" />
     <Compile Include="DependecyServices\HistoryUpdatorDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroid.cs" />
     <Compile Include="DependecyServices\LocationServiceDroidFused.cs" />
@@ -209,6 +210,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <AndroidAsset Include="Assets\airshipconfig.properties" />
+    <AndroidAsset Include="Assets\CountryCodes.json" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -328,6 +330,12 @@
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\route1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\notification.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\map.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <Import Project="..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets" Condition="Exists('..\..\packages\Xamarin.Forms.2.2.0.31\build\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\Xamarin.Forms.targets')" />

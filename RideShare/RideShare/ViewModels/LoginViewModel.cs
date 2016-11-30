@@ -37,7 +37,19 @@ namespace RideShare.ViewModels
             this.LoginCommand = new RelayCommand(Login);
             this.SignUpCommand = new RelayCommand(SignUp);
             this.TapForgotPwdOneCommand = new RelayCommand(OnForgotPwdNext);
+            PopulateUserName();
             //InitRecentAuthntication();
+        }
+
+        public void PopulateUserName()
+        {
+            if (Session.AuthenticationService != null && !String.IsNullOrEmpty(App.DeviceUniqueID))
+            {
+                DriverLocator.DriverLocatorService driverLocatorService = new DriverLocator.DriverLocatorService(Session.AuthenticationService);
+                var userCorrdinateResult = driverLocatorService.GetUserStatusByDeviceID(App.DeviceUniqueID);
+                if (userCorrdinateResult != null && !String.IsNullOrEmpty(userCorrdinateResult.UserName))
+                    this.UserName = userCorrdinateResult.UserName;
+            }
         }
 
 

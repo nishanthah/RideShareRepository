@@ -23,6 +23,9 @@ namespace RideShare.ViewModels
             appDataService.Save("access_token", null);
             appDataService.Save("current_user", null);
             appDataService.Save("is_user_logged_in", "false");
+            App.CurrentLoggedUser = null;
+            App.CurrentUserFavouritePlaces = null;
+            App.CurrentUserVehicles = null;
             Session.ClearAuthenticationInstance();
             Session.CurrentUserName = null;
 

@@ -16,7 +16,7 @@
         </ListView>
       </StackLayout>
 
-      <Button x:Name="registerButton" Command="{Binding RegisterFavPlace}" Text="Done" />
+      <Button x:Name="registerButton" Command="{Binding RegisterFavPlace}" Text="Done" BackgroundColor="#467891" />
     </StackLayout  >
   </ContentPage.Content>
 </ContentPage>

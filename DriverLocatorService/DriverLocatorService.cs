@@ -299,13 +299,13 @@ namespace DriverLocator
             return result;
         }
 
-        public ResponseBase GetUserStatusByDeviceID(string deviceID)
+        public SelectedUserResponseByDeviceID GetUserStatusByDeviceID(string deviceID)
         {
             HttpRequestHandler requestHandler = new HttpRequestHandler();
             requestHandler.AccessToken = authenticationService.AuthenticationToken;
             requestHandler.Method = HttpMethod.GET;
             requestHandler.Url = String.Format(GET_USER_STATUS_BY_DEVICE_ID_URL, deviceID);
-            var result = requestHandler.SendRequest<ResponseBase>();
+            var result = requestHandler.SendRequest<SelectedUserResponseByDeviceID>();
             return result;
         }
 

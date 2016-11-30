@@ -11,5 +11,6 @@ namespace RideShare.Common
         void MoveToLoginPage();
         void MoveToNextPage();
         void MoveToPreviousPage();
+        void InvokeInMainThread(Action action);
     }
 }

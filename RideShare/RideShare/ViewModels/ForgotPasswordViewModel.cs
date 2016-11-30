@@ -58,21 +58,36 @@ namespace RideShare.ViewModels
         {
             ResponseBase userInfo = null;
             ErrorMessage = String.Empty;
+            Task.Factory.StartNew(() =>
+                {
+                    if (App.DeviceType == App.DeviceTypes.Android)
+                    {
+                        IsBusy = true;
+                        //if (App.DeviceVersion >= 23)
+                        //    userInfo = Session.AuthenticationService.GetUserInfoByUserNameAndSendEmail(this.userName);
+                        //else
+                        userInfo = Session.AuthenticationService.SendEmailWithCode(this.userName, "FPWD");
 
-            if (App.DeviceType == App.DeviceTypes.Android)
-            {
-                //if (App.DeviceVersion >= 23)
-                //    userInfo = Session.AuthenticationService.GetUserInfoByUserNameAndSendEmail(this.userName);
-                //else
-                    userInfo = Session.AuthenticationService.SendEmailWithCode(this.userName, "FPWD");
-                
-                bool userExists = userInfo.IsSuccess && (userInfo.Message == "User exists");
+                        bool userExists = userInfo.IsSuccess && (userInfo.Message == "User exists");
 
-                if (!userExists)
-                    ErrorMessage = userInfo.Message;
-                else
-                    fpwdPageProcessor.MoveToLoginPage();
-            }          
+                        if (!userExists)
+                        {
+                            fpwdPageProcessor.InvokeInMainThread(() =>
+                            {
+                                ErrorMessage = userInfo.Message;
+                                IsBusy = false;
+                            });
+                        }
+                        else
+                        {
+                            fpwdPageProcessor.InvokeInMainThread(() =>
+                                {
+                                    fpwdPageProcessor.MoveToLoginPage();
+                                    IsBusy = false;
+                                });
+                        }
+                    }
+                });
 
         }
 

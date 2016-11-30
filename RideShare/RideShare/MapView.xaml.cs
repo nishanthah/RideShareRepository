@@ -389,13 +389,18 @@ namespace RideShare
             });
 
         }
-        public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent)
+        public void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent,Action okAction = null)
         {
+            
             Device.BeginInvokeOnMainThread(() =>
             {
                 infoWindowTitle.Text = infoWindowContent.Title;
                 infoWindowDescription.Text = infoWindowContent.Description;
                 infoWindowPopup.IsVisible = true;
+                if(okAction != null)
+                {
+                    okAction();
+                }
             });
         }
 

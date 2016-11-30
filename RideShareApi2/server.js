@@ -229,7 +229,7 @@ apiRoutes.get('/users/device/:deviceID', function (req, res) {
             res.json({ success: false, message: "User does not exist" });
         }
         else {
-            res.json({ success: true, message: "User exists" });
+            res.json({ userName: userCoordinate.userName, success: true, message: "User exists" });
         }
 			
 			
@@ -249,7 +249,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-    httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
+    httpClient.get("http://172.26.204.146:8078/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)

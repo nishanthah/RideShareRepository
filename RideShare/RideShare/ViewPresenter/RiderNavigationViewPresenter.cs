@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 using Xamarin.Forms.Maps;
 
 namespace RideShare.ViewPresenter
@@ -17,21 +18,39 @@ namespace RideShare.ViewPresenter
     {
         DriverLocator.DriverLocatorService driverLocatorService;
         RideHistory rideHistory;
+        IAppDataService appDataService;
+
         public RiderNavigationViewPresenter(IMapPageProcessor mapPageProcessor,IMapSocketService mapSocketService, RideHistory rideHistory, DriverLocator.DriverLocatorService driverLocatorService) :base(mapPageProcessor,mapSocketService,driverLocatorService)
         {
             this.driverLocatorService = driverLocatorService;           
             this.rideHistory = rideHistory;
+            this.appDataService = DependencyService.Get<IAppDataService>();
             base.InitDestination();
             RefreshPins(true);
             if (rideHistory.RequestStatus == RequestStatus.DriverAccepted)
             {
                 var infoWindowText = String.Format("{0} accepted your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
-                mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Accepted" });
+
+                if (appDataService.Get(rideHistory.Id + rideHistory.RequestStatus.ToString()) != "closed")
+                {
+                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Accepted" }, () =>
+                    {
+                        appDataService.Save(rideHistory.Id + rideHistory.RequestStatus.ToString(), "closed");
+                    });
+                }
+                
             }
             else if (rideHistory.RequestStatus == RequestStatus.DriverRejected)
             {
                 var infoWindowText = String.Format("{0} rejected your request to {1}", rideHistory.DiverUserName, rideHistory.DestinationName);
-                mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Rejected" });
+                if (appDataService.Get(rideHistory.Id + rideHistory.RequestStatus.ToString()) != "closed")
+                {
+                    mapPageProcessor.ShowInfoWindowPopupBox(new InfoWindowContent() { Description = infoWindowText, Title = "Ride Request Rejected" }, () =>
+                    {
+                        appDataService.Save(rideHistory.Id + rideHistory.RequestStatus.ToString(), "closed");
+                    });
+                }
+
             }
             base.OnInitializationCompleted();
         }

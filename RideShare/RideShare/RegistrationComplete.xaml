@@ -4,8 +4,9 @@
              x:Class="RideShare.RegistrationComplete">  
   <ContentPage.Content>
     <StackLayout x:Name="vrtStackLayout" Orientation="Vertical">
+      <Label Text="Please enter the registration code you have received to your email to complete the registration" HorizontalTextAlignment="Start" TextColor="Gray" WidthRequest="300"></Label>
       <Entry x:Name="registrationCodeEntry" Text="{Binding Path=RegistrationCode}" Placeholder="Registration Code" Keyboard="Numeric"/>
-      <Button x:Name="nextButton" Command="{Binding NextCommand}" Text="Next" />
+      <Button x:Name="nextButton" Command="{Binding NextCommand}" Text="Next" BackgroundColor="#467891" />
     </StackLayout>
   </ContentPage.Content>
 </ContentPage>

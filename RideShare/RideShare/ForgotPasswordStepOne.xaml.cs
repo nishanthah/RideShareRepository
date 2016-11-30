@@ -31,5 +31,14 @@ namespace RideShare
         {
             throw new NotImplementedException();
         }
+
+
+        public void InvokeInMainThread(Action action)
+        {
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                action();
+            });
+        }
     }
 }

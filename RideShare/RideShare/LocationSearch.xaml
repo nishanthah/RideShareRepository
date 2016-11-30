@@ -12,6 +12,6 @@
         </ListView.ItemTemplate>
     </ListView>
 
-    <Button x:Name="selectButton" Text="Set This Location" />
+    <Button x:Name="selectButton" Text="Set This Location" BackgroundColor="#467891" />
   </StackLayout>
 </ContentPage>

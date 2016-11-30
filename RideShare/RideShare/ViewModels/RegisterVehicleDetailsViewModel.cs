@@ -185,7 +185,7 @@ namespace RideShare.ViewModels
                 }
             }
 
-            if (!exists)
+            if (!exists && !String.IsNullOrEmpty(newUserVehicle.VehicleModel))
             {
                 newUserVehicle.PreviousVehicleNumberPlate = this.vehicleNumberPlate;
                 if (!App.CurrentUserVehicles.Contains(newUserVehicle))

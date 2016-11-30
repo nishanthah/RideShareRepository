@@ -28,6 +28,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
+    <DefineConstants>
+    </DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Models\CreateRideHistoryResponse.cs" />
@@ -35,6 +37,7 @@
     <Compile Include="Models\FilteredRideHistoryResponse.cs" />
     <Compile Include="Models\FinishRideResponse.cs" />
     <Compile Include="Models\RideHistory.cs" />
+    <Compile Include="Models\SelectedUserResponseByDeviceID.cs" />
     <Compile Include="Models\UpdateFavouritePlacesRequest.cs" />
     <Compile Include="Models\UpdateFavouritePlacesResponse.cs" />
     <Compile Include="Models\UpdateNotificationStatusRequest.cs" />

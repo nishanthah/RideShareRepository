@@ -36,7 +36,7 @@ namespace RideShare
             masterPageItems.Add(new MasterPageItem
             {
                 Title = "Notifications",
-                IconSource = "edit.png",
+                IconSource = "notification.png",
                 TargetType = typeof(NotificationView),
                 IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });
@@ -71,8 +71,8 @@ namespace RideShare
             });
             masterPageItems.Add(new MasterPageItem
             {
-                Title = Session.CurrentUserType == null ? "Provide Ride" : (Session.CurrentUserType == global::Common.Models.UserType.Driver ? "Provide Ride" : "Get Ride"),
-                IconSource = "logout.png",
+                Title = Session.CurrentUserType == global::Common.Models.UserType.Driver ? "Provide Ride" : "Get Ride",
+                IconSource = "map.png",
                 TargetType = typeof(MapView),
                 IsEnabled = String.IsNullOrEmpty(App.CurrentLoggedUser.User.RegistrationCode)
             });

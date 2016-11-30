@@ -184,7 +184,7 @@ namespace RideShare.ViewModels
                 }
             }
 
-            if (!exists)
+            if (!exists && !String.IsNullOrEmpty(newFavPlace.PlaceName))
             {
                 newFavPlace.PreviousUserGivenPlaceName = this.userGivenplaceName;
                 if (!App.CurrentUserFavouritePlaces.Contains(newFavPlace))

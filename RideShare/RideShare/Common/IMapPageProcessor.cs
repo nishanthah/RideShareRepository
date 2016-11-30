@@ -29,7 +29,7 @@ namespace RideShare.Common
         void RefreshRoute(bool canMoveToLocation, Func<RouteData> loadRouteFunction);
         void ShowDoubleButtonPopup(string title, string buttonConfirmText, string buttonCancelText,Action confirmAction,Action cancelAction);
         void HideDoubleButtonPopupBox();
-        void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent);
+        void ShowInfoWindowPopupBox(InfoWindowContent infoWindowContent,Action okAction=null);
         void HideInfoWindowPopupBox();
         void NavigateToRiderView();
         void SetDestination(LocationSearchResult destination);

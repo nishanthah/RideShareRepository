@@ -108,6 +108,7 @@
     </Compile>
     <Compile Include="SharedInterfaces\IAppDataService.cs" />
     <Compile Include="SharedInterfaces\IBaseUrl.cs" />
+    <Compile Include="SharedInterfaces\IFileReader.cs" />
     <Compile Include="SharedInterfaces\IHistoryUpdator.cs" />
     <Compile Include="SharedInterfaces\ILocationService.cs" />
     <Compile Include="SharedInterfaces\ILocationServiceHelper.cs" />
@@ -118,6 +119,7 @@
     <Compile Include="SplashScreen.xaml.cs">
       <DependentUpon>SplashScreen.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\CountryCodeUtility.cs" />
     <Compile Include="Utilities\LocationUtility.cs" />
     <Compile Include="ViewModels\CustomMapViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
@@ -225,6 +227,10 @@
   <ItemGroup>
     <Reference Include="ImageCircle.Forms.Plugin.Abstractions, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Xam.Plugins.Forms.ImageCircle.1.4.1\lib\portable-net45+wp8+win8+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10+UAP10\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="libphonenumber, Version=5.8.606.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Google.LibPhoneNumber.1.0.0\lib\libphonenumber.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MediaPicker.Forms.Plugin.Abstractions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
