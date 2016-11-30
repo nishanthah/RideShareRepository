@@ -207,6 +207,7 @@ apiRoutes.get('/users/:userName', function (req, res) {
             res.json({ success: false, message: "User Not Found" });
         }
         else {
+		console.log(userCoordinate.mobileNo);
             userMapper.mapSingleUser(userCoordinate, function (userData) {
                 var userData = userData;
                 res.json({ userData: userData, success: true });
@@ -249,7 +250,7 @@ apiRoutes.use(function(req, res, next) {
 		headers: { "Content-Type": "application/json","x-access-token": token}
 	};
 	 
-    httpClient.get("http://vauthapp.herokuapp.com/authapp/userinfo", args, function (userInfo, response) {
+    httpClient.get("http://172.26.204.146:8078/authapp/userinfo", args, function (userInfo, response) {
 		
 	
 			if(userInfo.success)

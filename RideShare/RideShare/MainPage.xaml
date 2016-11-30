@@ -9,7 +9,7 @@
   <MasterDetailPage.Detail>
     <NavigationPage>
       <x:Arguments>
-        <local:MapView/>
+        <local:SettingsPage/>
       </x:Arguments>
     </NavigationPage>
   </MasterDetailPage.Detail>
