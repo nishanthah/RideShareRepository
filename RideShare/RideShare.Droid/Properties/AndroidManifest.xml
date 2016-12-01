@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.virtusa.driverlocatorforms" android:installLocation="auto">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.virtusa.driverlocatorforms" android:installLocation="auto" android:versionCode="4" android:versionName="4">
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="RideShare" android:icon="@drawable/app_icon">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
