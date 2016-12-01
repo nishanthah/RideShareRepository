@@ -32,9 +32,7 @@ namespace RideShare.Behaviors
 
         protected override void OnDetachingFrom(Entry entry)
         {
-
             entry.TextChanged -= HandleTextChanged;
-
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Authentication;
 using Authentication.Models;
+using com.google.i18n.phonenumbers;
 using DriverLocatorFormsPortable.Common;
 using RideShare.Common;
 using System;
@@ -25,16 +26,18 @@ namespace RideShare.ViewModels
         string password = String.Empty;
         string email = String.Empty;
         string gender;
-        string mobileNumber;
+        string mobileNumber = String.Empty;
+        string countryCode = String.Empty;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
         bool isButtonEnabled;
+        bool isMobileNumberErrorMessageEnabled;
         ObservableCollection<DriverLocator.Models.Vehicle> vehicles;
         ObservableCollection<DriverLocator.Models.FavouritePlace> favPlaces;
         string passwordErrorMessage = "The password must be 8-15 characters long and must include atleast one capital letter and a special character";
         string requiredFieldErrorMessage = "Required";
         string emailAddressErrorMessage = "Invalid email";
-        string mobileNumberErrorMessage = "Please enter a mobile number";
+        string mobileNumberErrorMessage = "Please enter a valid mobile number";        
         string errorMessage;
         IAgreementResult agreementResult;
 
@@ -46,6 +49,7 @@ namespace RideShare.ViewModels
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
+            this.IsMobileNumberErrorMessageEnabled = false;
             this.agreementResult = (IAgreementResult)signUpPageProcessor;
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
@@ -61,7 +65,11 @@ namespace RideShare.ViewModels
                 this.UserName = currentUserDetails.UserName;
                 this.Email = currentUserDetails.EMail;
                 this.gender = currentUserDetails.Gender;
-                this.mobileNumber = currentUserDetails.MobileNo;
+                if (!String.IsNullOrEmpty(currentUserDetails.MobileNo))
+                {
+                    this.mobileNumber = currentUserDetails.MobileNo.Split('-')[1];
+                    this.countryCode = currentUserDetails.MobileNo.Split('-')[0];
+                }
                 this.password = "********";
                 if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
                 {
@@ -137,6 +145,20 @@ namespace RideShare.ViewModels
         public string MobileNumberErrorMessage
         {
             get { return mobileNumberErrorMessage; }            
+        }
+
+        public bool IsMobileNumberErrorMessageEnabled
+        {
+            get
+            {
+                return isMobileNumberErrorMessageEnabled;
+            }
+
+            set
+            {
+                isMobileNumberErrorMessageEnabled = value;
+                OnPropertyChanged("IsMobileNumberErrorMessageEnabled");
+            }
         }
 
         public byte[] ProfilePhoto
@@ -257,6 +279,21 @@ namespace RideShare.ViewModels
             }
         }
 
+        public string CountryCode
+        {
+            get
+            {
+                return countryCode;
+            }
+
+            set
+            {
+                countryCode = value;
+                OnPropertyChanged("CountryCode");
+                CheckFormValiditiy();
+            }
+        }
+
         public ObservableCollection<DriverLocator.Models.Vehicle> Vehicles
         {
             get
@@ -308,7 +345,7 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
                 ResetPasswordGuid = null,
-                MobileNumber = this.mobileNumber
+                MobileNumber = String.Format("{0}-{1}",this.countryCode, this.mobileNumber.Replace("-", String.Empty))
             };
 
             var signUpSucceeded = AreDetailsValid(user);
@@ -343,7 +380,7 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
                 ResetPasswordGuid = null,
-                MobileNumber = this.mobileNumber
+                MobileNumber = String.Format("{0}-{1}", this.countryCode, this.mobileNumber.Replace("-", String.Empty))
             };
 
             var Isvalid = AreDetailsValid(user, true);
@@ -538,24 +575,40 @@ namespace RideShare.ViewModels
             string emailRegex = @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
         @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$";
 
-            string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";
-
-            const string mobileNumberRegex = @"^0[7][0-9]{8}$";
+            string passwordRegex = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\da-zA-Z]).{8,15}$";            
+            
+            
+            bool mobileNumberValid = false;
+            char[] separators = { '+' };
+            if (!String.IsNullOrEmpty(this.countryCode) && this.countryCode != "Country Code" && !String.IsNullOrEmpty(this.mobileNumber))
+            {
+                try
+                {
+                    PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                    int countryCodeWithoutPlus = Convert.ToInt16(this.countryCode.Split(separators)[1].Replace(" ", String.Empty));
+                    com.google.i18n.phonenumbers.Phonenumber.PhoneNumber mobileNumber =
+                        new com.google.i18n.phonenumbers.Phonenumber.PhoneNumber().setCountryCode(countryCodeWithoutPlus).setNationalNumber(Convert.ToInt64(this.mobileNumber));
+                    mobileNumberValid = phoneUtil.isValidNumber(mobileNumber);                    
+                }
+                catch (Exception)
+                {}                
+            }
+            
 
             if (this.password != "********")
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber)  
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber)
                 && !String.IsNullOrEmpty(this.lastName) && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
-                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && 
-                    (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) &&
-                    (Regex.IsMatch(this.mobileNumber, mobileNumberRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
+                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) &&
+                    (Regex.IsMatch(this.password, passwordRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && mobileNumberValid;
+            
             else
                 IsButtonEnabled = !String.IsNullOrEmpty(this.email) &&
-                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber) 
-                && !String.IsNullOrEmpty(this.lastName) 
+                !String.IsNullOrEmpty(this.firstName) && !String.IsNullOrEmpty(this.mobileNumber)
+                && !String.IsNullOrEmpty(this.lastName)
                 && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
-                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) &&
-                    (Regex.IsMatch(this.mobileNumber, mobileNumberRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00)));
+                && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && mobileNumberValid;
+                   
         }
     }
 }

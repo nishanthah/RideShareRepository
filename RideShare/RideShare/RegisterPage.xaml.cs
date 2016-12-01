@@ -1,4 +1,5 @@
-﻿using ImageCircle.Forms.Plugin.Abstractions;
+﻿using com.google.i18n.phonenumbers;
+using ImageCircle.Forms.Plugin.Abstractions;
 using MediaPicker.Forms.Plugin.Abstractions;
 using RideShare.Common;
 using RideShare.ViewModels;
@@ -9,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using Xamarin.Forms;
 
 namespace RideShare
@@ -35,6 +35,9 @@ namespace RideShare
             //isNewItem = isNew;
             var vm = Content.BindingContext as SignUpViewModel;
             genderPicker.SelectedIndexChanged += genderPicker_SelectedIndexChanged;
+            countryCodePicker.SelectedIndexChanged += countryCodePicker_SelectedIndexChanged;
+            mobileNumberEntry.Unfocused += mobileNumberEntry_Unfocused;
+            mobileNumberEntry.TextChanged += mobileNumberEntry_TextChanged;
             profilePhoto = new CircleImage()
             {
                 //BorderColor = Color.Yellow,
@@ -56,6 +59,15 @@ namespace RideShare
             genderPicker.Items.Add("Gender");
             genderPicker.Items.Add("Male");
             genderPicker.Items.Add("Female");
+
+            RideShare.SharedInterfaces.IFileReader fileReader = DependencyService.Get<RideShare.SharedInterfaces.IFileReader>();
+            List<string> codes = fileReader.GetCountryCodes();
+            countryCodePicker.Items.Add("Country Code");
+            foreach (string code in codes)
+            {
+                countryCodePicker.Items.Add(code.Replace(" ", String.Empty));
+            }
+            
 
             if (vm.isAuthenticated)
             {
@@ -103,6 +115,10 @@ namespace RideShare
                     genderPicker.SelectedIndex = 1;
                 else
                     genderPicker.SelectedIndex = 0;
+
+                if (!String.IsNullOrEmpty(vm.CountryCode))
+                    countryCodePicker.SelectedIndex = countryCodePicker.Items.ToList().FindIndex(i => i == vm.CountryCode);
+                    
             }
             else
             {
@@ -118,7 +134,61 @@ namespace RideShare
             OnUserVehicleAdded = OnUserVehicleAddedResult;
             OnUserFavouritePlaceAdded = OnUserFavouritePlaceAddedResult;
             RefreshFavouritePlaces();
-            RefreshUserVehicles();
+            RefreshUserVehicles();          
+            
+        }
+
+        void mobileNumberEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            if (vm.IsMobileNumberErrorMessageEnabled)
+                vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
+        }
+        
+
+        void mobileNumberEntry_Unfocused(object sender, FocusEventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
+        }
+
+        void countryCodePicker_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.CountryCode = countryCodePicker.Items[countryCodePicker.SelectedIndex];
+            vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
+        }
+
+        public bool MobileNumberValidator()
+        {            
+            char[] separators = { '+' };
+            if (!String.IsNullOrEmpty(countryCodePicker.Items[countryCodePicker.SelectedIndex]))
+            {
+                if (countryCodePicker.Items[countryCodePicker.SelectedIndex] == "Country Code")
+                    return true;
+                else if (!String.IsNullOrEmpty(mobileNumberEntry.Text))
+                {
+                    try
+                    {
+                        string thisCountryCode = countryCodePicker.Items[countryCodePicker.SelectedIndex];
+                        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+                        int countryCodeWithoutPlus = Convert.ToInt16(thisCountryCode.Split(separators)[1].Replace(" ", String.Empty));
+                        com.google.i18n.phonenumbers.Phonenumber.PhoneNumber mobileNumber =
+                            new com.google.i18n.phonenumbers.Phonenumber.PhoneNumber().setCountryCode(countryCodeWithoutPlus).setNationalNumber(Convert.ToInt64(mobileNumberEntry.Text));
+                        return !phoneUtil.isValidNumber(mobileNumber);
+                    }
+                    catch (Exception)
+                    {
+                        return true;
+
+                    }
+
+                }
+                else
+                    return false;
+            }
+            else
+                return true;
         }
 
         void genderPicker_SelectedIndexChanged(object sender, EventArgs e)
