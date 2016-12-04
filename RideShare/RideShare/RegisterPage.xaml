@@ -152,7 +152,7 @@
         </StackLayout>
 
         <!--<Button x:Name="registerButton" Text="Register" Command="{Binding SignUpCommand}"/>-->
-        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" BackgroundColor="#467891" IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}" >
+        <Button x:Name="registerButton" Command="{Binding SignUpCommand}" BackgroundColor="#ed910c" IsEnabled="{Binding IsButtonEnabled, Mode=TwoWay}" >
           <Button.Style>
             <Style TargetType="Button">
               <Setter Property="Text" Value="Register"></Setter>

@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.virtusa.driverlocatorforms" android:installLocation="auto" android:versionCode="4" android:versionName="4">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.micronians.rideshare" android:installLocation="auto" android:versionCode="6" android:versionName="6">
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="RideShare" android:icon="@drawable/app_icon">
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
-		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyDLbarg8-ZWjkc8Ukuat40tj7m8OfqLsq8" />
+		<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyD7TP5yZKCJH_yM9u0vu-jpjFFA5nrxRt8" />
 	</application>
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 	<uses-permission android:name="android.permission.INTERNET" />
