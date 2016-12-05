@@ -38,6 +38,7 @@ namespace RideShare.Droid
             Xamarin.FormsMaps.Init(this, bundle);
             App.DeviceType = App.DeviceTypes.Android;
             App.DeviceVersion = Convert.ToInt32(Build.VERSION.Sdk);
+            App.ApplicationVersion = PackageManager.GetPackageInfo(this.PackageName, 0).VersionName;            
 
             //**ANDROID_ID - this id is newly generated once the device is wiped
             App.DeviceUniqueID = Android.Provider.Settings.Secure.GetString(MainApp.Context.ContentResolver, Android.Provider.Settings.Secure.AndroidId);
@@ -142,6 +143,13 @@ namespace RideShare.Droid
                 historyUpdator.StopHistoryUpdatorService();
             }
 
+        }
+
+        public override void OnBackPressed()
+        {
+            Intent main = new Intent(Intent.ActionMain);
+            main.AddCategory(Intent.CategoryHome);
+            StartActivity(main);
         }
     }
 }
