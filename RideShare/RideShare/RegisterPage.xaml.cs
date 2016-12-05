@@ -162,11 +162,13 @@ namespace RideShare
         public bool MobileNumberValidator()
         {            
             char[] separators = { '+' };
+
+            if (countryCodePicker.SelectedIndex == -1 || countryCodePicker.SelectedIndex == 0)
+                return true;
+
             if (!String.IsNullOrEmpty(countryCodePicker.Items[countryCodePicker.SelectedIndex]))
             {
-                if (countryCodePicker.Items[countryCodePicker.SelectedIndex] == "Country Code")
-                    return true;
-                else if (!String.IsNullOrEmpty(mobileNumberEntry.Text))
+                if (!String.IsNullOrEmpty(mobileNumberEntry.Text))
                 {
                     try
                     {
