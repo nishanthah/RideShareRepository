@@ -54,6 +54,24 @@ namespace RideShare.UWP.DependecyServices
 
         }
 
-        
+        CommonModels.Location ILocationService.GetCurrentLocation()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ILocationService.InitLocationService()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ILocationService.StartLocationService()
+        {
+            throw new NotImplementedException();
+        }
+
+        void ILocationService.StopLocationService()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

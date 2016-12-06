@@ -26,7 +26,7 @@ namespace RideShare.UWP
         {
             this.InitializeComponent();
             Xamarin.FormsMaps.Init("Ak9VaN3Wh00PbaDOVzRdsI3P_xEBSwa0sUFw8qeaQHbawMZ0B1kjjmJal0j8kP2i");
-            this.LoadApplication(new RideShare.App(false));
+            //this.LoadApplication(new RideShare.App(false));
         }
     }
 }
