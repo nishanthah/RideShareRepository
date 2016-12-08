@@ -45,6 +45,7 @@ namespace RideShare
         public static DeviceTypes DeviceType;
         public static int DeviceVersion;
         public static string DeviceUniqueID;
+        public static string ApplicationVersion;
 
 
         public App(bool isLoading, string guid)

@@ -4,8 +4,9 @@
              x:Class="RideShare.AboutPage"
              Title="About">
   <ContentPage.Content>
-  <!--  <StackLayout>
-      <Label Text="About Page" HorizontalOptions="Center" VerticalOptions="CenterAndExpand" />
-    </StackLayout>-->
+  <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="Center">  
+    <Label Text="Share a ride with your friends/family/colleagues" HorizontalTextAlignment="Center" TextColor="White" ></Label>
+    <Label Text="{Binding Path=Version}" HorizontalTextAlignment="Center" TextColor="White" ></Label>
+  </StackLayout>
   </ContentPage.Content>
 </ContentPage>
