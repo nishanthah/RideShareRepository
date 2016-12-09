@@ -121,6 +121,7 @@
     </Compile>
     <Compile Include="Utilities\CountryCodeUtility.cs" />
     <Compile Include="Utilities\LocationUtility.cs" />
+    <Compile Include="ViewModels\AboutViewModel.cs" />
     <Compile Include="ViewModels\CustomMapViewModel.cs" />
     <Compile Include="ViewModels\ForgotPasswordViewModel.cs" />
     <Compile Include="ViewModels\HistoryViewModel.cs" />

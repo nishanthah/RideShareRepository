@@ -14,17 +14,7 @@ namespace RideShare
         {
             InitializeComponent();
             Content.BindingContext = new AboutViewModel();
-            Title = "About Page";
-            //Content = new StackLayout
-            //{
-            //    Children = {
-            //        new Label {
-            //            Text = "About Page data goes here",
-            //            HorizontalOptions = LayoutOptions.Center,
-            //            VerticalOptions = LayoutOptions.CenterAndExpand
-            //        }
-            //    }
-            //};
+            Title = "About Page";            
         }
     }
 }
