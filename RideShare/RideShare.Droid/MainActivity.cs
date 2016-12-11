@@ -10,6 +10,7 @@ using Android.App;
 using Android.Preferences;
 using Android.Content;
 
+
 namespace RideShare.Droid
 {
     //, Icon = "@drawable/app_icon"
