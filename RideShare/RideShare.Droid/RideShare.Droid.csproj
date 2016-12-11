@@ -74,8 +74,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AirshipBindings, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\urbanairship.2.2.0\lib\MonoAndroid41\AirshipBindings.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\packages\urbanairship.3.1.1\lib\MonoAndroid41\AirshipBindings.dll</HintPath>
     </Reference>
     <Reference Include="EngineIoClientDotNet, Version=0.9.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\EngineIoClientDotNet.0.9.22\lib\monoandroid10\EngineIoClientDotNet.dll</HintPath>
@@ -273,10 +273,6 @@
     <XamarinComponentReference Include="SocketIoClientDotNet">
       <Visible>False</Visible>
       <Version>0.9.13</Version>
-    </XamarinComponentReference>
-    <XamarinComponentReference Include="urbanairship">
-      <Visible>False</Visible>
-      <Version>2.2.0</Version>
     </XamarinComponentReference>
     <XamarinComponentReference Include="xamarin.mobile">
       <Visible>False</Visible>
