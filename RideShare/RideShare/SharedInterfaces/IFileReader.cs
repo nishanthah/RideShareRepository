@@ -8,6 +8,7 @@ namespace RideShare.SharedInterfaces
 {
     public interface IFileReader
     {
-        List<string> GetCountryCodes();
+        Dictionary<string, string> GetCountryCodesWithNames();
+        Dictionary<string, string> GetCountryNamesWithFlagName();
     }
 }
