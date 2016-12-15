@@ -14,7 +14,7 @@ using Xamarin.Forms;
 
 namespace RideShare
 {
-    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult, IUserFavouritePlaceAdditionResult, IAgreementResult
+    public partial class RegisterPage : ContentPage, ISignUpPageProcessor, IUserVehicleAdditionResult, IUserFavouritePlaceAdditionResult, IAgreementResult, ICountryCodeSelectionResult
     {
         //bool isNewItem;
 
@@ -25,6 +25,7 @@ namespace RideShare
         String status;
         public Action<ObservableCollection<DriverLocator.Models.Vehicle>> OnUserVehicleAdded { get; set; }
         public Action<ObservableCollection<DriverLocator.Models.FavouritePlace>> OnUserFavouritePlaceAdded { get; set; }
+        public Action<string> OnCountryCodeSelection { get; set; }
         ObservableCollection<DriverLocator.Models.Vehicle> sortedVehicleList;
         ObservableCollection<DriverLocator.Models.FavouritePlace> sortedFavPlaceList;
 
@@ -32,12 +33,12 @@ namespace RideShare
         {
             InitializeComponent();
             Content.BindingContext = new SignUpViewModel(this);
-            //isNewItem = isNew;
             var vm = Content.BindingContext as SignUpViewModel;
             genderPicker.SelectedIndexChanged += genderPicker_SelectedIndexChanged;
-            countryCodePicker.SelectedIndexChanged += countryCodePicker_SelectedIndexChanged;
             mobileNumberEntry.Unfocused += mobileNumberEntry_Unfocused;
             mobileNumberEntry.TextChanged += mobileNumberEntry_TextChanged;
+            countryCodeEntry.Unfocused += countryCodeEntry_Unfocused;
+            countryCodeEntry.TextChanged += countryCodeEntry_TextChanged;
             profilePhoto = new CircleImage()
             {
                 //BorderColor = Color.Yellow,
@@ -59,15 +60,6 @@ namespace RideShare
             genderPicker.Items.Add("Gender");
             genderPicker.Items.Add("Male");
             genderPicker.Items.Add("Female");
-
-            RideShare.SharedInterfaces.IFileReader fileReader = DependencyService.Get<RideShare.SharedInterfaces.IFileReader>();
-            List<string> codes = fileReader.GetCountryCodes();
-            countryCodePicker.Items.Add("Country Code");
-            foreach (string code in codes)
-            {
-                countryCodePicker.Items.Add(code.Replace(" ", String.Empty));
-            }
-            
 
             if (vm.isAuthenticated)
             {
@@ -114,11 +106,7 @@ namespace RideShare
                 else if (vm.Gender == "Male")
                     genderPicker.SelectedIndex = 1;
                 else
-                    genderPicker.SelectedIndex = 0;
-
-                if (!String.IsNullOrEmpty(vm.CountryCode))
-                    countryCodePicker.SelectedIndex = countryCodePicker.Items.ToList().FindIndex(i => i == vm.CountryCode);
-                    
+                    genderPicker.SelectedIndex = 0;                                    
             }
             else
             {
@@ -133,9 +121,22 @@ namespace RideShare
             profileImageStackLayout.Children.Add(addPictureButton);
             OnUserVehicleAdded = OnUserVehicleAddedResult;
             OnUserFavouritePlaceAdded = OnUserFavouritePlaceAddedResult;
+            OnCountryCodeSelection = OnCountryCodeSelectionResult;
             RefreshFavouritePlaces();
             RefreshUserVehicles();          
             
+        }
+
+        void countryCodeEntry_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
+        }
+
+        void countryCodeEntry_Unfocused(object sender, FocusEventArgs e)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
         }
 
         void mobileNumberEntry_TextChanged(object sender, TextChangedEventArgs e)
@@ -150,29 +151,25 @@ namespace RideShare
         {
             var vm = Content.BindingContext as SignUpViewModel;
             vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
-        }
-
-        void countryCodePicker_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            var vm = Content.BindingContext as SignUpViewModel;
-            vm.CountryCode = countryCodePicker.Items[countryCodePicker.SelectedIndex];
-            vm.IsMobileNumberErrorMessageEnabled = MobileNumberValidator();
-        }
+        }        
 
         public bool MobileNumberValidator()
-        {            
+        {
             char[] separators = { '+' };
 
-            if (countryCodePicker.SelectedIndex == -1 || countryCodePicker.SelectedIndex == 0)
+            if (String.IsNullOrEmpty(countryCodeEntry.Text))
                 return true;
 
-            if (!String.IsNullOrEmpty(countryCodePicker.Items[countryCodePicker.SelectedIndex]))
+            if (!String.IsNullOrEmpty(countryCodeEntry.Text))
             {
                 if (!String.IsNullOrEmpty(mobileNumberEntry.Text))
                 {
                     try
                     {
-                        string thisCountryCode = countryCodePicker.Items[countryCodePicker.SelectedIndex];
+                        RideShare.SharedInterfaces.IFileReader fileReader = DependencyService.Get<RideShare.SharedInterfaces.IFileReader>();
+                        Dictionary<string, string> countryCodes = fileReader.GetCountryCodesWithNames();
+
+                        string thisCountryCode = countryCodes.FirstOrDefault(i => i.Key == countryCodeEntry.Text).Value; ;
                         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
                         int countryCodeWithoutPlus = Convert.ToInt16(thisCountryCode.Split(separators)[1].Replace(" ", String.Empty));
                         com.google.i18n.phonenumbers.Phonenumber.PhoneNumber mobileNumber =
@@ -279,8 +276,10 @@ namespace RideShare
             NavigationPage nextPage = new NavigationPage();
             if(page == "RegisterVehicleDetailsPage")
                 nextPage = new NavigationPage(new RegisterVehicleDetailsPage(this, new DriverLocator.Models.Vehicle()));
-            else
+            else if (page == "RegisterFavouritePlacesPage")
                 nextPage = new NavigationPage(new RegisterFavouritePlacesPage(this, new DriverLocator.Models.FavouritePlace()));
+            else if (page == "CountryCodesPage")
+                nextPage = new NavigationPage(new CountryCodesPage(this, this.countryCodeEntry.Text));
 
             Navigation.PushModalAsync(nextPage);            
         }
@@ -363,6 +362,12 @@ namespace RideShare
 
 
             });            
+        }
+
+        void OnCountryCodeSelectionResult(string selectedName)
+        {
+            var vm = Content.BindingContext as SignUpViewModel;
+            vm.CountryName = selectedName;
         }
     }
 }

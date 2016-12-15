@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace RideShare.ViewModels
 {
@@ -27,7 +28,7 @@ namespace RideShare.ViewModels
         string email = String.Empty;
         string gender;
         string mobileNumber = String.Empty;
-        string countryCode = String.Empty;
+        string countryName = String.Empty;
         byte[] _profilePhoto;
         string profilePictureEncoded = string.Empty;
         bool isButtonEnabled;
@@ -40,21 +41,25 @@ namespace RideShare.ViewModels
         string mobileNumberErrorMessage = "Please enter a valid mobile number";        
         string errorMessage;
         IAgreementResult agreementResult;
-
+        Dictionary<string, string> countryCodes = new Dictionary<string, string>();
 
         ISignUpPageProcessor signUpPageProcessor;
         public ICommand TapCommand { protected set; get; }
         public ICommand TapCommandLogin { protected set; get; }
         public ICommand TapFavsCommand { protected set; get; }
+        public ICommand TapCountryCodeCommand { protected set; get; }
 
         public SignUpViewModel(ISignUpPageProcessor signUpPageProcessor)
         {
+            RideShare.SharedInterfaces.IFileReader fileReader = DependencyService.Get<RideShare.SharedInterfaces.IFileReader>();
+            countryCodes = fileReader.GetCountryCodesWithNames();
             this.IsMobileNumberErrorMessageEnabled = false;
             this.agreementResult = (IAgreementResult)signUpPageProcessor;
             this.signUpPageProcessor = signUpPageProcessor;
             this.TapCommand = new RelayCommand(OnTapped);
             this.TapCommandLogin = new RelayCommand(OnTappedLogin);
             this.TapFavsCommand = new RelayCommand(OnTappedFavs);
+            this.TapCountryCodeCommand = new RelayCommand(OnTappedCountryCode);
             vehicles = new ObservableCollection<DriverLocator.Models.Vehicle>();
             favPlaces = new ObservableCollection<DriverLocator.Models.FavouritePlace>();
             if (Session.AuthenticationService != null && Session.AuthenticationService.IsAuthenticated)
@@ -68,7 +73,7 @@ namespace RideShare.ViewModels
                 if (!String.IsNullOrEmpty(currentUserDetails.MobileNo))
                 {
                     this.mobileNumber = currentUserDetails.MobileNo.Split('-')[1];
-                    this.countryCode = currentUserDetails.MobileNo.Split('-')[0];
+                    this.countryName = countryCodes.FirstOrDefault(i => i.Value == currentUserDetails.MobileNo.Split('-')[0]).Key;
                 }
                 this.password = "********";
                 if (!String.IsNullOrEmpty(currentUserDetails.profileImageEncoded))
@@ -279,17 +284,17 @@ namespace RideShare.ViewModels
             }
         }
 
-        public string CountryCode
+        public string CountryName
         {
             get
             {
-                return countryCode;
+                return countryName;
             }
 
             set
             {
-                countryCode = value;
-                OnPropertyChanged("CountryCode");
+                countryName = value;
+                OnPropertyChanged("CountryName");
                 CheckFormValiditiy();
             }
         }
@@ -345,7 +350,7 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
                 ResetPasswordGuid = null,
-                MobileNumber = String.Format("{0}-{1}",this.countryCode, this.mobileNumber.Replace("-", String.Empty))
+                MobileNumber = String.Format("{0}-{1}", GetCountryCodeByName(this.countryName), this.mobileNumber.Replace("-", String.Empty))
             };
 
             var signUpSucceeded = AreDetailsValid(user);
@@ -380,7 +385,7 @@ namespace RideShare.ViewModels
                 profileImageEncoded = GetProfilePictureEncoded(),
                 Gender = this.gender,
                 ResetPasswordGuid = null,
-                MobileNumber = String.Format("{0}-{1}", this.countryCode, this.mobileNumber.Replace("-", String.Empty))
+                MobileNumber = String.Format("{0}-{1}", GetCountryCodeByName(this.countryName), this.mobileNumber.Replace("-", String.Empty))
             };
 
             var Isvalid = AreDetailsValid(user, true);
@@ -568,6 +573,11 @@ namespace RideShare.ViewModels
             this.signUpPageProcessor.MoveToPage("RegisterFavouritePlacesPage");
         }
 
+        private void OnTappedCountryCode()
+        {
+            this.signUpPageProcessor.MoveToPage("CountryCodesPage");
+        }
+
         private void CheckFormValiditiy()
         {
             this.ErrorMessage = String.Empty;            
@@ -580,12 +590,13 @@ namespace RideShare.ViewModels
             
             bool mobileNumberValid = false;
             char[] separators = { '+' };
-            if (!String.IsNullOrEmpty(this.countryCode) && this.countryCode != "Country Code" && !String.IsNullOrEmpty(this.mobileNumber))
+            if (!String.IsNullOrEmpty(this.countryName) && !String.IsNullOrEmpty(this.mobileNumber))
             {
                 try
                 {
+                    string countryCode = GetCountryCodeByName(this.countryName);
                     PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-                    int countryCodeWithoutPlus = Convert.ToInt16(this.countryCode.Split(separators)[1].Replace(" ", String.Empty));
+                    int countryCodeWithoutPlus = Convert.ToInt16(countryCode.Split(separators)[1].Replace(" ", String.Empty));
                     com.google.i18n.phonenumbers.Phonenumber.PhoneNumber mobileNumber =
                         new com.google.i18n.phonenumbers.Phonenumber.PhoneNumber().setCountryCode(countryCodeWithoutPlus).setNationalNumber(Convert.ToInt64(this.mobileNumber));
                     mobileNumberValid = phoneUtil.isValidNumber(mobileNumber);                    
@@ -609,6 +620,14 @@ namespace RideShare.ViewModels
                 && !String.IsNullOrEmpty(this.userName) && !String.IsNullOrEmpty(this.password)
                 && (Regex.IsMatch(this.email, emailRegex, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(250.00))) && mobileNumberValid;
                    
+        }
+
+        private string GetCountryCodeByName(string countryName)
+        {
+            if (this.countryCodes != null && this.countryCodes.Count != 0)
+                return this.countryCodes.FirstOrDefault(i => i.Key == countryName).Value;
+            else
+                return String.Empty;
         }
     }
 }

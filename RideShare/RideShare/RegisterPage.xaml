@@ -75,8 +75,15 @@
         <Label Text="{Binding EmailAddressErrorMessage, Mode=TwoWay}" HorizontalTextAlignment="Start" TextColor="Red" FontAttributes="Bold" IsVisible="{Binding Source={x:Reference emailValidator},
 	                        Path=MessageIsValid, Converter={StaticResource inverseBooleanConverter}}"></Label>
 
-        <StackLayout Orientation="Horizontal">
-        <Picker x:Name="countryCodePicker" Title="CountryCode"></Picker>
+        <StackLayout Orientation="Horizontal">        
+          <Entry x:Name="countryCodeEntry" Text="{Binding CountryName, Mode=TwoWay}" Placeholder="Code [Required]" IsEnabled="False"> </Entry>
+            <Image Source="arrow.png" >
+              <Image.GestureRecognizers>
+                <TapGestureRecognizer
+                    Command="{Binding TapCountryCodeCommand}" />
+              </Image.GestureRecognizers>
+            </Image>
+            
         <Entry x:Name="mobileNumberEntry" Text="{Binding MobileNumber, Mode=TwoWay}" Placeholder="Mobile Number [Required]" Keyboard="Telephone">
           <Entry.Behaviors>
             <local:RequiredFieldValidatorBehavior x:Name="mobileNumberRequiredFieldValidator"/>            

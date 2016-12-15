@@ -19,9 +19,9 @@ namespace RideShare.Droid.DependecyServices
 {
     public class FileReaderServiceDroid : IFileReader
     {
-        public List<string> GetCountryCodes()
+        public Dictionary<string, string> GetCountryCodesWithNames()
         {
-            List<string> countryCodeList = new List<string>();
+            Dictionary<string, string> countryCodeList = new Dictionary<string, string>();
             string countryCodes = String.Empty;
             Android.Content.Res.AssetManager assets = MainApp.Context.Assets;
             
@@ -32,7 +32,27 @@ namespace RideShare.Droid.DependecyServices
 
                 foreach (CountryCode cntry in items.Countries)
                 {
-                    countryCodeList.Add(cntry.Code);
+                    countryCodeList.Add(cntry.CountryName, cntry.Code.Replace(" ", String.Empty));
+                }
+            }
+
+            return countryCodeList;
+        }
+
+        public Dictionary<string, string> GetCountryNamesWithFlagName()
+        {
+            Dictionary<string, string> countryCodeList = new Dictionary<string, string>();
+            string countryCodes = String.Empty;
+            Android.Content.Res.AssetManager assets = MainApp.Context.Assets;
+
+            using (StreamReader r = new StreamReader(assets.Open("CountryCodes.json")))
+            {
+                countryCodes = r.ReadToEnd();
+                CountryCodesResult items = JsonConvert.DeserializeObject<CountryCodesResult>(countryCodes);
+
+                foreach (CountryCode cntry in items.Countries)
+                {
+                    countryCodeList.Add(cntry.CountryName, cntry.CountryName.Replace(" ", "_"));
                 }
             }
 
@@ -52,6 +72,8 @@ namespace RideShare.Droid.DependecyServices
 
             [JsonProperty("name")]
             public string CountryName { get; set; }
+
+            public string CountryFlagImageName { get; set; }
         }
     }
 }
