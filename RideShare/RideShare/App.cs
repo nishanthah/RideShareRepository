@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 using CommonModels = Common.Models;
-//using RideShare.Data;
+using RideShare;
 
 namespace RideShare
 {

@@ -1,5 +1,4 @@
 ﻿using System;
-
 using Android.Content.PM;
 using Android.Runtime;
 using Android.Views;
@@ -10,6 +9,7 @@ using RideShare;
 using Android.App;
 using Android.Preferences;
 using Android.Content;
+
 
 namespace RideShare.Droid
 {
