@@ -54,6 +54,19 @@ namespace RideShare.UWP.DependecyServices
 
         }
 
-        
+        public void InitLocationService()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartLocationService()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StopLocationService()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

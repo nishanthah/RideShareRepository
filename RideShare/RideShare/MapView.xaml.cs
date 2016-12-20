@@ -212,14 +212,20 @@ namespace RideShare
         #region MapViewRelatedFunctions
         private void InitMap()
         {
+            //TODO: When the longitude or latitude is negative map starts at Rome
+            double _latlitulde, _longitude;
+            double.TryParse(App.CurrentLoggedUser.Location.Latitude, out _latlitulde);
+            double.TryParse(App.CurrentLoggedUser.Location.Longitude, out _longitude);
+            
             map = new CustomMap
             {
                 IsShowingUser = false,
                 HeightRequest = 100,
                 WidthRequest = 960,
-                VerticalOptions = LayoutOptions.FillAndExpand
+                VerticalOptions = LayoutOptions.FillAndExpand,
+                BaseLatitude = _latlitulde,
+                BaseLongitude = _longitude
             };
-
 
             mapContainer.Children.Clear();
             mapContainer.Children.Add(map);

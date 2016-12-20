@@ -87,7 +87,8 @@ namespace RideShare
 
         static void MoveMapToRegion(CustomMap map)
         {
-            if (map.BaseLatitude > 0 && map.BaseLongitude > 0)
+            //Nish:Commenting this out as it was preventing MoveMap when longitude or latitude was a negative value, which is a valid value
+            //if (map.BaseLatitude > 0 && map.BaseLongitude > 0)
                 map.MoveToRegion(MapSpan.FromCenterAndRadius(new Position(map.BaseLatitude, map.BaseLongitude), Distance.FromKilometers(50)));
         }
 
