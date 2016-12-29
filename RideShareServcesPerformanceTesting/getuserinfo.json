@@ -1,0 +1,22 @@
+{
+  "config": {
+    "target": "http://vauthapp.herokuapp.com",
+    "phases": [
+      {"duration": 60, "arrivalRate": 5}
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "accesstoken retrivel",
+      "flow": [
+        {"get":   {
+			"url": "/authapp/userinfo",
+			"headers": {
+				   "x-access-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyTmFtZSI6Im1hZHVzaGFuX21hZCIsImNhbkFjY2Vzc1VzZXJJbmZvIjp0cnVlLCJpYXQiOjE0ODE2OTQ2NTYsImV4cCI6MTQ4MTc4MTA1Nn0.l_zFSqD17t2m1yF83JnIfNV_hLKgb4OMm_VVp-qzupE"
+				}
+			}
+        }
+      ]
+    }
+  ]
+}

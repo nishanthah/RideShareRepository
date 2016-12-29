@@ -1,0 +1,19 @@
+{
+  "config": {
+    "target": "http://vauthapp.herokuapp.com",
+    "phases": [
+      {"duration": 60, "arrivalRate": 5}
+    ]
+  },
+  "scenarios": [
+    {
+      "name": "accesstoken retrivel",
+      "flow": [
+        {"get":   {
+			"url": "/authapp/userinfosendemailwithguid/madushan_mad",
+			}
+        }
+      ]
+    }
+  ]
+}

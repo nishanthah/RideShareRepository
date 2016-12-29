@@ -1,0 +1,8 @@
+1) Install artillery.io
+	"npm install -g artillery"
+
+2)Run Created Json Script
+	"artillery run token.json"
+
+3)Create Hltm View for Test Data
+	"artillery report artillery_report_20161229_152143.json"
