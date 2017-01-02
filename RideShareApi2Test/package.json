@@ -1,0 +1,9 @@
+{
+  "name": "ride-share-api2-test",
+  "version": "0.0.0",
+  "description": "RideShareApi2Test",
+  "main": "app.js",
+  "author": {
+    "name": "josriskandarajah"
+  }
+}
